@@ -9,14 +9,18 @@
  * - validating the Item
  * - checking quantity
  * - reading generic effect fields
- * - consuming quantity
+ * - preparing a use transaction
+ * - committing quantity consumption only after
+ *   the effect successfully resolves
  *
  * Genre modules are responsible for interpreting
  * genre-specific consumable types and traits.
  */
 
 /**
- * Use a Tactical Consumable Item.
+ * Prepare use of a Tactical Consumable Item.
+ *
+ * This does NOT consume quantity.
  *
  * @param {Actor} actor
  * Actor using the Consumable.
@@ -24,9 +28,9 @@
  * @param {Item} consumable
  * Consumable Item being used.
  *
- * @returns {Promise<object|null>}
+ * @returns {object|null}
  */
-export async function useConsumable(
+export function prepareConsumableUse(
   actor,
   consumable
 ) {
@@ -58,7 +62,7 @@ export async function useConsumable(
   /*  Quantity                                    */
   /* -------------------------------------------- */
 
-  const quantityBefore =
+  const quantity =
     Math.max(
       0,
       Number(
@@ -66,9 +70,12 @@ export async function useConsumable(
       ) || 0
     );
 
+  const consumedOnUse =
+    system.consumedOnUse !== false;
+
   if (
-    system.consumedOnUse !== false &&
-    quantityBefore <= 0
+    consumedOnUse &&
+    quantity <= 0
   ) {
 
     ui.notifications.warn(
@@ -138,30 +145,7 @@ export async function useConsumable(
       : [];
 
   /* -------------------------------------------- */
-  /*  Consume Quantity                            */
-  /* -------------------------------------------- */
-
-  let quantityAfter =
-    quantityBefore;
-
-  if (
-    system.consumedOnUse !== false
-  ) {
-
-    quantityAfter =
-      Math.max(
-        0,
-        quantityBefore - 1
-      );
-
-    await consumable.update({
-      "system.quantity":
-        quantityAfter
-    });
-  }
-
-  /* -------------------------------------------- */
-  /*  Result                                      */
+  /*  Prepared Transaction                        */
   /* -------------------------------------------- */
 
   return {
@@ -197,8 +181,138 @@ export async function useConsumable(
         ) || 0
       ),
 
-    consumedOnUse:
-      system.consumedOnUse !== false,
+    consumedOnUse,
+
+    quantity: {
+      before:
+        quantity
+    },
+
+    effect,
+
+    traits
+  };
+}
+
+/**
+ * Commit a prepared Consumable use.
+ *
+ * Quantity is only reduced here, after the caller
+ * has successfully resolved the Consumable effect.
+ *
+ * @param {Item} consumable
+ * @param {object} preparedUse
+ *
+ * @returns {Promise<object|null>}
+ */
+export async function commitConsumableUse(
+  consumable,
+  preparedUse
+) {
+
+  /* -------------------------------------------- */
+  /*  Validation                                  */
+  /* -------------------------------------------- */
+
+  if (
+    !consumable ||
+    consumable.type !== "consumable"
+  ) {
+
+    throw new Error(
+      "Tactical | Consumable commit requires a Consumable Item."
+    );
+  }
+
+  if (!preparedUse) {
+
+    throw new Error(
+      "Tactical | Consumable commit requires a prepared use transaction."
+    );
+  }
+
+  if (
+    preparedUse.consumableId !==
+    consumable.id
+  ) {
+
+    throw new Error(
+      "Tactical | Prepared Consumable transaction does not match this Item."
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  No Consumption                              */
+  /* -------------------------------------------- */
+
+  if (
+    preparedUse.consumedOnUse === false
+  ) {
+
+    return {
+      ...preparedUse,
+
+      committed:
+        true,
+
+      quantity: {
+        before:
+          preparedUse.quantity.before,
+
+        after:
+          preparedUse.quantity.before
+      }
+    };
+  }
+
+  /* -------------------------------------------- */
+  /*  Re-Check Live Quantity                      */
+  /* -------------------------------------------- */
+
+  /*
+   * Re-read the live Item value instead of trusting
+   * the prepared transaction.
+   *
+   * This protects against another action changing
+   * quantity between prepare and commit.
+   */
+  const quantityBefore =
+    Math.max(
+      0,
+      Number(
+        consumable.system.quantity
+      ) || 0
+    );
+
+  if (quantityBefore <= 0) {
+
+    ui.notifications.warn(
+      `${consumable.name} has no uses remaining.`
+    );
+
+    return null;
+  }
+
+  const quantityAfter =
+    Math.max(
+      0,
+      quantityBefore - 1
+    );
+
+  /* -------------------------------------------- */
+  /*  Commit                                      */
+  /* -------------------------------------------- */
+
+  await consumable.update({
+    "system.quantity":
+      quantityAfter
+  });
+
+  return {
+    ...preparedUse,
+
+    committed:
+      true,
 
     quantity: {
       before:
@@ -206,10 +320,6 @@ export async function useConsumable(
 
       after:
         quantityAfter
-    },
-
-    effect,
-
-    traits
+    }
   };
 }
