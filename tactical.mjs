@@ -7,27 +7,29 @@
 
 import { TacticalSkillRegistry } from "./module/registry/skill-registry.mjs";
 import { registerCoreSkills } from "./module/registry/core-skills.mjs";
+import { registerTacticalDataModels } from "./module/data-models/register-data-models.mjs";
 
 Hooks.once("init", () => {
   console.log("Tactical | Initializing Tactical system");
 
-  /**
-   * Create the core Skill registry.
-   */
+  /* -------------------------------------------- */
+  /*  Data Models                                 */
+  /* -------------------------------------------- */
+
+  registerTacticalDataModels();
+
+  /* -------------------------------------------- */
+  /*  Skill Registry                              */
+  /* -------------------------------------------- */
+
   const skillRegistry = new TacticalSkillRegistry();
 
-  /**
-   * Register Tactical's default modern-day Skills.
-   */
   registerCoreSkills(skillRegistry);
 
-  /**
-   * Public Tactical API.
-   *
-   * Future genre modules can access shared Tactical functionality through:
-   *
-   * game.tactical
-   */
+  /* -------------------------------------------- */
+  /*  Public Tactical API                         */
+  /* -------------------------------------------- */
+
   game.tactical = {
     version: "0.1.0",
 
@@ -35,7 +37,8 @@ Hooks.once("init", () => {
       skills: skillRegistry,
 
       /*
-       * These will receive dedicated registry classes later.
+       * These will receive dedicated registry
+       * classes as we build those systems.
        */
       statuses: new Map(),
       equipmentTraits: new Map(),
@@ -46,6 +49,8 @@ Hooks.once("init", () => {
   console.log(
     `Tactical | ${game.tactical.registries.skills.getAll().length} Skills available`
   );
+
+  console.log("Tactical | Initialization complete");
 });
 
 Hooks.once("ready", () => {
