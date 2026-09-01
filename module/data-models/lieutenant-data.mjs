@@ -79,6 +79,13 @@ export class TacticalLieutenantData extends foundry.abstract.TypeDataModel {
         initial: 3
       }),
 
+      initiative: new NumberField({
+        required: true,
+        integer: true,
+        min: 0,
+        initial: 0
+      }),
+      
       resolve: new NumberField({
         required: true,
         integer: true,
