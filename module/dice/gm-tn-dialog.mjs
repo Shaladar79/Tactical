@@ -110,6 +110,7 @@ export async function promptGMTNModifiers({
           <p class="hint">
             Use only one Cover option.
             Heavy Cover takes precedence if both are checked.
+            Flanking negates Cover against the flanking attacker.
           </p>
 
           <hr>
@@ -123,7 +124,7 @@ export async function promptGMTNModifiers({
                 type="checkbox"
                 name="flanking"
               >
-              Flanking (-1 TN)
+              Flanking (-1 TN and negates Cover)
             </label>
 
             <label>
@@ -251,11 +252,18 @@ export async function promptGMTNModifiers({
 
   let coverModifier = 0;
 
-  if (modifiers.heavyCover) {
-    coverModifier = 2;
-  }
-  else if (modifiers.lightCover) {
-    coverModifier = 1;
+  /*
+   * Flanking negates Cover against the attacker
+   * performing the flanking attack.
+   */
+  if (!modifiers.flanking) {
+
+    if (modifiers.heavyCover) {
+      coverModifier = 2;
+    }
+    else if (modifiers.lightCover) {
+      coverModifier = 1;
+    }
   }
 
   /* -------------------------------------------- */
