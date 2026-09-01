@@ -51,9 +51,7 @@ import {
 /*  Combat Helpers                              */
 /* -------------------------------------------- */
 
-function getActorCombatant(
-  actor
-) {
+function getActorCombatant(actor) {
 
   const combat =
     game.combat;
@@ -72,9 +70,7 @@ function getActorCombatant(
   ) ?? null;
 }
 
-function isActorsTurn(
-  actor
-) {
+function isActorsTurn(actor) {
 
   const activeCombatant =
     game.combat?.combatant;
@@ -173,11 +169,11 @@ export async function rollWeaponAttack(
     );
 
   /*
-   * Normal attacks can only be made during
-   * the Actor's own turn.
+   * Normal attacks may only happen during the
+   * Actor's own turn.
    *
-   * Overwatch and other Reaction attacks will
-   * use their own workflow later.
+   * Overwatch and other Reaction attacks will use
+   * a separate reaction workflow later.
    */
   if (
     inCombat &&
@@ -282,8 +278,8 @@ export async function rollWeaponAttack(
       : null;
 
   /*
-   * An empty weapon prevents the attack from
-   * being committed, so no Action is spent.
+   * Empty weapons fail before the Action is
+   * committed.
    */
   if (
     usesMagazine &&
@@ -444,8 +440,8 @@ export async function rollWeaponAttack(
     });
 
   /*
-   * GM rejected or canceled the attack.
-   * Nothing has been committed yet.
+   * GM canceled or rejected.
+   * No Action, ammo, or Rank Die is spent.
    */
   if (!approval) {
     return null;
@@ -458,8 +454,9 @@ export async function rollWeaponAttack(
   if (inCombat) {
 
     /*
-     * Re-check immediately before spending in
-     * case Action state changed while awaiting GM.
+     * Re-check immediately before spending because
+     * the Action state may have changed while the
+     * GM approval dialog was open.
      */
     const actionState =
       await spendActions(
@@ -556,8 +553,8 @@ export async function rollWeaponAttack(
   /* -------------------------------------------- */
 
   /*
-   * A miss still consumed the Attack Action,
-   * Rank Die if used, and ammunition.
+   * A miss still consumes the Action, Rank Die,
+   * and ammunition because the attack occurred.
    */
   if (
     result.successes > 0
