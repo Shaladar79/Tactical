@@ -4,24 +4,19 @@
  *
  * Handles player-to-GM requests for Tactical rolls.
  *
- * Flow:
+ * Supported request types:
  *
- * Player requests roll
- *      ↓
- * system.tactical socket
- *      ↓
- * Primary active GM receives request
- *      ↓
- * GM chooses TN modifiers
- *      ↓
- * GM sends approval / cancellation
- *      ↓
- * Requesting player receives response
+ * - check
+ * - attack
  */
 
 import {
   promptGMTNModifiers
 } from "../dice/gm-tn-dialog.mjs";
+
+import {
+  promptGMAttackTN
+} from "../dice/gm-attack-tn-dialog.mjs";
 
 /**
  * Tactical system socket namespace.
@@ -106,26 +101,59 @@ export function registerTacticalRollSocket() {
 /**
  * Request GM approval for a Tactical roll.
  *
- * If the current user is already the GM,
- * the approval dialog opens locally.
- *
- * Otherwise the request is sent to the
- * primary active GM.
- *
  * @param {object} options
+ *
+ * @param {"check"|"attack"} options.requestType
+ * Type of roll being requested.
+ *
  * @param {string} options.actorName
+ * Name of the Actor performing the roll.
+ *
  * @param {string} options.rollName
+ * Display name of the roll.
+ *
  * @param {number} options.baseTN
+ * Base Target Number.
+ *
  * @param {number} options.dicePool
+ * Final proposed dice pool before rolling.
+ *
+ * @param {object} options.rangeOverrides
+ * Optional weapon-specific range TN modifiers.
  *
  * @returns {Promise<object|null>}
  */
 export async function requestGMTNApproval({
+  requestType = "check",
+
   actorName = "Character",
   rollName = "Tactical Check",
+
   baseTN = 7,
-  dicePool = 0
+  dicePool = 0,
+
+  rangeOverrides = {}
 } = {}) {
+
+  const normalizedRequestType =
+    requestType === "attack"
+      ? "attack"
+      : "check";
+
+  const normalizedBaseTN =
+    Math.max(
+      2,
+      Math.min(
+        12,
+        Number(baseTN) || 7
+      )
+    );
+
+  const normalizedDicePool =
+    Math.max(
+      0,
+      Number(dicePool) || 0
+    );
 
   /* -------------------------------------------- */
   /*  GM Rolling Locally                         */
@@ -133,11 +161,33 @@ export async function requestGMTNApproval({
 
   if (game.user.isGM) {
 
+    if (normalizedRequestType === "attack") {
+
+      return promptGMAttackTN({
+        actorName,
+
+        attackName:
+          rollName,
+
+        baseTN:
+          normalizedBaseTN,
+
+        dicePool:
+          normalizedDicePool,
+
+        rangeOverrides
+      });
+    }
+
     return promptGMTNModifiers({
       actorName,
       rollName,
-      baseTN,
-      dicePool
+
+      baseTN:
+        normalizedBaseTN,
+
+      dicePool:
+        normalizedDicePool
     });
   }
 
@@ -167,6 +217,9 @@ export async function requestGMTNApproval({
   const request = {
     type: "rollRequest",
 
+    requestType:
+      normalizedRequestType,
+
     requestId,
 
     requestingUserId:
@@ -179,19 +232,14 @@ export async function requestGMTNApproval({
     rollName,
 
     baseTN:
-      Math.max(
-        2,
-        Math.min(
-          12,
-          Number(baseTN) || 7
-        )
-      ),
+      normalizedBaseTN,
 
     dicePool:
-      Math.max(
-        0,
-        Number(dicePool) || 0
-      )
+      normalizedDicePool,
+
+    rangeOverrides: {
+      ...rangeOverrides
+    }
   };
 
   /* -------------------------------------------- */
@@ -263,22 +311,65 @@ async function handleRollRequest(message) {
     return;
   }
 
-  const approval =
-    await promptGMTNModifiers({
-      title: "Player Roll Request",
+  const requestType =
+    message.requestType === "attack"
+      ? "attack"
+      : "check";
 
-      actorName:
-        message.actorName,
+  let approval = null;
 
-      rollName:
-        message.rollName,
+  /* -------------------------------------------- */
+  /*  Attack Approval                            */
+  /* -------------------------------------------- */
 
-      baseTN:
-        message.baseTN,
+  if (requestType === "attack") {
 
-      dicePool:
-        message.dicePool
-    });
+    approval =
+      await promptGMAttackTN({
+        title:
+          "Player Attack Request",
+
+        actorName:
+          message.actorName,
+
+        attackName:
+          message.rollName,
+
+        baseTN:
+          message.baseTN,
+
+        dicePool:
+          message.dicePool,
+
+        rangeOverrides:
+          message.rangeOverrides ?? {}
+      });
+  }
+
+  /* -------------------------------------------- */
+  /*  Normal Check Approval                      */
+  /* -------------------------------------------- */
+
+  else {
+
+    approval =
+      await promptGMTNModifiers({
+        title:
+          "Player Roll Request",
+
+        actorName:
+          message.actorName,
+
+        rollName:
+          message.rollName,
+
+        baseTN:
+          message.baseTN,
+
+        dicePool:
+          message.dicePool
+      });
+  }
 
   /* -------------------------------------------- */
   /*  GM Cancelled                               */
@@ -289,7 +380,8 @@ async function handleRollRequest(message) {
     game.socket.emit(
       SOCKET_NAME,
       {
-        type: "rollResponse",
+        type:
+          "rollResponse",
 
         requestId:
           message.requestId,
@@ -297,7 +389,8 @@ async function handleRollRequest(message) {
         requestingUserId:
           message.requestingUserId,
 
-        approved: false
+        approved:
+          false
       }
     );
 
@@ -311,7 +404,10 @@ async function handleRollRequest(message) {
   game.socket.emit(
     SOCKET_NAME,
     {
-      type: "rollResponse",
+      type:
+        "rollResponse",
+
+      requestType,
 
       requestId:
         message.requestId,
@@ -319,7 +415,8 @@ async function handleRollRequest(message) {
       requestingUserId:
         message.requestingUserId,
 
-      approved: true,
+      approved:
+        true,
 
       baseTN:
         approval.baseTN,
@@ -331,7 +428,13 @@ async function handleRollRequest(message) {
         approval.finalTN,
 
       modifiers:
-        approval.modifiers
+        approval.modifiers ?? {},
+
+      breakdown:
+        approval.breakdown ?? {},
+
+      range:
+        approval.range ?? null
     }
   );
 }
@@ -388,7 +491,11 @@ function handleRollResponse(message) {
   /* -------------------------------------------- */
 
   resolve({
-    approved: true,
+    approved:
+      true,
+
+    requestType:
+      message.requestType ?? "check",
 
     baseTN:
       message.baseTN,
@@ -400,6 +507,12 @@ function handleRollResponse(message) {
       message.finalTN,
 
     modifiers:
-      message.modifiers ?? {}
+      message.modifiers ?? {},
+
+    breakdown:
+      message.breakdown ?? {},
+
+    range:
+      message.range ?? null
   });
 }
