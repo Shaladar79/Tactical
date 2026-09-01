@@ -18,11 +18,17 @@ import {
 import { TacticalEquipmentTraitRegistry } from "./module/registry/equipment-trait-registry.mjs";
 import { registerCoreEquipmentTraits } from "./module/registry/core-equipment-traits.mjs";
 
-import { registerTacticalDataModels } from "./module/data-models/register-data-models.mjs";
+import {
+  registerTacticalDataModels
+} from "./module/data-models/register-data-models.mjs";
 
-import { registerTacticalActorSheets } from "./module/sheets/actor/register-actor-sheets.mjs";
+import {
+  registerTacticalActorSheets
+} from "./module/sheets/actor/register-actor-sheets.mjs";
 
-import { runSessionXPAward } from "./module/progression/session-xp-coordinator.mjs";
+import {
+  runSessionXPAward
+} from "./module/progression/session-xp-coordinator.mjs";
 
 import {
   registerTacticalRollSocket
@@ -33,15 +39,21 @@ import {
 } from "./module/socket/damage-request-socket.mjs";
 
 import {
+  registerTacticalInitiative
+} from "./module/combat/initiative-handler.mjs";
+
+import {
   registerBleedingOutCombatHook
 } from "./module/combat/bleeding-out-combat-hook.mjs";
 
 import {
-  registerTacticalInitiative
-} from "./module/combat/initiative-handler.mjs";
+  registerActionEconomyCombatHook
+} from "./module/combat/action-economy-combat-hook.mjs";
 
 Hooks.once("init", () => {
-  console.log("Tactical | Initializing Tactical system");
+  console.log(
+    "Tactical | Initializing Tactical system"
+  );
 
   /* -------------------------------------------- */
   /*  Data Models                                 */
@@ -170,6 +182,7 @@ Hooks.once("ready", () => {
   /* -------------------------------------------- */
 
   registerBleedingOutCombatHook();
+  registerActionEconomyCombatHook();
 
   console.log(
     "Tactical | Ready"
