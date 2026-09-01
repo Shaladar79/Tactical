@@ -88,10 +88,6 @@ export async function reloadWeapon(weapon) {
   const system =
     weapon.system;
 
-  /*
-   * Embedded Items expose their owning Actor
-   * through weapon.actor.
-   */
   const actor =
     weapon.actor ?? null;
 
