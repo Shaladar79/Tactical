@@ -233,6 +233,97 @@
 
     </section>
 
+    <hr>
+
+    <section class="weapons-section">
+
+      <h2>Weapons</h2>
+
+      <div class="weapon-list">
+
+        {{#each weapons as |weapon|}}
+
+          <div
+            class="weapon-row"
+            data-item-id="{{weapon.id}}"
+          >
+
+            <img
+              class="weapon-image"
+              src="{{weapon.img}}"
+              title="{{weapon.name}}"
+              width="32"
+              height="32"
+            >
+
+            <div class="weapon-name">
+              {{weapon.name}}
+            </div>
+
+            <div class="weapon-stat">
+              <span>DPS</span>
+              <strong>{{weapon.dps}}</strong>
+            </div>
+
+            <div class="weapon-stat">
+              <span>Pen</span>
+              <strong>{{weapon.penetration}}</strong>
+            </div>
+
+            <div class="weapon-stat">
+              <span>Range</span>
+              <strong>{{weapon.intendedRange}}</strong>
+            </div>
+
+            <div class="weapon-stat">
+              <span>Pool</span>
+              <strong>{{weapon.pool}}d12</strong>
+            </div>
+
+            {{#if weapon.usesMagazine}}
+
+              <div class="weapon-stat weapon-ammo">
+                <span>Ammo</span>
+                <strong>
+                  {{weapon.ammoRemaining}}
+                  /
+                  {{weapon.magazineCapacity}}
+                </strong>
+              </div>
+
+            {{else}}
+
+              <div class="weapon-stat weapon-ammo">
+                <span>Ammo</span>
+                <strong>—</strong>
+              </div>
+
+            {{/if}}
+
+            <button
+              type="button"
+              class="weapon-attack"
+              data-action="rollWeapon"
+              data-weapon="{{weapon.id}}"
+              title="Attack with {{weapon.name}}"
+            >
+              Attack
+            </button>
+
+          </div>
+
+        {{else}}
+
+          <p class="hint">
+            This character has no Weapon Items.
+          </p>
+
+        {{/each}}
+
+      </div>
+
+    </section>
+
   </section>
 
 </form>
