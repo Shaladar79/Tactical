@@ -5,6 +5,12 @@
  * Defines the genre-neutral data used by player characters.
  */
 
+import {
+  getRankFromXPSpent,
+  getMaxWoundsForRank,
+  getMaxRankDice
+} from "../progression/rank-progression.mjs";
+
 const {
   NumberField,
   SchemaField,
@@ -48,20 +54,6 @@ function attributeField() {
 }
 
 /**
- * Reusable Skill rating field.
- *
- * Skill IDs are supplied by the Skill Registry.
- */
-function skillField() {
-  return new NumberField({
-    required: true,
-    integer: true,
-    min: 0,
-    initial: 0
-  });
-}
-
-/**
  * Player Character data.
  */
 export class TacticalCharacterData extends foundry.abstract.TypeDataModel {
@@ -73,6 +65,11 @@ export class TacticalCharacterData extends foundry.abstract.TypeDataModel {
       /*  Progression                                 */
       /* -------------------------------------------- */
 
+      /**
+       * Rank is stored on the Actor for convenience,
+       * but is recalculated from XP Spent whenever
+       * derived data is prepared.
+       */
       rank: new NumberField({
         required: true,
         integer: true,
@@ -203,50 +200,62 @@ export class TacticalCharacterData extends foundry.abstract.TypeDataModel {
   }
 
   /**
-   * Calculate values that are derived from Rank and Attributes.
+   * Calculate values derived from XP, Rank, and Attributes.
    */
   prepareDerivedData() {
     super.prepareDerivedData();
+
+    /* -------------------------------------------- */
+    /*  Rank                                        */
+    /* -------------------------------------------- */
+
+    this.rank = getRankFromXPSpent(
+      this.xp.spent
+    );
 
     const rank = this.rank;
     const endurance = this.attributes.endurance;
     const agility = this.attributes.agility;
 
-    /*
-     * Health = 5 + (Endurance × (Rank + 1))
-     */
-    this.health.max = 5 + (endurance * (rank + 1));
+    /* -------------------------------------------- */
+    /*  Health                                      */
+    /* -------------------------------------------- */
 
-    /*
+    /**
+     * Health =
+     * 5 + (Endurance × (Rank + 1))
+     */
+    this.health.max =
+      5 + (endurance * (rank + 1));
+
+    /* -------------------------------------------- */
+    /*  Movement                                    */
+    /* -------------------------------------------- */
+
+    /**
      * Movement = 3 + Agility
      */
-    this.movement = 3 + agility;
+    this.movement =
+      3 + agility;
 
-    /*
-     * Maximum Wounds:
-     *
-     * R0 = 2
-     * R1 = 3
-     * R2 = 3
-     * R3 = 4
-     * R4 = 4
-     * etc.
-     */
-    this.wounds.max = 2 + Math.ceil(rank / 2);
+    /* -------------------------------------------- */
+    /*  Wounds                                      */
+    /* -------------------------------------------- */
 
-    /*
-     * Rank Dice:
-     *
-     * R0 = 0
-     * R1 = 1
-     * R2 = 2
-     * etc.
-     */
-    this.rankDice.max = rank;
+    this.wounds.max =
+      getMaxWoundsForRank(rank);
 
-    /*
-     * Do not allow current resources to exceed maximum.
-     */
+    /* -------------------------------------------- */
+    /*  Rank Dice                                   */
+    /* -------------------------------------------- */
+
+    this.rankDice.max =
+      getMaxRankDice(rank);
+
+    /* -------------------------------------------- */
+    /*  Resource Clamping                           */
+    /* -------------------------------------------- */
+
     this.health.value = Math.min(
       this.health.value,
       this.health.max
