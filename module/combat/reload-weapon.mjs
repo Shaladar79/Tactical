@@ -13,28 +13,6 @@ import {
   spendActions
 } from "./action-economy.mjs";
 
-function getActorCombatant(actor) {
-  if (!actor || !game.combat) {
-    return null;
-  }
-
-  return game.combat.combatants.find(
-    combatant =>
-      combatant.actor?.id === actor.id
-  ) ?? null;
-}
-
-function isActorsTurn(actor) {
-  const combatant =
-    game.combat?.combatant;
-
-  if (!actor || !combatant) {
-    return false;
-  }
-
-  return combatant.actor?.id === actor.id;
-}
-
 /* -------------------------------------------- */
 /*  Combat Helpers                              */
 /* -------------------------------------------- */
@@ -236,11 +214,6 @@ export async function reloadWeapon(weapon) {
   /*  Spend Reload Action                         */
   /* -------------------------------------------- */
 
-  /*
-   * THIS IS THE ACTUAL ACTION ECONOMY CHANGE.
-   *
-   * A valid Reload costs 1 Action during combat.
-   */
   if (inCombat) {
 
     const actionState =
