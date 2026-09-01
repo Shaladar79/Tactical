@@ -32,6 +32,10 @@ import {
   registerTacticalDamageSocket
 } from "./module/socket/damage-request-socket.mjs";
 
+import {
+  registerBleedingOutCombatHook
+} from "./module/combat/bleeding-out-combat-hook.mjs";
+
 Hooks.once("init", () => {
   console.log("Tactical | Initializing Tactical system");
 
@@ -150,6 +154,12 @@ Hooks.once("ready", () => {
 
   registerTacticalRollSocket();
   registerTacticalDamageSocket();
+
+  /* -------------------------------------------- */
+  /*  Combat Hooks                                */
+  /* -------------------------------------------- */
+
+  registerBleedingOutCombatHook();
 
   console.log(
     "Tactical | Ready"
