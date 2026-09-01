@@ -13,12 +13,12 @@
  * 7. Build final dice pool.
  * 8. Send attack request to GM.
  * 9. GM selects range / cover / position modifiers.
- * 10. Commit attack and spend 1 Action.
+ * 10. Spend 1 Action once the attack is committed.
  * 11. Spend Rank Die if selected.
  * 12. Consume ammunition.
  * 13. Roll attack.
- * 14. Calculate attack damage data.
- * 15. If successful, send damage request to GM.
+ * 14. Calculate damage data.
+ * 15. On a hit, send damage request to GM.
  */
 
 import {
@@ -64,8 +64,7 @@ function getActorCombatant(actor) {
 
   return combat.combatants.find(
     combatant =>
-      combatant.actor?.id ===
-      actor.id
+      combatant.actor?.id === actor.id
   ) ?? null;
 }
 
@@ -82,14 +81,14 @@ function isActorsTurn(actor) {
   }
 
   return (
-    activeCombatant.actor?.id ===
-    actor.id
+    activeCombatant.actor?.id === actor.id
   );
 }
 
-/**
- * Resolve a Tactical weapon attack.
- */
+/* -------------------------------------------- */
+/*  Weapon Attack                               */
+/* -------------------------------------------- */
+
 export async function rollWeaponAttack(
   actor,
   weapon,
@@ -139,20 +138,16 @@ export async function rollWeaponAttack(
   /* -------------------------------------------- */
 
   const combatant =
-    getActorCombatant(
-      actor
-    );
+    getActorCombatant(actor);
 
   const inCombat =
-    Boolean(
-      combatant
-    );
+    Boolean(combatant);
 
   /*
-   * Normal attacks can only occur during the
-   * Actor's own turn.
+   * Normal Attack Actions can only be made
+   * during the Actor's own turn.
    *
-   * Overwatch and other Reaction attacks will use
+   * Overwatch and other reactions will use
    * their own workflow later.
    */
   if (
@@ -169,10 +164,7 @@ export async function rollWeaponAttack(
 
   if (
     inCombat &&
-    !canSpendActions(
-      actor,
-      1
-    )
+    !canSpendActions(actor, 1)
   ) {
 
     ui.notifications.warn(
@@ -191,9 +183,7 @@ export async function rollWeaponAttack(
       game.user.targets ?? []
     );
 
-  if (
-    targets.length === 0
-  ) {
+  if (targets.length === 0) {
 
     ui.notifications.warn(
       "Target a token before making an attack."
@@ -202,9 +192,7 @@ export async function rollWeaponAttack(
     return null;
   }
 
-  if (
-    targets.length > 1
-  ) {
+  if (targets.length > 1) {
 
     ui.notifications.warn(
       "Standard weapon attacks require exactly one target."
@@ -298,7 +286,7 @@ export async function rollWeaponAttack(
     );
 
   /* -------------------------------------------- */
-  /*  Base Dice Pool                              */
+  /*  Base Pool                                   */
   /* -------------------------------------------- */
 
   const basePool =
@@ -326,7 +314,7 @@ export async function rollWeaponAttack(
     `${actor.name}: ${weapon.name}`;
 
   /* -------------------------------------------- */
-  /*  Player Roll Options                         */
+  /*  Player Options                              */
   /* -------------------------------------------- */
 
   const playerOptions =
@@ -343,15 +331,14 @@ export async function rollWeaponAttack(
     });
 
   /*
-   * Canceling the player dialog does not
-   * spend an Action.
+   * Canceling here costs nothing.
    */
   if (!playerOptions) {
     return null;
   }
 
   /* -------------------------------------------- */
-  /*  Validate Rank Die                           */
+  /*  Rank Die Validation                         */
   /* -------------------------------------------- */
 
   if (
@@ -367,7 +354,7 @@ export async function rollWeaponAttack(
   }
 
   /* -------------------------------------------- */
-  /*  Build Final Dice Pool                       */
+  /*  Final Dice Pool                             */
   /* -------------------------------------------- */
 
   const poolData =
@@ -386,14 +373,14 @@ export async function rollWeaponAttack(
     });
 
   /* -------------------------------------------- */
-  /*  Weapon Range Overrides                      */
+  /*  Range Overrides                             */
   /* -------------------------------------------- */
 
   const rangeOverrides =
     system.rangeOverrides ?? {};
 
   /* -------------------------------------------- */
-  /*  GM Attack Approval                          */
+  /*  GM TN Approval                              */
   /* -------------------------------------------- */
 
   const approval =
@@ -416,22 +403,22 @@ export async function rollWeaponAttack(
     });
 
   /*
-   * GM rejection/cancel does not spend the
-   * Action, ammunition, or Rank Die.
+   * GM cancellation/rejection costs nothing.
    */
   if (!approval) {
     return null;
   }
 
   /* -------------------------------------------- */
-  /*  Commit Attack Action                        */
+  /*  Spend Action                                */
   /* -------------------------------------------- */
 
   if (inCombat) {
 
     /*
-     * Re-check immediately before spending in
-     * case Actions changed while awaiting GM.
+     * Re-check immediately before committing,
+     * since the Action state could have changed
+     * while the GM dialog was open.
      */
     const actionState =
       await spendActions(
@@ -449,9 +436,7 @@ export async function rollWeaponAttack(
   /*  Spend Rank Die                              */
   /* -------------------------------------------- */
 
-  if (
-    playerOptions.rankDie
-  ) {
+  if (playerOptions.rankDie) {
 
     await actor.update({
       "system.rankDice.value":
@@ -484,7 +469,7 @@ export async function rollWeaponAttack(
   }
 
   /* -------------------------------------------- */
-  /*  Roll Attack                                 */
+  /*  Attack Roll                                 */
   /* -------------------------------------------- */
 
   const result =
@@ -500,23 +485,19 @@ export async function rollWeaponAttack(
     });
 
   /* -------------------------------------------- */
-  /*  Weapon Damage Data                          */
+  /*  Damage Data                                 */
   /* -------------------------------------------- */
 
   const dps =
     Math.max(
       0,
-      Number(
-        system.dps
-      ) || 0
+      Number(system.dps) || 0
     );
 
   const penetration =
     Math.max(
       0,
-      Number(
-        system.penetration
-      ) || 0
+      Number(system.penetration) || 0
     );
 
   const rawDamage =
@@ -528,8 +509,11 @@ export async function rollWeaponAttack(
   /* -------------------------------------------- */
 
   /*
-   * A miss still consumes the Action,
-   * ammunition, and Rank Die if one was used.
+   * A miss still consumed:
+   *
+   * - 1 Action
+   * - ammunition
+   * - Rank Die if selected
    */
   if (
     result.successes > 0
