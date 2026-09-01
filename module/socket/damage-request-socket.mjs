@@ -15,6 +15,8 @@
  * GM confirms
  *      ↓
  * Target is updated automatically
+ *      ↓
+ * Appropriate Tactical statuses are applied
  */
 
 import {
@@ -24,6 +26,11 @@ import {
 import {
   resolveTacticalWound
 } from "../combat/wound-resolver.mjs";
+
+import {
+  applyTacticalStatus,
+  removeTacticalStatus
+} from "../status/foundry-status-effects.mjs";
 
 const SOCKET_NAME = "system.tactical";
 
@@ -53,10 +60,6 @@ function getPrimaryActiveGM() {
 
 /**
  * Determine the target's resulting combat state.
- *
- * This does not create Active Effects yet.
- * It only determines what state results from
- * the proposed damage transaction.
  */
 function determinePostDamageState({
   actorType = "",
@@ -146,6 +149,93 @@ function determinePostDamageState({
     id: "active",
     label: "Active"
   };
+}
+
+/* -------------------------------------------- */
+/*  Apply Post-Damage Statuses                  */
+/* -------------------------------------------- */
+
+/**
+ * Apply Tactical statuses caused by the final
+ * approved damage result.
+ *
+ * Dead / Defeated / Disabled are not Foundry
+ * statuses yet, so those states remain informational
+ * until their dedicated handling is added.
+ */
+async function applyPostDamageStatuses(
+  actor,
+  combatState
+) {
+
+  if (
+    !actor ||
+    !combatState
+  ) {
+    return;
+  }
+
+  /* -------------------------------------------- */
+  /*  Bleeding Out                                */
+  /* -------------------------------------------- */
+
+  if (
+    combatState.id ===
+    "bleeding-out"
+  ) {
+
+    /*
+     * A character beginning to Bleed Out cannot
+     * simultaneously remain Stable.
+     */
+    await removeTacticalStatus(
+      actor,
+      "stable"
+    );
+
+    await applyTacticalStatus(
+      actor,
+      "unconscious"
+    );
+
+    await applyTacticalStatus(
+      actor,
+      "bleeding-out"
+    );
+
+    return;
+  }
+
+  /* -------------------------------------------- */
+  /*  Death                                       */
+  /* -------------------------------------------- */
+
+  if (
+    combatState.id ===
+    "dead"
+  ) {
+
+    /*
+     * Dead actors should no longer retain
+     * Bleeding Out or Stable.
+     *
+     * A dedicated Dead status can be added later.
+     */
+    await removeTacticalStatus(
+      actor,
+      "bleeding-out"
+    );
+
+    await removeTacticalStatus(
+      actor,
+      "stable"
+    );
+
+    await applyTacticalStatus(
+      actor,
+      "unconscious"
+    );
+  }
 }
 
 /* -------------------------------------------- */
@@ -472,7 +562,9 @@ async function handleDamageRequest(message) {
     supportsWounds
       ? Math.max(
           0,
-          Number(system.wounds.max) || 0
+          Number(
+            system.wounds.max
+          ) || 0
         )
       : null;
 
@@ -659,12 +751,25 @@ async function handleDamageRequest(message) {
   }
 
   /* -------------------------------------------- */
-  /*  Apply Update                                */
+  /*  Apply Damage Update                         */
   /* -------------------------------------------- */
 
   await targetActor.update(
     updateData
   );
+
+  /* -------------------------------------------- */
+  /*  Apply Resulting Statuses                    */
+  /* -------------------------------------------- */
+
+  await applyPostDamageStatuses(
+    targetActor,
+    combatState
+  );
+
+  /* -------------------------------------------- */
+  /*  Notification                                */
+  /* -------------------------------------------- */
 
   ui.notifications.info(
     `Applied damage to ${targetActor.name}. Result: ${combatState.label}.`
