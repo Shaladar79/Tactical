@@ -9,6 +9,7 @@ const {
   ArrayField,
   BooleanField,
   NumberField,
+  SchemaField,
   StringField
 } = foundry.data.fields;
 
@@ -105,6 +106,57 @@ export class TacticalWeaponData extends foundry.abstract.TypeDataModel {
         integer: true,
         min: 0,
         initial: 5
+      }),
+
+      /**
+       * Optional TN overrides by range band.
+       *
+       * A null value means:
+       * use the normal Tactical range modifier.
+       *
+       * Example Sniper profile:
+       *
+       * short:   +1
+       * medium:  +1
+       * long:     0
+       * extreme: +1
+       */
+      rangeOverrides: new SchemaField({
+
+        melee: new NumberField({
+          required: false,
+          nullable: true,
+          integer: true,
+          initial: null
+        }),
+
+        short: new NumberField({
+          required: false,
+          nullable: true,
+          integer: true,
+          initial: null
+        }),
+
+        medium: new NumberField({
+          required: false,
+          nullable: true,
+          integer: true,
+          initial: null
+        }),
+
+        long: new NumberField({
+          required: false,
+          nullable: true,
+          integer: true,
+          initial: null
+        }),
+
+        extreme: new NumberField({
+          required: false,
+          nullable: true,
+          integer: true,
+          initial: null
+        })
       }),
 
       /* -------------------------------------------- */
