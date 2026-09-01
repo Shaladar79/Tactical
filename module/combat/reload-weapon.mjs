@@ -2,7 +2,7 @@
  * Tactical
  * Reload Weapon Helper
  *
- * Reload normally costs 1 Action during combat.
+ * Reload costs 1 Action during combat.
  *
  * Invalid reload attempts spend no Actions.
  * Outside combat, reload does not use the Action Economy.
@@ -17,38 +17,49 @@ import {
 /*  Combat Helpers                              */
 /* -------------------------------------------- */
 
+/**
+ * Find this Actor's combatant in the
+ * currently active Combat.
+ *
+ * @param {Actor} actor
+ *
+ * @returns {Combatant|null}
+ */
 function getActorCombatant(actor) {
 
-  const combat =
-    game.combat;
-
   if (
-    !combat ||
-    !actor
+    !actor ||
+    !game.combat
   ) {
     return null;
   }
 
-  return combat.combatants.find(
+  return game.combat.combatants.find(
     combatant =>
       combatant.actor?.id === actor.id
   ) ?? null;
 }
 
+/**
+ * Determine whether it is currently this
+ * Actor's turn.
+ *
+ * @param {Actor} actor
+ *
+ * @returns {boolean}
+ */
 function isActorsTurn(actor) {
 
-  const combatant =
-    game.combat?.combatant;
-
   if (
-    !combatant ||
-    !actor
+    !actor ||
+    !game.combat?.combatant
   ) {
     return false;
   }
 
   return (
-    combatant.actor?.id === actor.id
+    game.combat.combatant.actor?.id ===
+    actor.id
   );
 }
 
@@ -62,7 +73,7 @@ function isActorsTurn(actor) {
 export async function reloadWeapon(weapon) {
 
   /* -------------------------------------------- */
-  /*  Validation                                  */
+  /*  Weapon Validation                           */
   /* -------------------------------------------- */
 
   if (
@@ -77,6 +88,10 @@ export async function reloadWeapon(weapon) {
   const system =
     weapon.system;
 
+  /*
+   * Embedded Items expose their owning Actor
+   * through weapon.actor.
+   */
   const actor =
     weapon.actor ?? null;
 
@@ -143,7 +158,7 @@ export async function reloadWeapon(weapon) {
   }
 
   /* -------------------------------------------- */
-  /*  Combat / Action Validation                  */
+  /*  Determine Combat State                      */
   /* -------------------------------------------- */
 
   const combatant =
@@ -152,7 +167,11 @@ export async function reloadWeapon(weapon) {
       : null;
 
   const inCombat =
-    Boolean(combatant);
+    combatant !== null;
+
+  /* -------------------------------------------- */
+  /*  Turn Validation                             */
+  /* -------------------------------------------- */
 
   if (
     inCombat &&
@@ -169,6 +188,10 @@ export async function reloadWeapon(weapon) {
     };
   }
 
+  /* -------------------------------------------- */
+  /*  Action Availability                         */
+  /* -------------------------------------------- */
+
   if (
     inCombat &&
     !canSpendActions(
@@ -178,7 +201,7 @@ export async function reloadWeapon(weapon) {
   ) {
 
     ui.notifications.warn(
-      `${actor.name} has no Actions remaining.`
+      `${actor.name} does not have enough Actions to Reload.`
     );
 
     return {
@@ -188,9 +211,14 @@ export async function reloadWeapon(weapon) {
   }
 
   /* -------------------------------------------- */
-  /*  Spend Action                                */
+  /*  Spend Reload Action                         */
   /* -------------------------------------------- */
 
+  /*
+   * THIS IS THE ACTUAL ACTION ECONOMY CHANGE.
+   *
+   * A valid Reload costs 1 Action during combat.
+   */
   if (inCombat) {
 
     const actionState =
@@ -210,7 +238,7 @@ export async function reloadWeapon(weapon) {
   }
 
   /* -------------------------------------------- */
-  /*  Reload                                      */
+  /*  Reload Weapon                               */
   /* -------------------------------------------- */
 
   await weapon.update({
