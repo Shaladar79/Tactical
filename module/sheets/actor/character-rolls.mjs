@@ -4,8 +4,13 @@
  *
  * Standard character rolls are assembled here.
  *
- * TN modifiers are supplied separately by the GM
- * approval/modifier workflow.
+ * Flow:
+ *
+ * 1. Build the player's dice pool.
+ * 2. Send the proposed roll to the GM.
+ * 3. GM selects applicable TN modifiers.
+ * 4. GM approves or cancels.
+ * 5. If approved, roll against the GM-approved TN.
  */
 
 import {
@@ -15,6 +20,10 @@ import {
 import {
   rollTacticalPool
 } from "../../dice/tactical-roll.mjs";
+
+import {
+  requestGMTNApproval
+} from "../../socket/roll-request-socket.mjs";
 
 /**
  * Roll a standard character Attribute + Skill check.
@@ -41,16 +50,10 @@ import {
  * @param {number} options.baseTN
  * Base Target Number before GM modifiers.
  *
- * @param {number} options.tnModifier
- * Total TN modifier approved by the GM.
- *
- * @param {object} options.tnModifierDetails
- * Optional breakdown of the GM-selected TN modifiers.
- *
  * @param {string} options.flavor
  * Chat message flavor.
  *
- * @returns {Promise<object>}
+ * @returns {Promise<object|null>}
  */
 export async function rollCharacterCheck(
   actor,
@@ -64,8 +67,6 @@ export async function rollCharacterCheck(
     diceModifier = 0,
 
     baseTN = 7,
-    tnModifier = 0,
-    tnModifierDetails = {},
 
     flavor = "Tactical Check"
   } = {}
@@ -114,7 +115,31 @@ export async function rollCharacterCheck(
       : 0;
 
   /* -------------------------------------------- */
-  /*  Dice Pool                                   */
+  /*  Rank Die Validation                         */
+  /* -------------------------------------------- */
+
+  const availableRankDice =
+    Math.max(
+      0,
+      Number(
+        actor.system.rankDice?.value
+      ) || 0
+    );
+
+  if (
+    rankDie &&
+    availableRankDice <= 0
+  ) {
+
+    ui.notifications.warn(
+      `${actor.name} has no Rank Dice remaining.`
+    );
+
+    return null;
+  }
+
+  /* -------------------------------------------- */
+  /*  Build Dice Pool                             */
   /* -------------------------------------------- */
 
   const poolData =
@@ -127,7 +152,7 @@ export async function rollCharacterCheck(
     });
 
   /* -------------------------------------------- */
-  /*  Target Number                               */
+  /*  Base Target Number                          */
   /* -------------------------------------------- */
 
   const startingTN = Math.max(
@@ -138,16 +163,50 @@ export async function rollCharacterCheck(
     )
   );
 
-  const approvedTNModifier =
-    Number(tnModifier) || 0;
+  /* -------------------------------------------- */
+  /*  Request GM Approval                         */
+  /* -------------------------------------------- */
 
-  const finalTN = Math.max(
-    2,
-    Math.min(
-      12,
-      startingTN + approvedTNModifier
-    )
-  );
+  const approval =
+    await requestGMTNApproval({
+      actorName:
+        actor.name,
+
+      rollName:
+        flavor,
+
+      baseTN:
+        startingTN,
+
+      dicePool:
+        poolData.total
+    });
+
+  /*
+   * GM cancelled or rejected the roll.
+   */
+  if (!approval) {
+    return null;
+  }
+
+  /* -------------------------------------------- */
+  /*  Spend Rank Die                              */
+  /* -------------------------------------------- */
+
+  /**
+   * The Rank Die is only consumed after the GM
+   * approves the roll.
+   */
+  if (rankDie) {
+
+    await actor.update({
+      "system.rankDice.value":
+        Math.max(
+          0,
+          availableRankDice - 1
+        )
+    });
+  }
 
   /* -------------------------------------------- */
   /*  Roll                                        */
@@ -155,8 +214,12 @@ export async function rollCharacterCheck(
 
   const result =
     await rollTacticalPool({
-      pool: poolData.total,
-      tn: finalTN,
+      pool:
+        poolData.total,
+
+      tn:
+        approval.finalTN,
+
       flavor
     });
 
@@ -173,26 +236,24 @@ export async function rollCharacterCheck(
     attributeId,
     skillId,
 
+    specialization,
+    rankDie,
+    diceModifier,
+
     poolData,
 
     targetNumber: {
-      base: startingTN,
-      modifier: approvedTNModifier,
-      final: finalTN,
+      base:
+        approval.baseTN,
 
-      /*
-       * Stores exactly which options the GM
-       * selected when approving the roll.
-       *
-       * Example:
-       *
-       * {
-       *   difficultConditions: true,
-       *   favorableConditions: false
-       * }
-       */
+      modifier:
+        approval.tnModifier,
+
+      final:
+        approval.finalTN,
+
       details: {
-        ...tnModifierDetails
+        ...(approval.modifiers ?? {})
       }
     }
   };
