@@ -16,6 +16,8 @@ import { registerCoreEquipmentTraits } from "./module/registry/core-equipment-tr
 
 import { registerTacticalDataModels } from "./module/data-models/register-data-models.mjs";
 
+import { registerTacticalActorSheets } from "./module/sheets/actor/register-actor-sheets.mjs";
+
 import { runSessionXPAward } from "./module/progression/session-xp-coordinator.mjs";
 
 Hooks.once("init", () => {
@@ -26,6 +28,12 @@ Hooks.once("init", () => {
   /* -------------------------------------------- */
 
   registerTacticalDataModels();
+
+  /* -------------------------------------------- */
+  /*  Actor Sheets                                */
+  /* -------------------------------------------- */
+
+  registerTacticalActorSheets();
 
   /* -------------------------------------------- */
   /*  Skill Registry                              */
