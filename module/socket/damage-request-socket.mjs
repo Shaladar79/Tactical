@@ -10,6 +10,8 @@
  *      ↓
  * Damage + Wound resolution
  *      ↓
+ * Determine post-damage combat state
+ *      ↓
  * GM confirms
  *      ↓
  * Target is updated automatically
@@ -43,6 +45,107 @@ function getPrimaryActiveGM() {
     );
 
   return activeGMs[0] ?? null;
+}
+
+/* -------------------------------------------- */
+/*  Post-Damage State                           */
+/* -------------------------------------------- */
+
+/**
+ * Determine the target's resulting combat state.
+ *
+ * This does not create Active Effects yet.
+ * It only determines what state results from
+ * the proposed damage transaction.
+ */
+function determinePostDamageState({
+  actorType = "",
+  healthAfter = 0,
+  woundsAfter = null,
+  maxWounds = null
+} = {}) {
+
+  const isVehicle =
+    actorType === "vehicle";
+
+  const isTrooper =
+    actorType === "trooper";
+
+  /* -------------------------------------------- */
+  /*  Vehicle                                     */
+  /* -------------------------------------------- */
+
+  if (isVehicle) {
+
+    if (healthAfter <= 0) {
+      return {
+        id: "disabled",
+        label: "Disabled"
+      };
+    }
+
+    return {
+      id: "active",
+      label: "Active"
+    };
+  }
+
+  /* -------------------------------------------- */
+  /*  Trooper                                     */
+  /* -------------------------------------------- */
+
+  if (isTrooper) {
+
+    if (healthAfter <= 0) {
+      return {
+        id: "defeated",
+        label: "Defeated"
+      };
+    }
+
+    return {
+      id: "active",
+      label: "Active"
+    };
+  }
+
+  /* -------------------------------------------- */
+  /*  Wound Death                                 */
+  /* -------------------------------------------- */
+
+  if (
+    maxWounds !== null &&
+    woundsAfter !== null &&
+    maxWounds > 0 &&
+    woundsAfter >= maxWounds
+  ) {
+
+    return {
+      id: "dead",
+      label: "Dead"
+    };
+  }
+
+  /* -------------------------------------------- */
+  /*  Zero Health                                 */
+  /* -------------------------------------------- */
+
+  if (healthAfter <= 0) {
+
+    return {
+      id: "bleeding-out",
+      label: "Unconscious + Bleeding Out"
+    };
+  }
+
+  /* -------------------------------------------- */
+  /*  Active                                      */
+  /* -------------------------------------------- */
+
+  return {
+    id: "active",
+    label: "Active"
+  };
 }
 
 /* -------------------------------------------- */
@@ -98,6 +201,7 @@ export async function requestDamageApplication({
 } = {}) {
 
   if (!targetUuid) {
+
     ui.notifications.warn(
       "Tactical | Damage application requires a target."
     );
@@ -109,6 +213,7 @@ export async function requestDamageApplication({
     getPrimaryActiveGM();
 
   if (!primaryGM) {
+
     ui.notifications.warn(
       "A GM must be connected to apply damage."
     );
@@ -159,10 +264,6 @@ export async function requestDamageApplication({
       )
   };
 
-  /*
-   * If the current user is the primary GM,
-   * process locally instead of socket-looping.
-   */
   if (
     game.user.isGM &&
     game.user.id === primaryGM.id
@@ -234,10 +335,6 @@ async function handleDamageRequest(message) {
     return;
   }
 
-  /*
-   * A TokenDocument points to an Actor.
-   * An Actor UUID may also be supplied directly.
-   */
   const targetActor =
     targetDocument.actor ??
     targetDocument;
@@ -255,7 +352,7 @@ async function handleDamageRequest(message) {
     targetActor.system;
 
   /* -------------------------------------------- */
-  /*  Determine Health / Hull                     */
+  /*  Health / Hull                               */
   /* -------------------------------------------- */
 
   const isVehicle =
@@ -336,9 +433,11 @@ async function handleDamageRequest(message) {
 
   const supportsWounds =
     targetActor.type !== "trooper" &&
-    system.wounds;
+    targetActor.type !== "vehicle" &&
+    Boolean(system.wounds);
 
-  let woundResult = null;
+  let woundResult =
+    null;
 
   if (supportsWounds) {
 
@@ -361,23 +460,55 @@ async function handleDamageRequest(message) {
   }
 
   /* -------------------------------------------- */
+  /*  Post-Damage State                           */
+  /* -------------------------------------------- */
+
+  const woundsAfter =
+    woundResult
+      ? woundResult.wounds.after
+      : null;
+
+  const maxWounds =
+    supportsWounds
+      ? Math.max(
+          0,
+          Number(system.wounds.max) || 0
+        )
+      : null;
+
+  const combatState =
+    determinePostDamageState({
+      actorType:
+        targetActor.type,
+
+      healthAfter:
+        damageResult.health.after,
+
+      woundsAfter,
+
+      maxWounds
+    });
+
+  /* -------------------------------------------- */
   /*  GM Confirmation                             */
   /* -------------------------------------------- */
 
   const woundText =
-    woundResult?.wounds?.applied > 0
+    woundResult
       ? `
         <p>
           <strong>Wounds:</strong>
           +${woundResult.wounds.applied}
         </p>
-      `
-      : `
+
         <p>
-          <strong>Wounds:</strong>
-          0
+          <strong>New Wounds:</strong>
+          ${woundResult.wounds.after}
+          /
+          ${woundResult.wounds.max}
         </p>
-      `;
+      `
+      : "";
 
   const confirmed =
     await foundry.applications.api.DialogV2.confirm({
@@ -412,6 +543,11 @@ async function handleDamageRequest(message) {
           </p>
 
           <p>
+            <strong>Critical Points:</strong>
+            ${message.criticalPoints}
+          </p>
+
+          <p>
             <strong>DPS:</strong>
             ${message.dps}
           </p>
@@ -425,6 +561,8 @@ async function handleDamageRequest(message) {
             <strong>Penetration:</strong>
             ${message.penetration}
           </p>
+
+          <hr>
 
           <p>
             <strong>Toughness:</strong>
@@ -462,18 +600,10 @@ async function handleDamageRequest(message) {
             ${damageResult.health.after}
           </p>
 
-          ${
-            woundResult
-              ? `
-                <p>
-                  <strong>New Wounds:</strong>
-                  ${woundResult.wounds.after}
-                  /
-                  ${woundResult.wounds.max}
-                </p>
-              `
-              : ""
-          }
+          <p>
+            <strong>Resulting State:</strong>
+            ${combatState.label}
+          </p>
 
         </div>
       `,
@@ -520,10 +650,7 @@ async function handleDamageRequest(message) {
       damageResult.health.after;
   }
 
-  if (
-    woundResult &&
-    woundResult.wounds.applied > 0
-  ) {
+  if (woundResult) {
 
     updateData[
       "system.wounds.value"
@@ -540,6 +667,6 @@ async function handleDamageRequest(message) {
   );
 
   ui.notifications.info(
-    `Applied damage to ${targetActor.name}.`
+    `Applied damage to ${targetActor.name}. Result: ${combatState.label}.`
   );
 }
