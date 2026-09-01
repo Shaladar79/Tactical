@@ -44,9 +44,11 @@ export function getAveragePartyRank(ranks = []) {
  */
 export function getBaseSessionXP(averageRank = 0) {
 
-  const rank = Math.max(
-    0,
-    Number(averageRank) || 0
+  const rank = Math.floor(
+    Math.max(
+      0,
+      Number(averageRank) || 0
+    )
   );
 
   return 3 * (rank + 1);
