@@ -18,6 +18,10 @@ import {
 } from "../../combat/reload-weapon.mjs";
 
 import {
+  performStabilizeAction
+} from "../../combat/stabilize-action.mjs";
+
+import {
   promptTacticalRoll
 } from "../../dice/roll-dialog.mjs";
 
@@ -62,7 +66,8 @@ export class TacticalCharacterSheet
       rollSkill: this.#onRollSkill,
       rollAttribute: this.#onRollAttribute,
       rollWeapon: this.#onRollWeapon,
-      reloadWeapon: this.#onReloadWeapon
+      reloadWeapon: this.#onReloadWeapon,
+      stabilize: this.#onStabilize
     }
   };
 
@@ -584,15 +589,6 @@ export class TacticalCharacterSheet
     const isMelee =
       weapon.system.weaponType === "melee";
 
-    /*
-     * Default Tactical attack pairings:
-     *
-     * Melee weapon:
-     * Might + Melee
-     *
-     * Ranged weapon:
-     * Aim + Ranged
-     */
     const attributeId =
       isMelee
         ? "might"
@@ -648,6 +644,17 @@ export class TacticalCharacterSheet
 
     await reloadWeapon(
       weapon
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  Stabilize                                   */
+  /* -------------------------------------------- */
+
+  static async #onStabilize() {
+
+    await performStabilizeAction(
+      this.actor
     );
   }
 }
