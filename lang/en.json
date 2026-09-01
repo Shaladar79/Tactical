@@ -1,0 +1,52 @@
+{
+  "TACTICAL": {
+    "SystemName": "Tactical",
+
+    "Attributes": {
+      "Might": "Might",
+      "Aim": "Aim",
+      "Agility": "Agility",
+      "Endurance": "Endurance",
+      "Focus": "Focus",
+      "Resolve": "Resolve",
+      "Perception": "Perception"
+    },
+
+    "Progression": {
+      "Rank": "Rank",
+      "XP": "XP",
+      "EarnedXP": "Earned XP",
+      "SpentXP": "Spent XP",
+      "AvailableXP": "Available XP",
+      "RankDice": "Rank Dice"
+    },
+
+    "Combat": {
+      "Health": "Health",
+      "Wounds": "Wounds",
+      "ArmorIntegrity": "Armor Integrity",
+      "Toughness": "Toughness",
+      "Movement": "Movement",
+      "Initiative": "Initiative"
+    },
+
+    "Rolls": {
+      "Success": "Success",
+      "Successes": "Successes",
+      "CriticalPoint": "Critical Point",
+      "CriticalPoints": "Critical Points",
+      "TargetNumber": "Target Number",
+      "DicePool": "Dice Pool"
+    },
+
+    "SessionXP": {
+      "Title": "Tactical Session XP",
+      "AveragePartyRank": "Average Party Rank",
+      "BaseXP": "Base Session XP",
+      "BonusXP": "Bonus XP",
+      "FinalXP": "Final XP",
+      "AwardXP": "Award XP",
+      "CalculateXP": "Calculate XP"
+    }
+  }
+}
