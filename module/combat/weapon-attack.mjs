@@ -5,8 +5,8 @@
  * Full weapon attack workflow:
  *
  * 1. Validate attacker and Weapon Item.
- * 2. Require exactly one targeted token.
- * 3. Validate turn and Action availability.
+ * 2. Validate turn and Action availability.
+ * 3. Require exactly one targeted token.
  * 4. Check ammunition.
  * 5. Read Attribute + Skill values.
  * 6. Open player pre-roll configuration.
@@ -18,8 +18,7 @@
  * 12. Consume ammunition.
  * 13. Roll attack.
  * 14. Calculate attack damage data.
- * 15. If the attack succeeds, send a damage request
- *     to the GM for approval and automatic application.
+ * 15. If successful, send damage request to GM.
  */
 
 import {
@@ -90,25 +89,6 @@ function isActorsTurn(actor) {
 
 /**
  * Resolve a Tactical weapon attack.
- *
- * @param {Actor} actor
- * Actor making the attack.
- *
- * @param {Item} weapon
- * Weapon Item being used.
- *
- * @param {object} options
- *
- * @param {string} options.attributeId
- * Attribute used for the attack.
- *
- * @param {string} options.skillId
- * Skill used for the attack.
- *
- * @param {string} options.flavor
- * Optional roll display name.
- *
- * @returns {Promise<object|null>}
  */
 export async function rollWeaponAttack(
   actor,
@@ -169,11 +149,11 @@ export async function rollWeaponAttack(
     );
 
   /*
-   * Normal attacks may only happen during the
+   * Normal attacks can only occur during the
    * Actor's own turn.
    *
    * Overwatch and other Reaction attacks will use
-   * a separate reaction workflow later.
+   * their own workflow later.
    */
   if (
     inCombat &&
@@ -277,10 +257,6 @@ export async function rollWeaponAttack(
         )
       : null;
 
-  /*
-   * Empty weapons fail before the Action is
-   * committed.
-   */
   if (
     usesMagazine &&
     ammoBefore <= 0
@@ -367,8 +343,8 @@ export async function rollWeaponAttack(
     });
 
   /*
-   * Player canceled.
-   * No Action is spent.
+   * Canceling the player dialog does not
+   * spend an Action.
    */
   if (!playerOptions) {
     return null;
@@ -440,23 +416,22 @@ export async function rollWeaponAttack(
     });
 
   /*
-   * GM canceled or rejected.
-   * No Action, ammo, or Rank Die is spent.
+   * GM rejection/cancel does not spend the
+   * Action, ammunition, or Rank Die.
    */
   if (!approval) {
     return null;
   }
 
   /* -------------------------------------------- */
-  /*  Spend Attack Action                         */
+  /*  Commit Attack Action                        */
   /* -------------------------------------------- */
 
   if (inCombat) {
 
     /*
-     * Re-check immediately before spending because
-     * the Action state may have changed while the
-     * GM approval dialog was open.
+     * Re-check immediately before spending in
+     * case Actions changed while awaiting GM.
      */
     const actionState =
       await spendActions(
@@ -553,8 +528,8 @@ export async function rollWeaponAttack(
   /* -------------------------------------------- */
 
   /*
-   * A miss still consumes the Action, Rank Die,
-   * and ammunition because the attack occurred.
+   * A miss still consumes the Action,
+   * ammunition, and Rank Die if one was used.
    */
   if (
     result.successes > 0
