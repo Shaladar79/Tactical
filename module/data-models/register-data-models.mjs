@@ -8,6 +8,7 @@
 import { TacticalCharacterData } from "./character-data.mjs";
 import { TacticalTrooperData } from "./trooper-data.mjs";
 import { TacticalLieutenantData } from "./lieutenant-data.mjs";
+import { TacticalCommanderData } from "./commander-data.mjs";
 
 /**
  * Register all currently available Tactical Data Models.
@@ -27,7 +28,8 @@ export function registerTacticalDataModels() {
 
     character: TacticalCharacterData,
     trooper: TacticalTrooperData,
-    lieutenant: TacticalLieutenantData
+    lieutenant: TacticalLieutenantData,
+    commander: TacticalCommanderData
   };
 
   /* -------------------------------------------- */
