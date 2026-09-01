@@ -54,7 +54,7 @@
     }
   },
 
-  "socket": false,
+  "socket": true,
 
   "grid": {
     "distance": 1,
