@@ -5,9 +5,8 @@
  * The GM approves and modifies the Target Number
  * before a requested Tactical roll is resolved.
  *
- * Generic checks use additive TN modifier checkboxes.
- * Specialized rolls such as attacks can use their own
- * named modifier dialogs later.
+ * Common Tactical conditions are represented by
+ * named checkboxes.
  */
 
 /**
@@ -86,67 +85,111 @@ export async function promptGMTNModifiers({
 
           <hr>
 
-          <h3>TN Modifiers</h3>
+          <h3>Cover</h3>
 
           <div class="tn-modifier-group">
 
             <label>
               <input
                 type="checkbox"
-                name="tnMinus3"
+                name="lightCover"
               >
-              -3 TN
+              Light Cover (+1 TN)
             </label>
 
             <label>
               <input
                 type="checkbox"
-                name="tnMinus2"
+                name="heavyCover"
               >
-              -2 TN
-            </label>
-
-            <label>
-              <input
-                type="checkbox"
-                name="tnMinus1"
-              >
-              -1 TN
-            </label>
-
-          </div>
-
-          <div class="tn-modifier-group">
-
-            <label>
-              <input
-                type="checkbox"
-                name="tnPlus1"
-              >
-              +1 TN
-            </label>
-
-            <label>
-              <input
-                type="checkbox"
-                name="tnPlus2"
-              >
-              +2 TN
-            </label>
-
-            <label>
-              <input
-                type="checkbox"
-                name="tnPlus3"
-              >
-              +3 TN
+              Heavy Cover (+2 TN)
             </label>
 
           </div>
 
           <p class="hint">
-            Check every modifier that applies.
-            Checked modifiers are cumulative.
+            Use only one Cover option.
+            Heavy Cover takes precedence if both are checked.
+          </p>
+
+          <hr>
+
+          <h3>Position</h3>
+
+          <div class="tn-modifier-group">
+
+            <label>
+              <input
+                type="checkbox"
+                name="flanking"
+              >
+              Flanking (-1 TN)
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                name="higherElevation"
+              >
+              Attacker Higher Elevation (-1 TN)
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                name="lowerElevation"
+              >
+              Attacker Lower Elevation (+1 TN)
+            </label>
+
+          </div>
+
+          <p class="hint">
+            Higher and Lower Elevation cannot normally both apply.
+          </p>
+
+          <hr>
+
+          <h3>Situational Modifiers</h3>
+
+          <div class="tn-modifier-group">
+
+            <label>
+              <input
+                type="checkbox"
+                name="situationalMinus2"
+              >
+              Major Advantage (-2 TN)
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                name="situationalMinus1"
+              >
+              Minor Advantage (-1 TN)
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                name="situationalPlus1"
+              >
+              Minor Difficulty (+1 TN)
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                name="situationalPlus2"
+              >
+              Major Difficulty (+2 TN)
+            </label>
+
+          </div>
+
+          <p class="hint">
+            Situational modifiers are cumulative.
           </p>
 
         </div>
@@ -169,58 +212,112 @@ export async function promptGMTNModifiers({
   }
 
   /* -------------------------------------------- */
-  /*  Selected Modifiers                          */
+  /*  Read Selected Conditions                    */
   /* -------------------------------------------- */
 
   const modifiers = {
-    tnMinus3:
-      formData.get("tnMinus3") === "on",
 
-    tnMinus2:
-      formData.get("tnMinus2") === "on",
+    lightCover:
+      formData.get("lightCover") === "on",
 
-    tnMinus1:
-      formData.get("tnMinus1") === "on",
+    heavyCover:
+      formData.get("heavyCover") === "on",
 
-    tnPlus1:
-      formData.get("tnPlus1") === "on",
+    flanking:
+      formData.get("flanking") === "on",
 
-    tnPlus2:
-      formData.get("tnPlus2") === "on",
+    higherElevation:
+      formData.get("higherElevation") === "on",
 
-    tnPlus3:
-      formData.get("tnPlus3") === "on"
+    lowerElevation:
+      formData.get("lowerElevation") === "on",
+
+    situationalMinus2:
+      formData.get("situationalMinus2") === "on",
+
+    situationalMinus1:
+      formData.get("situationalMinus1") === "on",
+
+    situationalPlus1:
+      formData.get("situationalPlus1") === "on",
+
+    situationalPlus2:
+      formData.get("situationalPlus2") === "on"
   };
 
   /* -------------------------------------------- */
-  /*  Calculate Modifier                          */
+  /*  Cover Modifier                              */
   /* -------------------------------------------- */
 
-  let tnModifier = 0;
+  let coverModifier = 0;
 
-  if (modifiers.tnMinus3) {
-    tnModifier -= 3;
+  if (modifiers.heavyCover) {
+    coverModifier = 2;
+  }
+  else if (modifiers.lightCover) {
+    coverModifier = 1;
   }
 
-  if (modifiers.tnMinus2) {
-    tnModifier -= 2;
+  /* -------------------------------------------- */
+  /*  Flanking Modifier                           */
+  /* -------------------------------------------- */
+
+  const flankingModifier =
+    modifiers.flanking
+      ? -1
+      : 0;
+
+  /* -------------------------------------------- */
+  /*  Elevation Modifier                          */
+  /* -------------------------------------------- */
+
+  let elevationModifier = 0;
+
+  if (
+    modifiers.higherElevation &&
+    !modifiers.lowerElevation
+  ) {
+    elevationModifier = -1;
   }
 
-  if (modifiers.tnMinus1) {
-    tnModifier -= 1;
+  if (
+    modifiers.lowerElevation &&
+    !modifiers.higherElevation
+  ) {
+    elevationModifier = 1;
   }
 
-  if (modifiers.tnPlus1) {
-    tnModifier += 1;
+  /* -------------------------------------------- */
+  /*  Situational Modifier                        */
+  /* -------------------------------------------- */
+
+  let situationalModifier = 0;
+
+  if (modifiers.situationalMinus2) {
+    situationalModifier -= 2;
   }
 
-  if (modifiers.tnPlus2) {
-    tnModifier += 2;
+  if (modifiers.situationalMinus1) {
+    situationalModifier -= 1;
   }
 
-  if (modifiers.tnPlus3) {
-    tnModifier += 3;
+  if (modifiers.situationalPlus1) {
+    situationalModifier += 1;
   }
+
+  if (modifiers.situationalPlus2) {
+    situationalModifier += 2;
+  }
+
+  /* -------------------------------------------- */
+  /*  Total TN Modifier                           */
+  /* -------------------------------------------- */
+
+  const tnModifier =
+    coverModifier +
+    flankingModifier +
+    elevationModifier +
+    situationalModifier;
 
   /* -------------------------------------------- */
   /*  Final TN                                    */
@@ -248,6 +345,20 @@ export async function promptGMTNModifiers({
 
     finalTN,
 
-    modifiers
+    modifiers,
+
+    breakdown: {
+      cover:
+        coverModifier,
+
+      flanking:
+        flankingModifier,
+
+      elevation:
+        elevationModifier,
+
+      situational:
+        situationalModifier
+    }
   };
 }
