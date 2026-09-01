@@ -5,21 +5,21 @@
  * Base Session XP:
  * 3 × (Average Party Rank + 1)
  *
- * The GM may add any amount of Bonus XP when
- * calculating the final session award.
+ * If the resulting Base XP contains a decimal:
+ * - .5 or less rounds down
+ * - greater than .5 rounds up
+ *
+ * Bonus XP is added manually afterward.
  */
 
 /**
  * Calculate the average Rank of a party.
- *
- * @param {Array<number>} ranks
- *
- * @returns {number}
  */
 export function getAveragePartyRank(ranks = []) {
 
-  const validRanks = ranks
-    .map(rank => Math.max(0, Number(rank) || 0));
+  const validRanks = ranks.map(
+    rank => Math.max(0, Number(rank) || 0)
+  );
 
   if (validRanks.length === 0) {
     return 0;
@@ -34,39 +34,46 @@ export function getAveragePartyRank(ranks = []) {
 }
 
 /**
+ * Tactical XP rounding rule.
+ *
+ * Decimal <= .5 = floor
+ * Decimal > .5 = ceiling
+ */
+export function roundSessionXP(value = 0) {
+
+  const amount = Math.max(
+    0,
+    Number(value) || 0
+  );
+
+  const whole = Math.floor(amount);
+  const decimal = amount - whole;
+
+  return decimal <= 0.5
+    ? Math.floor(amount)
+    : Math.ceil(amount);
+}
+
+/**
  * Calculate base session XP.
  *
  * Base XP = 3 × (Average Party Rank + 1)
- *
- * @param {number} averageRank
- *
- * @returns {number}
  */
 export function getBaseSessionXP(averageRank = 0) {
 
-  const rawRank = Math.max(
+  const rank = Math.max(
     0,
     Number(averageRank) || 0
   );
 
-  const wholeRank = Math.floor(rawRank);
-  const decimal = rawRank - wholeRank;
+  const rawXP =
+    3 * (rank + 1);
 
-  const roundedRank =
-    decimal <= 0.5
-      ? Math.floor(rawRank)
-      : Math.ceil(rawRank);
-
-  return 3 * (roundedRank + 1);
+  return roundSessionXP(rawXP);
 }
+
 /**
- * Calculate a complete session XP award.
- *
- * @param {object} options
- * @param {Array<number>} options.ranks
- * @param {number} options.bonusXP
- *
- * @returns {object}
+ * Calculate the complete session XP award.
  */
 export function calculateSessionXP({
   ranks = [],
@@ -76,8 +83,11 @@ export function calculateSessionXP({
   const averageRank =
     getAveragePartyRank(ranks);
 
+  const rawBaseXP =
+    3 * (averageRank + 1);
+
   const baseXP =
-    getBaseSessionXP(averageRank);
+    roundSessionXP(rawBaseXP);
 
   const bonus = Math.max(
     0,
@@ -89,6 +99,7 @@ export function calculateSessionXP({
 
   return {
     averageRank,
+    rawBaseXP,
     baseXP,
     bonusXP: bonus,
     totalXP
