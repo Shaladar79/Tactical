@@ -6,6 +6,7 @@
  */
 
 import { TacticalCharacterData } from "./character-data.mjs";
+import { TacticalTrooperData } from "./trooper-data.mjs";
 
 /**
  * Register all currently available Tactical Data Models.
@@ -23,7 +24,8 @@ export function registerTacticalDataModels() {
   CONFIG.Actor.dataModels = {
     ...CONFIG.Actor.dataModels,
 
-    character: TacticalCharacterData
+    character: TacticalCharacterData,
+    trooper: TacticalTrooperData
   };
 
   /* -------------------------------------------- */
