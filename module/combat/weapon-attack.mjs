@@ -2,19 +2,19 @@
  * Tactical
  * Weapon Attack Helper
  *
- * Resolves a weapon attack up to the point where
- * damage is ready to be applied to a target.
- *
- * Flow:
+ * Full weapon attack workflow:
  *
  * 1. Validate attacker and Weapon Item.
- * 2. Read Attribute + Skill values.
- * 3. Open player pre-roll configuration.
- * 4. Build final dice pool.
- * 5. Send attack request to GM.
- * 6. GM selects range / cover / position modifiers.
- * 7. Roll attack.
- * 8. Calculate raw damage from Successes × DPS.
+ * 2. Require exactly one targeted token.
+ * 3. Read Attribute + Skill values.
+ * 4. Open player pre-roll configuration.
+ * 5. Build final dice pool.
+ * 6. Send attack request to GM.
+ * 7. GM selects range / cover / position modifiers.
+ * 8. Roll attack.
+ * 9. Calculate attack damage data.
+ * 10. If the attack succeeds, send a damage request
+ *     to the GM for approval and automatic application.
  */
 
 import {
@@ -32,6 +32,10 @@ import {
 import {
   requestGMTNApproval
 } from "../socket/roll-request-socket.mjs";
+
+import {
+  requestDamageApplication
+} from "../socket/damage-request-socket.mjs";
 
 /**
  * Resolve a Tactical weapon attack.
@@ -95,6 +99,92 @@ export async function rollWeaponAttack(
 
   const system =
     weapon.system;
+
+  /* -------------------------------------------- */
+  /*  Target                                      */
+  /* -------------------------------------------- */
+
+  const targets =
+    Array.from(
+      game.user.targets ?? []
+    );
+
+  if (targets.length === 0) {
+
+    ui.notifications.warn(
+      "Target a token before making an attack."
+    );
+
+    return null;
+  }
+
+  if (targets.length > 1) {
+
+    ui.notifications.warn(
+      "Standard weapon attacks require exactly one target."
+    );
+
+    return null;
+  }
+
+  const targetToken =
+    targets[0];
+
+  const targetActor =
+    targetToken.actor;
+
+  if (!targetActor) {
+
+    ui.notifications.warn(
+      "The targeted token has no Actor."
+    );
+
+    return null;
+  }
+
+  const targetUuid =
+    targetToken.document?.uuid;
+
+  if (!targetUuid) {
+
+    ui.notifications.error(
+      "Tactical | Could not determine the target UUID."
+    );
+
+    return null;
+  }
+
+  /* -------------------------------------------- */
+  /*  Ammunition Pre-Check                        */
+  /* -------------------------------------------- */
+
+  const usesMagazine =
+    system.usesMagazine !== false;
+
+  const ammoBefore =
+    usesMagazine
+      ? Math.max(
+          0,
+          Number(
+            system.ammoRemaining
+          ) || 0
+        )
+      : null;
+
+  /*
+   * Check ammunition before opening either roll dialog.
+   */
+  if (
+    usesMagazine &&
+    ammoBefore <= 0
+  ) {
+
+    ui.notifications.warn(
+      `${weapon.name} is out of ammunition.`
+    );
+
+    return null;
+  }
 
   /* -------------------------------------------- */
   /*  Attribute                                   */
@@ -211,14 +301,6 @@ export async function rollWeaponAttack(
   /*  Weapon Range Overrides                      */
   /* -------------------------------------------- */
 
-  /**
-   * Weapon Items currently store an intendedRange,
-   * but specialized profiles such as Sniper Rifles
-   * can later store explicit overrides.
-   *
-   * If rangeOverrides does not yet exist on an older
-   * Weapon Item, this simply passes an empty object.
-   */
   const rangeOverrides =
     system.rangeOverrides ?? {};
 
@@ -265,46 +347,23 @@ export async function rollWeaponAttack(
   }
 
   /* -------------------------------------------- */
-  /*  Ammunition                                  */
+  /*  Consume Ammunition                          */
   /* -------------------------------------------- */
 
-  const usesMagazine =
-    system.usesMagazine !== false;
+  let ammoAfter =
+    null;
 
   if (usesMagazine) {
 
-    const ammoRemaining =
+    ammoAfter =
       Math.max(
         0,
-        Number(
-          system.ammoRemaining
-        ) || 0
+        ammoBefore - 1
       );
-
-    if (ammoRemaining <= 0) {
-
-      ui.notifications.warn(
-        `${weapon.name} is out of ammunition.`
-      );
-
-      /*
-       * Refund the Rank Die because no attack
-       * was actually made.
-       */
-      if (playerOptions.rankDie) {
-
-        await actor.update({
-          "system.rankDice.value":
-            availableRankDice
-        });
-      }
-
-      return null;
-    }
 
     await weapon.update({
       "system.ammoRemaining":
-        ammoRemaining - 1
+        ammoAfter
     });
   }
 
@@ -344,6 +403,44 @@ export async function rollWeaponAttack(
     result.successes * dps;
 
   /* -------------------------------------------- */
+  /*  GM Damage Request                           */
+  /* -------------------------------------------- */
+
+  /**
+   * Zero Successes means the attack missed.
+   *
+   * No damage request is sent to the GM.
+   */
+  if (result.successes > 0) {
+
+    await requestDamageApplication({
+      attackerUuid:
+        actor.uuid,
+
+      attackerName:
+        actor.name,
+
+      weaponUuid:
+        weapon.uuid,
+
+      weaponName:
+        weapon.name,
+
+      targetUuid,
+
+      successes:
+        result.successes,
+
+      criticalPoints:
+        result.criticalPoints,
+
+      dps,
+
+      penetration
+    });
+  }
+
+  /* -------------------------------------------- */
   /*  Result                                      */
   /* -------------------------------------------- */
 
@@ -351,11 +448,25 @@ export async function rollWeaponAttack(
     actorId:
       actor.id,
 
+    actorUuid:
+      actor.uuid,
+
     weaponId:
       weapon.id,
 
+    weaponUuid:
+      weapon.uuid,
+
     weaponName:
       weapon.name,
+
+    targetId:
+      targetActor.id,
+
+    targetUuid,
+
+    targetName:
+      targetActor.name,
 
     attributeId,
     skillId,
@@ -410,10 +521,7 @@ export async function rollWeaponAttack(
 
       ammoRemaining:
         usesMagazine
-          ? Math.max(
-              0,
-              (Number(system.ammoRemaining) || 0) - 1
-            )
+          ? ammoAfter
           : null,
 
       usesMagazine,
@@ -423,8 +531,14 @@ export async function rollWeaponAttack(
     },
 
     damage: {
+      hit:
+        result.successes > 0,
+
       successes:
         result.successes,
+
+      criticalPoints:
+        result.criticalPoints,
 
       dps,
 
