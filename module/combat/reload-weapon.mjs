@@ -25,20 +25,6 @@ import {
  *
  * @returns {Combatant|null}
  */
-function getActorCombatant(actor) {
-
-  if (
-    !actor ||
-    !game.combat
-  ) {
-    return null;
-  }
-
-  return game.combat.combatants.find(
-    combatant =>
-      combatant.actor?.id === actor.id
-  ) ?? null;
-}
 
 /**
  * Determine whether it is currently this
@@ -48,20 +34,7 @@ function getActorCombatant(actor) {
  *
  * @returns {boolean}
  */
-function isActorsTurn(actor) {
 
-  if (
-    !actor ||
-    !game.combat?.combatant
-  ) {
-    return false;
-  }
-
-  return (
-    game.combat.combatant.actor?.id ===
-    actor.id
-  );
-}
 
 /**
  * Reload a Tactical Weapon Item.
