@@ -30,14 +30,15 @@ import {
  * Optional weapon-specific range overrides:
  *
  * {
- *   melee: -1,
- *   short: 0,
+ *   melee: null,
+ *   short: 1,
  *   medium: 1,
- *   long: 2,
- *   extreme: 3
+ *   long: 0,
+ *   extreme: 1
  * }
  *
- * Any omitted band uses the normal Tactical value.
+ * null or undefined means:
+ * use the normal Tactical modifier for that band.
  *
  * @param {object} options.rangeOverrides
  *
@@ -71,20 +72,47 @@ export async function promptGMAttackTN({
     Number(dicePool) || 0
   );
 
+  /* -------------------------------------------- */
+  /*  Range Modifier Helper                       */
+  /* -------------------------------------------- */
+
   const getRangeModifier = band => {
 
+    const normalModifier =
+      RANGE_TN_MODIFIERS[band] ?? 0;
+
     if (
-      Object.prototype.hasOwnProperty.call(
+      !Object.prototype.hasOwnProperty.call(
         rangeOverrides,
         band
       )
     ) {
-      return Number(
-        rangeOverrides[band]
-      ) || 0;
+      return normalModifier;
     }
 
-    return RANGE_TN_MODIFIERS[band] ?? 0;
+    const override =
+      rangeOverrides[band];
+
+    /*
+     * null / undefined means this weapon does not
+     * override the normal Tactical modifier.
+     */
+    if (
+      override === null ||
+      override === undefined
+    ) {
+      return normalModifier;
+    }
+
+    const numericOverride =
+      Number(override);
+
+    /*
+     * A real numeric 0 is a valid override.
+     */
+    return Number.isFinite(numericOverride)
+      ? numericOverride
+      : normalModifier;
   };
 
   const meleeModifier =
