@@ -5,6 +5,10 @@
  * Foundry VTT v14 Actor sheet for Tactical player characters.
  */
 
+import {
+  rollCharacterCheck
+} from "./character-rolls.mjs";
+
 const {
   api,
   sheets
@@ -40,6 +44,10 @@ export class TacticalCharacterSheet
     window: {
       resizable: true,
       title: "Tactical Character"
+    },
+
+    actions: {
+      rollSkill: this.#onRollSkill
     }
   };
 
@@ -95,9 +103,15 @@ export class TacticalCharacterSheet
       skillRegistry
         ? skillRegistry.getAll().map(skill => ({
             ...skill,
+
             value:
               Number(
                 system.skills?.[skill.id]
+              ) || 0,
+
+            attributeValue:
+              Number(
+                system.attributes?.[skill.attribute]
               ) || 0
           }))
         : [];
@@ -154,5 +168,57 @@ export class TacticalCharacterSheet
           system.movement ?? 0
       }
     };
+  }
+
+  /* -------------------------------------------- */
+  /*  Actions                                     */
+  /* -------------------------------------------- */
+
+  /**
+   * Roll a Skill using its default governing Attribute.
+   *
+   * @this {TacticalCharacterSheet}
+   * @param {PointerEvent} event
+   * @param {HTMLElement} target
+   */
+  static async #onRollSkill(event, target) {
+
+    const skillId =
+      target.dataset.skill;
+
+    if (!skillId) {
+      return;
+    }
+
+    const skill =
+      game.tactical?.registries?.skills?.get(skillId);
+
+    if (!skill) {
+      ui.notifications.warn(
+        `Tactical | Unknown Skill: ${skillId}`
+      );
+
+      return;
+    }
+
+    const attributeId =
+      skill.attribute;
+
+    const attributeName =
+      attributeId
+        ? attributeId.charAt(0).toUpperCase() +
+          attributeId.slice(1)
+        : "Attribute";
+
+    await rollCharacterCheck(
+      this.actor,
+      {
+        attributeId,
+        skillId,
+
+        flavor:
+          `${this.actor.name}: ${attributeName} + ${skill.name}`
+      }
+    );
   }
 }
