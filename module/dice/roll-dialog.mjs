@@ -2,14 +2,13 @@
  * Tactical
  * Pre-Roll Configuration Dialog
  *
- * Allows a player to configure a Tactical check before rolling:
+ * Allows a player to configure their side of a Tactical roll:
  *
  * - Applicable Specialization
  * - Rank Die expenditure
- * - Dice-pool modifier
- * - Target Number modifier
+ * - Temporary dice-pool modifier
  *
- * Base TN remains 7 unless supplied otherwise.
+ * Target Number modifiers are controlled separately by the GM.
  */
 
 /**
@@ -115,7 +114,7 @@ export async function promptTacticalRoll({
           <div class="form-group">
 
             <label for="dice-modifier">
-              Dice Modifier
+              Temporary Dice Modifier
             </label>
 
             <input
@@ -127,28 +126,7 @@ export async function promptTacticalRoll({
             >
 
             <p class="hint">
-              Enter positive or negative dice modifiers.
-            </p>
-
-          </div>
-
-          <div class="form-group">
-
-            <label for="tn-modifier">
-              TN Modifier
-            </label>
-
-            <input
-              id="tn-modifier"
-              name="tnModifier"
-              type="number"
-              step="1"
-              value="0"
-            >
-
-            <p class="hint">
-              Positive numbers make the roll harder.
-              Negative numbers make it easier.
+              Use for temporary +d12 or -d12 effects that are not yet automated.
             </p>
 
           </div>
@@ -157,7 +135,7 @@ export async function promptTacticalRoll({
       `,
 
       ok: {
-        label: "Roll"
+        label: "Submit Roll"
       },
 
       rejectClose: false,
@@ -188,21 +166,16 @@ export async function promptTacticalRoll({
       formData.get("diceModifier")
     ) || 0;
 
-  const tnModifier =
-    Number(
-      formData.get("tnModifier")
-    ) || 0;
-
   /* -------------------------------------------- */
-  /*  Final TN                                    */
+  /*  Preview Pool                                */
   /* -------------------------------------------- */
 
-  const finalTN = Math.max(
-    2,
-    Math.min(
-      12,
-      startingTN + tnModifier
-    )
+  const previewPool = Math.max(
+    0,
+    startingPool +
+    (specialization ? 1 : 0) +
+    (rankDie ? 1 : 0) +
+    diceModifier
   );
 
   /* -------------------------------------------- */
@@ -214,18 +187,12 @@ export async function promptTacticalRoll({
     rankDie,
     diceModifier,
 
-    baseTN: startingTN,
-    tnModifier,
-    finalTN,
+    baseTN:
+      startingTN,
 
-    basePool: startingPool,
+    basePool:
+      startingPool,
 
-    previewPool: Math.max(
-      0,
-      startingPool +
-      (specialization ? 1 : 0) +
-      (rankDie ? 1 : 0) +
-      diceModifier
-    )
+    previewPool
   };
 }
