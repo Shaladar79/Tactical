@@ -10,11 +10,12 @@ import { TacticalTrooperData } from "./trooper-data.mjs";
 import { TacticalLieutenantData } from "./lieutenant-data.mjs";
 import { TacticalCommanderData } from "./commander-data.mjs";
 import { TacticalOverlordData } from "./overlord-data.mjs";
+import { TacticalVehicleData } from "./vehicle-data.mjs";
 
 /**
  * Register all currently available Tactical Data Models.
  *
- * Additional Actor and Item models will be added here as
+ * Additional Item models will be added here as
  * their individual files are created.
  */
 export function registerTacticalDataModels() {
@@ -31,7 +32,8 @@ export function registerTacticalDataModels() {
     trooper: TacticalTrooperData,
     lieutenant: TacticalLieutenantData,
     commander: TacticalCommanderData,
-    overlord: TacticalOverlordData
+    overlord: TacticalOverlordData,
+    vehicle: TacticalVehicleData
   };
 
   /* -------------------------------------------- */
