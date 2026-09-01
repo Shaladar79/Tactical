@@ -152,75 +152,35 @@
 
       <div class="attribute-grid">
 
-        <div class="attribute-card">
-          <label>{{localize "TACTICAL.Attributes.Might"}}</label>
-          <input
-            name="system.attributes.might"
-            type="number"
-            min="0"
-            value="{{attributes.might}}"
-          >
-        </div>
+        {{#each attributes as |attribute|}}
 
-        <div class="attribute-card">
-          <label>{{localize "TACTICAL.Attributes.Aim"}}</label>
-          <input
-            name="system.attributes.aim"
-            type="number"
-            min="0"
-            value="{{attributes.aim}}"
-          >
-        </div>
+          <div class="attribute-card">
 
-        <div class="attribute-card">
-          <label>{{localize "TACTICAL.Attributes.Agility"}}</label>
-          <input
-            name="system.attributes.agility"
-            type="number"
-            min="0"
-            value="{{attributes.agility}}"
-          >
-        </div>
+            <button
+              type="button"
+              class="attribute-roll"
+              data-action="rollAttribute"
+              data-attribute="{{attribute.id}}"
+              title="Roll {{attribute.name}}"
+            >
+              {{attribute.name}}
+            </button>
 
-        <div class="attribute-card">
-          <label>{{localize "TACTICAL.Attributes.Endurance"}}</label>
-          <input
-            name="system.attributes.endurance"
-            type="number"
-            min="0"
-            value="{{attributes.endurance}}"
-          >
-        </div>
+            <input
+              name="system.attributes.{{attribute.id}}"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attribute.value}}"
+            >
 
-        <div class="attribute-card">
-          <label>{{localize "TACTICAL.Attributes.Focus"}}</label>
-          <input
-            name="system.attributes.focus"
-            type="number"
-            min="0"
-            value="{{attributes.focus}}"
-          >
-        </div>
+            <div class="attribute-pool">
+              {{attribute.value}}d12
+            </div>
 
-        <div class="attribute-card">
-          <label>{{localize "TACTICAL.Attributes.Resolve"}}</label>
-          <input
-            name="system.attributes.resolve"
-            type="number"
-            min="0"
-            value="{{attributes.resolve}}"
-          >
-        </div>
+          </div>
 
-        <div class="attribute-card">
-          <label>{{localize "TACTICAL.Attributes.Perception"}}</label>
-          <input
-            name="system.attributes.perception"
-            type="number"
-            min="0"
-            value="{{attributes.perception}}"
-          >
-        </div>
+        {{/each}}
 
       </div>
 
@@ -262,10 +222,7 @@
             >
 
             <div class="skill-pool">
-              {{skill.attributeValue}}
-              +
-              {{skill.value}}
-              d12
+              {{skill.pool}}d12
             </div>
 
           </div>
