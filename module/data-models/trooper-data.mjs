@@ -75,11 +75,12 @@ export class TacticalTrooperData extends foundry.abstract.TypeDataModel {
       }),
       
       initiative: new NumberField({
-      required: true,
-      integer: true,
-      min: 0,
-      initial: 0
-     }),
+        required: true,
+        integer: true,
+        min: 0,
+        initial: 0
+      }),
+      
       resolve: new NumberField({
         required: true,
         integer: true,
