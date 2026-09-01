@@ -6,15 +6,19 @@
  *
  * 1. Validate attacker and Weapon Item.
  * 2. Require exactly one targeted token.
- * 3. Read Attribute + Skill values.
- * 4. Open player pre-roll configuration.
- * 5. Build final dice pool.
- * 6. Send attack request to GM.
- * 7. GM selects range / cover / position modifiers.
- * 8. Roll attack.
- * 9. Calculate attack damage data.
- * 10. If the attack succeeds, send a damage request
- *     to the GM for approval and automatic application.
+ * 3. Validate combat turn / Action availability.
+ * 4. Check ammunition.
+ * 5. Read Attribute + Skill values.
+ * 6. Open player pre-roll configuration.
+ * 7. Build final dice pool.
+ * 8. Send attack request to GM.
+ * 9. GM selects range / cover / position modifiers.
+ * 10. Commit the attack and spend 1 Action.
+ * 11. Spend Rank Die if selected.
+ * 12. Consume ammunition.
+ * 13. Roll attack.
+ * 14. Calculate attack damage data.
+ * 15. If successful, send damage request to GM.
  */
 
 import {
@@ -36,6 +40,66 @@ import {
 import {
   requestDamageApplication
 } from "../socket/damage-request-socket.mjs";
+
+import {
+  canSpendActions,
+  spendActions
+} from "./action-economy.mjs";
+
+/* -------------------------------------------- */
+/*  Combat State Helpers                        */
+/* -------------------------------------------- */
+
+/**
+ * Determine whether the Actor is participating
+ * in the currently active Combat encounter.
+ *
+ * @param {Actor} actor
+ *
+ * @returns {boolean}
+ */
+function isActorInCurrentCombat(
+  actor
+) {
+
+  const combat =
+    game.combat;
+
+  if (!combat) {
+    return false;
+  }
+
+  return combat.combatants.some(
+    combatant =>
+      combatant.actor?.id ===
+      actor.id
+  );
+}
+
+/**
+ * Determine whether this Actor is the currently
+ * active combatant.
+ *
+ * @param {Actor} actor
+ *
+ * @returns {boolean}
+ */
+function isActorsTurn(
+  actor
+) {
+
+  const activeCombatant =
+    game.combat?.combatant;
+
+  if (!activeCombatant) {
+    return false;
+  }
+
+  return (
+    activeCombatant.actor?.id ===
+    actor.id
+  );
+}
 
 /**
  * Resolve a Tactical weapon attack.
@@ -79,7 +143,10 @@ export async function rollWeaponAttack(
     );
   }
 
-  if (!weapon || weapon.type !== "weapon") {
+  if (
+    !weapon ||
+    weapon.type !== "weapon"
+  ) {
     throw new Error(
       "Tactical | Weapon attacks require a Weapon Item."
     );
@@ -101,6 +168,50 @@ export async function rollWeaponAttack(
     weapon.system;
 
   /* -------------------------------------------- */
+  /*  Combat / Action Validation                  */
+  /* -------------------------------------------- */
+
+  const inCombat =
+    isActorInCurrentCombat(
+      actor
+    );
+
+  /*
+   * Normal Attack Actions may only be performed
+   * during that Actor's own turn.
+   *
+   * Reaction attacks such as Overwatch will use
+   * a separate reaction workflow later and will
+   * not call this normal Action validation.
+   */
+  if (
+    inCombat &&
+    !isActorsTurn(actor)
+  ) {
+
+    ui.notifications.warn(
+      `It is not ${actor.name}'s turn.`
+    );
+
+    return null;
+  }
+
+  if (
+    inCombat &&
+    !canSpendActions(
+      actor,
+      1
+    )
+  ) {
+
+    ui.notifications.warn(
+      `${actor.name} has no Actions remaining.`
+    );
+
+    return null;
+  }
+
+  /* -------------------------------------------- */
   /*  Target                                      */
   /* -------------------------------------------- */
 
@@ -109,7 +220,9 @@ export async function rollWeaponAttack(
       game.user.targets ?? []
     );
 
-  if (targets.length === 0) {
+  if (
+    targets.length === 0
+  ) {
 
     ui.notifications.warn(
       "Target a token before making an attack."
@@ -118,7 +231,9 @@ export async function rollWeaponAttack(
     return null;
   }
 
-  if (targets.length > 1) {
+  if (
+    targets.length > 1
+  ) {
 
     ui.notifications.warn(
       "Standard weapon attacks require exactly one target."
@@ -172,7 +287,8 @@ export async function rollWeaponAttack(
       : null;
 
   /*
-   * Check ammunition before opening either roll dialog.
+   * Empty weapons fail before either roll dialog
+   * and therefore do not spend an Action.
    */
   if (
     usesMagazine &&
@@ -219,7 +335,8 @@ export async function rollWeaponAttack(
   /* -------------------------------------------- */
 
   const basePool =
-    attribute + skill;
+    attribute +
+    skill;
 
   /* -------------------------------------------- */
   /*  Rank Dice                                   */
@@ -258,6 +375,11 @@ export async function rollWeaponAttack(
       availableRankDice
     });
 
+  /*
+   * Player canceled.
+   *
+   * No Action has been spent.
+   */
   if (!playerOptions) {
     return null;
   }
@@ -327,15 +449,47 @@ export async function rollWeaponAttack(
       rangeOverrides
     });
 
+  /*
+   * GM canceled/rejected.
+   *
+   * The attack was never committed, so no
+   * Action, ammunition, or Rank Die is spent.
+   */
   if (!approval) {
     return null;
+  }
+
+  /* -------------------------------------------- */
+  /*  Commit Attack Action                        */
+  /* -------------------------------------------- */
+
+  /*
+   * Re-check Actions immediately before spending.
+   *
+   * This protects against the Action state changing
+   * while the GM approval dialog was open.
+   */
+  if (inCombat) {
+
+    const actionState =
+      await spendActions(
+        actor,
+        1,
+        "Attack"
+      );
+
+    if (!actionState) {
+      return null;
+    }
   }
 
   /* -------------------------------------------- */
   /*  Spend Rank Die                              */
   /* -------------------------------------------- */
 
-  if (playerOptions.rankDie) {
+  if (
+    playerOptions.rankDie
+  ) {
 
     await actor.update({
       "system.rankDice.value":
@@ -390,28 +544,36 @@ export async function rollWeaponAttack(
   const dps =
     Math.max(
       0,
-      Number(system.dps) || 0
+      Number(
+        system.dps
+      ) || 0
     );
 
   const penetration =
     Math.max(
       0,
-      Number(system.penetration) || 0
+      Number(
+        system.penetration
+      ) || 0
     );
 
   const rawDamage =
-    result.successes * dps;
+    result.successes *
+    dps;
 
   /* -------------------------------------------- */
   /*  GM Damage Request                           */
   /* -------------------------------------------- */
 
-  /**
+  /*
    * Zero Successes means the attack missed.
    *
-   * No damage request is sent to the GM.
+   * The Attack Action and ammunition have still
+   * been spent because the attack occurred.
    */
-  if (result.successes > 0) {
+  if (
+    result.successes > 0
+  ) {
 
     await requestDamageApplication({
       attackerUuid:
@@ -471,6 +633,11 @@ export async function rollWeaponAttack(
     attributeId,
     skillId,
 
+    actionCost:
+      inCombat
+        ? 1
+        : 0,
+
     roll:
       result,
 
@@ -527,7 +694,8 @@ export async function rollWeaponAttack(
       usesMagazine,
 
       intendedRange:
-        system.intendedRange ?? "short"
+        system.intendedRange ??
+        "short"
     },
 
     damage: {
