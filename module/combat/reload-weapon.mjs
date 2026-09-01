@@ -13,6 +13,28 @@ import {
   spendActions
 } from "./action-economy.mjs";
 
+function getActorCombatant(actor) {
+  if (!actor || !game.combat) {
+    return null;
+  }
+
+  return game.combat.combatants.find(
+    combatant =>
+      combatant.actor?.id === actor.id
+  ) ?? null;
+}
+
+function isActorsTurn(actor) {
+  const combatant =
+    game.combat?.combatant;
+
+  if (!actor || !combatant) {
+    return false;
+  }
+
+  return combatant.actor?.id === actor.id;
+}
+
 /* -------------------------------------------- */
 /*  Combat Helpers                              */
 /* -------------------------------------------- */
