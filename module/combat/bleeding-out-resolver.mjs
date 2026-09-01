@@ -12,7 +12,8 @@
  * Roll 1d12 against TN = 9 + current Wounds Taken.
  *
  * Success:
- * - Character remains alive.
+ * - Character becomes Stable.
+ * - No Wound is gained.
  *
  * Failure:
  * - Character gains 1 Wound.
@@ -33,59 +34,132 @@ export async function resolveBleedingOut({
   flavor = "Bleeding Out"
 } = {}) {
 
-  const woundsBefore = Math.max(
-    0,
-    Number(currentWounds) || 0
-  );
+  /* -------------------------------------------- */
+  /*  Current Wounds                              */
+  /* -------------------------------------------- */
 
-  const woundMaximum = Math.max(
-    0,
-    Number(maxWounds) || 0
-  );
+  const woundsBefore =
+    Math.max(
+      0,
+      Number(currentWounds) || 0
+    );
+
+  const woundMaximum =
+    Math.max(
+      0,
+      Number(maxWounds) || 0
+    );
+
+  /* -------------------------------------------- */
+  /*  Target Number                               */
+  /* -------------------------------------------- */
 
   const targetNumber =
     9 + woundsBefore;
 
-  const roll = await new Roll("1d12").evaluate();
+  /* -------------------------------------------- */
+  /*  Roll                                        */
+  /* -------------------------------------------- */
+
+  const roll =
+    await new Roll(
+      "1d12"
+    ).evaluate();
 
   const result =
-    roll.total ?? 0;
+    Number(
+      roll.total
+    ) || 0;
 
   const success =
     result >= targetNumber;
 
-  const woundsApplied =
-    success ? 0 : 1;
+  /* -------------------------------------------- */
+  /*  Wound Result                                */
+  /* -------------------------------------------- */
 
-  const woundsAfter = Math.min(
-    woundMaximum,
-    woundsBefore + woundsApplied
-  );
+  const woundsApplied =
+    success
+      ? 0
+      : 1;
+
+  const woundsAfter =
+    Math.min(
+      woundMaximum,
+      woundsBefore +
+        woundsApplied
+    );
 
   const dead =
     woundMaximum > 0 &&
     woundsAfter >= woundMaximum;
 
+  /* -------------------------------------------- */
+  /*  Stable Result                               */
+  /* -------------------------------------------- */
+
+  /*
+   * A successful Bleeding Out check stabilizes
+   * the character unless they are already dead.
+   */
+  const stable =
+    success &&
+    !dead;
+
+  /* -------------------------------------------- */
+  /*  Chat Result                                 */
+  /* -------------------------------------------- */
+
+  let resultText;
+
+  if (dead) {
+    resultText =
+      "Failure | +1 Wound | Dead";
+  }
+  else if (stable) {
+    resultText =
+      "Success | Stable";
+  }
+  else {
+    resultText =
+      "Failure | +1 Wound";
+  }
+
   await roll.toMessage({
     flavor:
       `${flavor}<br>` +
       `TN ${targetNumber} | ` +
-      `${success ? "Success" : "Failure"}` +
-      `${woundsApplied > 0 ? " | +1 Wound" : ""}` +
-      `${dead ? " | Dead" : ""}`
+      resultText
   });
+
+  /* -------------------------------------------- */
+  /*  Result                                      */
+  /* -------------------------------------------- */
 
   return {
     roll,
+
     result,
-    tn: targetNumber,
+
+    tn:
+      targetNumber,
+
     success,
 
+    stable,
+
     wounds: {
-      before: woundsBefore,
-      applied: woundsApplied,
-      after: woundsAfter,
-      max: woundMaximum
+      before:
+        woundsBefore,
+
+      applied:
+        woundsApplied,
+
+      after:
+        woundsAfter,
+
+      max:
+        woundMaximum
     },
 
     dead
