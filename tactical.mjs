@@ -7,6 +7,10 @@
 
 import { TacticalSkillRegistry } from "./module/registry/skill-registry.mjs";
 import { registerCoreSkills } from "./module/registry/core-skills.mjs";
+
+import { TacticalStatusRegistry } from "./module/registry/status-registry.mjs";
+import { registerCoreStatuses } from "./module/registry/core-statuses.mjs";
+
 import { registerTacticalDataModels } from "./module/data-models/register-data-models.mjs";
 
 Hooks.once("init", () => {
@@ -27,6 +31,14 @@ Hooks.once("init", () => {
   registerCoreSkills(skillRegistry);
 
   /* -------------------------------------------- */
+  /*  Status Registry                             */
+  /* -------------------------------------------- */
+
+  const statusRegistry = new TacticalStatusRegistry();
+
+  registerCoreStatuses(statusRegistry);
+
+  /* -------------------------------------------- */
   /*  Public Tactical API                         */
   /* -------------------------------------------- */
 
@@ -35,19 +47,27 @@ Hooks.once("init", () => {
 
     registries: {
       skills: skillRegistry,
+      statuses: statusRegistry,
 
       /*
        * These will receive dedicated registry
        * classes as we build those systems.
        */
-      statuses: new Map(),
       equipmentTraits: new Map(),
       extensions: new Map()
     }
   };
 
+  /* -------------------------------------------- */
+  /*  Initialization Logging                      */
+  /* -------------------------------------------- */
+
   console.log(
     `Tactical | ${game.tactical.registries.skills.getAll().length} Skills available`
+  );
+
+  console.log(
+    `Tactical | ${game.tactical.registries.statuses.getAll().length} Status Effects available`
   );
 
   console.log("Tactical | Initialization complete");
