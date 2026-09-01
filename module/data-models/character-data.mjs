@@ -8,7 +8,8 @@
 const {
   NumberField,
   SchemaField,
-  StringField
+  StringField,
+  TypedObjectField
 } = foundry.data.fields;
 
 /**
@@ -38,6 +39,20 @@ function resourceField({ value = 0, max = 0 } = {}) {
  * Tactical Attributes begin at 0.
  */
 function attributeField() {
+  return new NumberField({
+    required: true,
+    integer: true,
+    min: 0,
+    initial: 0
+  });
+}
+
+/**
+ * Reusable Skill rating field.
+ *
+ * Skill IDs are supplied by the Skill Registry.
+ */
+function skillField() {
   return new NumberField({
     required: true,
     integer: true,
@@ -94,6 +109,38 @@ export class TacticalCharacterData extends foundry.abstract.TypeDataModel {
         resolve: attributeField(),
         perception: attributeField()
       }),
+
+      /* -------------------------------------------- */
+      /*  Skills                                      */
+      /* -------------------------------------------- */
+
+      /**
+       * Skills are stored dynamically by Skill ID.
+       *
+       * Example:
+       *
+       * skills: {
+       *   athletics: 1,
+       *   ranged: 2,
+       *   medicine: 0,
+       *   technology: 1
+       * }
+       *
+       * Future modules may register additional Skill IDs without
+       * requiring changes to this Character Data Model.
+       */
+      skills: new TypedObjectField(
+        new NumberField({
+          required: true,
+          integer: true,
+          min: 0,
+          initial: 0
+        }),
+        {
+          required: true,
+          initial: {}
+        }
+      ),
 
       /* -------------------------------------------- */
       /*  Derived Resources                           */
