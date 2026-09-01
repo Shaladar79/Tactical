@@ -56,6 +56,8 @@
 
   "socket": true,
 
+  "initiative": "1d12 + @attributes.perception + @attributes.agility",
+
   "grid": {
     "distance": 1,
     "units": "sq"
