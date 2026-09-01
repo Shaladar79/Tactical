@@ -58,9 +58,6 @@ function getPrimaryActiveGM() {
 /*  Post-Damage State                           */
 /* -------------------------------------------- */
 
-/**
- * Determine the target's resulting combat state.
- */
 function determinePostDamageState({
   actorType = "",
   healthAfter = 0,
@@ -152,16 +149,25 @@ function determinePostDamageState({
 }
 
 /* -------------------------------------------- */
-/*  Apply Post-Damage Statuses                  */
+/*  Status Helpers                              */
 /* -------------------------------------------- */
 
+async function removeStatuses(
+  actor,
+  statusIds
+) {
+
+  for (const statusId of statusIds) {
+    await removeTacticalStatus(
+      actor,
+      statusId
+    );
+  }
+}
+
 /**
- * Apply Tactical statuses caused by the final
- * approved damage result.
- *
- * Dead / Defeated / Disabled are not Foundry
- * statuses yet, so those states remain informational
- * until their dedicated handling is added.
+ * Apply statuses caused by the approved
+ * post-damage combat state.
  */
 async function applyPostDamageStatuses(
   actor,
@@ -184,13 +190,13 @@ async function applyPostDamageStatuses(
     "bleeding-out"
   ) {
 
-    /*
-     * A character beginning to Bleed Out cannot
-     * simultaneously remain Stable.
-     */
-    await removeTacticalStatus(
+    await removeStatuses(
       actor,
-      "stable"
+      [
+        "stable",
+        "dead",
+        "defeated"
+      ]
     );
 
     await applyTacticalStatus(
@@ -207,7 +213,7 @@ async function applyPostDamageStatuses(
   }
 
   /* -------------------------------------------- */
-  /*  Death                                       */
+  /*  Dead                                        */
   /* -------------------------------------------- */
 
   if (
@@ -215,26 +221,77 @@ async function applyPostDamageStatuses(
     "dead"
   ) {
 
-    /*
-     * Dead actors should no longer retain
-     * Bleeding Out or Stable.
-     *
-     * A dedicated Dead status can be added later.
-     */
-    await removeTacticalStatus(
+    await removeStatuses(
       actor,
-      "bleeding-out"
-    );
-
-    await removeTacticalStatus(
-      actor,
-      "stable"
+      [
+        "bleeding-out",
+        "stable",
+        "unconscious",
+        "defeated"
+      ]
     );
 
     await applyTacticalStatus(
       actor,
-      "unconscious"
+      "dead"
     );
+
+    return;
+  }
+
+  /* -------------------------------------------- */
+  /*  Defeated                                    */
+  /* -------------------------------------------- */
+
+  if (
+    combatState.id ===
+    "defeated"
+  ) {
+
+    await removeStatuses(
+      actor,
+      [
+        "bleeding-out",
+        "stable",
+        "unconscious",
+        "dead"
+      ]
+    );
+
+    await applyTacticalStatus(
+      actor,
+      "defeated"
+    );
+
+    return;
+  }
+
+  /* -------------------------------------------- */
+  /*  Disabled                                    */
+  /* -------------------------------------------- */
+
+  if (
+    combatState.id ===
+    "disabled"
+  ) {
+
+    await removeStatuses(
+      actor,
+      [
+        "bleeding-out",
+        "stable",
+        "unconscious",
+        "dead",
+        "defeated"
+      ]
+    );
+
+    await applyTacticalStatus(
+      actor,
+      "disabled"
+    );
+
+    return;
   }
 }
 
@@ -258,22 +315,6 @@ export function registerTacticalDamageSocket() {
 /*  Request Damage                              */
 /* -------------------------------------------- */
 
-/**
- * Request GM approval to apply attack damage.
- *
- * @param {object} options
- * @param {string} options.attackerUuid
- * @param {string} options.attackerName
- * @param {string} options.weaponUuid
- * @param {string} options.weaponName
- * @param {string} options.targetUuid
- * @param {number} options.successes
- * @param {number} options.criticalPoints
- * @param {number} options.dps
- * @param {number} options.penetration
- *
- * @returns {Promise<void>}
- */
 export async function requestDamageApplication({
   attackerUuid = "",
   attackerName = "Attacker",
@@ -751,7 +792,7 @@ async function handleDamageRequest(message) {
   }
 
   /* -------------------------------------------- */
-  /*  Apply Damage Update                         */
+  /*  Apply Damage                                */
   /* -------------------------------------------- */
 
   await targetActor.update(
@@ -759,7 +800,7 @@ async function handleDamageRequest(message) {
   );
 
   /* -------------------------------------------- */
-  /*  Apply Resulting Statuses                    */
+  /*  Apply Combat State                         */
   /* -------------------------------------------- */
 
   await applyPostDamageStatuses(
@@ -768,7 +809,7 @@ async function handleDamageRequest(message) {
   );
 
   /* -------------------------------------------- */
-  /*  Notification                                */
+  /*  Notification                               */
   /* -------------------------------------------- */
 
   ui.notifications.info(
