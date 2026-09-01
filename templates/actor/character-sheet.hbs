@@ -238,12 +238,19 @@
 
           <div class="skill-row">
 
-            <div class="skill-name">
+            <button
+              type="button"
+              class="skill-roll"
+              data-action="rollSkill"
+              data-skill="{{skill.id}}"
+              title="Roll {{skill.name}}"
+            >
               {{skill.name}}
-            </div>
+            </button>
 
             <div class="skill-attribute">
               {{skill.attribute}}
+              {{skill.attributeValue}}
             </div>
 
             <input
@@ -253,6 +260,13 @@
               step="1"
               value="{{skill.value}}"
             >
+
+            <div class="skill-pool">
+              {{skill.attributeValue}}
+              +
+              {{skill.value}}
+              d12
+            </div>
 
           </div>
 
