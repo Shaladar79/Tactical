@@ -91,6 +91,31 @@ export function registerCoreStatuses(statusRegistry) {
     source: "tactical"
   });
 
+  /* -------------------------------------------- */
+  /*  Terminal / Combat-State Statuses           */
+  /* -------------------------------------------- */
+
+  statusRegistry.register("dead", {
+    name: "Dead",
+    description:
+      "The character has reached their Maximum Wounds and is dead. Dead characters cannot take Actions, make Reactions, or recover through normal stabilization.",
+    source: "tactical"
+  });
+
+  statusRegistry.register("defeated", {
+    name: "Defeated",
+    description:
+      "A Trooper-class or other disposable enemy has been reduced to 0 Health and is removed from active combat.",
+    source: "tactical"
+  });
+
+  statusRegistry.register("disabled", {
+    name: "Disabled",
+    description:
+      "A vehicle or autonomous unit has been reduced to 0 Hull and can no longer function normally. Disabled does not necessarily mean destroyed.",
+    source: "tactical"
+  });
+
   console.log(
     `Tactical | Registered ${statusRegistry.getAll().length} core Status Effects`
   );
