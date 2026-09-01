@@ -11,6 +11,10 @@ import { registerCoreSkills } from "./module/registry/core-skills.mjs";
 import { TacticalStatusRegistry } from "./module/registry/status-registry.mjs";
 import { registerCoreStatuses } from "./module/registry/core-statuses.mjs";
 
+import {
+  registerFoundryStatusEffects
+} from "./module/status/foundry-status-effects.mjs";
+
 import { TacticalEquipmentTraitRegistry } from "./module/registry/equipment-trait-registry.mjs";
 import { registerCoreEquipmentTraits } from "./module/registry/core-equipment-traits.mjs";
 
@@ -47,17 +51,31 @@ Hooks.once("init", () => {
   /*  Skill Registry                              */
   /* -------------------------------------------- */
 
-  const skillRegistry = new TacticalSkillRegistry();
+  const skillRegistry =
+    new TacticalSkillRegistry();
 
-  registerCoreSkills(skillRegistry);
+  registerCoreSkills(
+    skillRegistry
+  );
 
   /* -------------------------------------------- */
   /*  Status Registry                             */
   /* -------------------------------------------- */
 
-  const statusRegistry = new TacticalStatusRegistry();
+  const statusRegistry =
+    new TacticalStatusRegistry();
 
-  registerCoreStatuses(statusRegistry);
+  registerCoreStatuses(
+    statusRegistry
+  );
+
+  /*
+   * Bridge Tactical's status definitions into
+   * Foundry's native status-effect system.
+   */
+  registerFoundryStatusEffects(
+    statusRegistry
+  );
 
   /* -------------------------------------------- */
   /*  Equipment Trait Registry                    */
@@ -78,22 +96,29 @@ Hooks.once("init", () => {
     version: "0.1.0",
 
     registries: {
-      skills: skillRegistry,
-      statuses: statusRegistry,
-      equipmentTraits: equipmentTraitRegistry,
+      skills:
+        skillRegistry,
+
+      statuses:
+        statusRegistry,
+
+      equipmentTraits:
+        equipmentTraitRegistry,
 
       /*
        * Genre modules will be able to register
        * additional Tactical extensions here.
        */
-      extensions: new Map()
+      extensions:
+        new Map()
     },
 
     /* -------------------------------------------- */
     /*  GM Tools                                    */
     /* -------------------------------------------- */
 
-    awardSessionXP: runSessionXPAward
+    awardSessionXP:
+      runSessionXPAward
   };
 
   /* -------------------------------------------- */
@@ -126,5 +151,7 @@ Hooks.once("ready", () => {
   registerTacticalRollSocket();
   registerTacticalDamageSocket();
 
-  console.log("Tactical | Ready");
+  console.log(
+    "Tactical | Ready"
+  );
 });
