@@ -1,0 +1,63 @@
+{
+  "id": "tactical",
+  "title": "Tactical",
+  "description": "A modular tactical tabletop RPG system built around d12 dice pools, success-based combat, wounds, armor, equipment, vehicles, and genre extension modules.",
+  "version": "0.1.0",
+
+  "compatibility": {
+    "minimum": 14,
+    "verified": 14
+  },
+
+  "authors": [
+    {
+      "name": "Shaladar"
+    }
+  ],
+
+  "esmodules": [
+    "tactical.mjs"
+  ],
+
+  "styles": [
+    "styles/tactical.css"
+  ],
+
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "trooper": {},
+      "lieutenant": {},
+      "commander": {},
+      "overlord": {},
+      "vehicle": {}
+    },
+
+    "Item": {
+      "weapon": {},
+      "armor": {},
+      "utility": {},
+      "consumable": {},
+      "ancestry": {},
+      "archetype": {},
+      "specialization": {},
+      "talent": {},
+      "ability": {}
+    }
+  },
+
+  "socket": false,
+
+  "grid": {
+    "distance": 1,
+    "units": "sq"
+  }
+}
