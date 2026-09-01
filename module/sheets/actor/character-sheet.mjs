@@ -10,6 +10,10 @@ import {
 } from "./character-rolls.mjs";
 
 import {
+  rollWeaponAttack
+} from "../../combat/weapon-attack.mjs";
+
+import {
   promptTacticalRoll
 } from "../../dice/roll-dialog.mjs";
 
@@ -52,7 +56,8 @@ export class TacticalCharacterSheet
 
     actions: {
       rollSkill: this.#onRollSkill,
-      rollAttribute: this.#onRollAttribute
+      rollAttribute: this.#onRollAttribute,
+      rollWeapon: this.#onRollWeapon
     }
   };
 
@@ -202,6 +207,95 @@ export class TacticalCharacterSheet
     ];
 
     /* -------------------------------------------- */
+    /*  Weapons                                     */
+    /* -------------------------------------------- */
+
+    const weapons =
+      actor.items
+        .filter(
+          item =>
+            item.type === "weapon"
+        )
+        .map(weapon => {
+
+          const weaponSystem =
+            weapon.system;
+
+          const isMelee =
+            weaponSystem.weaponType === "melee";
+
+          const attributeId =
+            isMelee
+              ? "might"
+              : "aim";
+
+          const skillId =
+            isMelee
+              ? "melee"
+              : "ranged";
+
+          const attributeValue =
+            Math.max(
+              0,
+              Number(
+                system.attributes?.[attributeId]
+              ) || 0
+            );
+
+          const skillValue =
+            Math.max(
+              0,
+              Number(
+                system.skills?.[skillId]
+              ) || 0
+            );
+
+          return {
+            id:
+              weapon.id,
+
+            name:
+              weapon.name,
+
+            img:
+              weapon.img,
+
+            weaponType:
+              weaponSystem.weaponType,
+
+            slot:
+              weaponSystem.slot,
+
+            dps:
+              weaponSystem.dps ?? 0,
+
+            penetration:
+              weaponSystem.penetration ?? 0,
+
+            usesMagazine:
+              weaponSystem.usesMagazine !== false,
+
+            magazineCapacity:
+              weaponSystem.magazineCapacity ?? 0,
+
+            ammoRemaining:
+              weaponSystem.ammoRemaining ?? 0,
+
+            intendedRange:
+              weaponSystem.intendedRange ?? "short",
+
+            attributeId,
+            skillId,
+
+            attributeValue,
+            skillValue,
+
+            pool:
+              attributeValue + skillValue
+          };
+        });
+
+    /* -------------------------------------------- */
     /*  Sheet Context                               */
     /* -------------------------------------------- */
 
@@ -234,6 +328,8 @@ export class TacticalCharacterSheet
       attributes,
 
       skills,
+
+      weapons,
 
       combat: {
         health:
@@ -323,10 +419,6 @@ export class TacticalCharacterSheet
     const flavor =
       `${this.actor.name}: ${attributeName} + ${skill.name}`;
 
-    /* -------------------------------------------- */
-    /*  Player Roll Options                         */
-    /* -------------------------------------------- */
-
     const options =
       await promptTacticalRoll({
         title:
@@ -343,10 +435,6 @@ export class TacticalCharacterSheet
     if (!options) {
       return;
     }
-
-    /* -------------------------------------------- */
-    /*  Submit Roll                                 */
-    /* -------------------------------------------- */
 
     await rollCharacterCheck(
       this.actor,
@@ -419,10 +507,6 @@ export class TacticalCharacterSheet
     const flavor =
       `${this.actor.name}: ${attributeName} Check`;
 
-    /* -------------------------------------------- */
-    /*  Player Roll Options                         */
-    /* -------------------------------------------- */
-
     const options =
       await promptTacticalRoll({
         title:
@@ -439,10 +523,6 @@ export class TacticalCharacterSheet
     if (!options) {
       return;
     }
-
-    /* -------------------------------------------- */
-    /*  Submit Roll                                 */
-    /* -------------------------------------------- */
 
     await rollCharacterCheck(
       this.actor,
@@ -462,6 +542,73 @@ export class TacticalCharacterSheet
           7,
 
         flavor
+      }
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  Weapon Attack                               */
+  /* -------------------------------------------- */
+
+  static async #onRollWeapon(event, target) {
+
+    const weaponId =
+      target.dataset.weapon;
+
+    if (!weaponId) {
+      return;
+    }
+
+    const weapon =
+      this.actor.items.get(
+        weaponId
+      );
+
+    if (
+      !weapon ||
+      weapon.type !== "weapon"
+    ) {
+
+      ui.notifications.warn(
+        "Tactical | Weapon could not be found."
+      );
+
+      return;
+    }
+
+    const isMelee =
+      weapon.system.weaponType === "melee";
+
+    /*
+     * Default Tactical attack pairings:
+     *
+     * Melee weapon:
+     * Might + Melee
+     *
+     * Ranged weapon:
+     * Aim + Ranged
+     *
+     * Future weapon rules may override these.
+     */
+    const attributeId =
+      isMelee
+        ? "might"
+        : "aim";
+
+    const skillId =
+      isMelee
+        ? "melee"
+        : "ranged";
+
+    await rollWeaponAttack(
+      this.actor,
+      weapon,
+      {
+        attributeId,
+        skillId,
+
+        flavor:
+          `${this.actor.name}: ${weapon.name}`
       }
     );
   }
