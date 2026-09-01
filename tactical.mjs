@@ -16,6 +16,8 @@ import { registerCoreEquipmentTraits } from "./module/registry/core-equipment-tr
 
 import { registerTacticalDataModels } from "./module/data-models/register-data-models.mjs";
 
+import { runSessionXPAward } from "./module/progression/session-xp-coordinator.mjs";
+
 Hooks.once("init", () => {
   console.log("Tactical | Initializing Tactical system");
 
@@ -66,7 +68,13 @@ Hooks.once("init", () => {
        * additional Tactical extensions here.
        */
       extensions: new Map()
-    }
+    },
+
+    /* -------------------------------------------- */
+    /*  GM Tools                                    */
+    /* -------------------------------------------- */
+
+    awardSessionXP: runSessionXPAward
   };
 
   /* -------------------------------------------- */
