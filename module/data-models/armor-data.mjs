@@ -7,6 +7,7 @@
 
 const {
   ArrayField,
+  BooleanField,
   NumberField,
   StringField
 } = foundry.data.fields;
@@ -85,10 +86,9 @@ export class TacticalArmorData extends foundry.abstract.TypeDataModel {
       /*  Restrictions / Source                       */
       /* -------------------------------------------- */
 
-      restricted: new StringField({
-        required: false,
-        blank: true,
-        initial: ""
+      restricted: new BooleanField({
+        required: true,
+        initial: false
       }),
 
       sourceModule: new StringField({
