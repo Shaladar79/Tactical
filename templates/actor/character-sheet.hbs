@@ -1,0 +1,267 @@
+<form class="tactical character-sheet {{cssClass}}" autocomplete="off">
+
+  <header class="sheet-header">
+    <div class="character-heading">
+
+      <img
+        class="profile-img"
+        src="{{actor.img}}"
+        data-edit="img"
+        title="{{actor.name}}"
+        width="96"
+        height="96"
+      >
+
+      <div class="character-heading-fields">
+
+        <input
+          class="character-name"
+          name="name"
+          type="text"
+          value="{{actor.name}}"
+          placeholder="Character Name"
+        >
+
+        <div class="progression-summary">
+
+          <div class="summary-field">
+            <label>{{localize "TACTICAL.Progression.Rank"}}</label>
+            <span>{{progression.rank}}</span>
+          </div>
+
+          <div class="summary-field">
+            <label>{{localize "TACTICAL.Progression.EarnedXP"}}</label>
+            <input
+              name="system.xp.earned"
+              type="number"
+              min="0"
+              step="1"
+              value="{{progression.earnedXP}}"
+            >
+          </div>
+
+          <div class="summary-field">
+            <label>{{localize "TACTICAL.Progression.SpentXP"}}</label>
+            <span>{{progression.spentXP}}</span>
+          </div>
+
+          <div class="summary-field">
+            <label>{{localize "TACTICAL.Progression.AvailableXP"}}</label>
+            <span>{{progression.availableXP}}</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <section class="sheet-body">
+
+    <section class="combat-summary">
+
+      <div class="resource-card">
+        <label>{{localize "TACTICAL.Combat.Health"}}</label>
+
+        <div class="resource-values">
+          <input
+            name="system.health.value"
+            type="number"
+            min="0"
+            value="{{combat.health.value}}"
+          >
+          <span>/</span>
+          <span>{{combat.health.max}}</span>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <label>{{localize "TACTICAL.Combat.Wounds"}}</label>
+
+        <div class="resource-values">
+          <input
+            name="system.wounds.value"
+            type="number"
+            min="0"
+            value="{{combat.wounds.value}}"
+          >
+          <span>/</span>
+          <span>{{combat.wounds.max}}</span>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <label>{{localize "TACTICAL.Combat.ArmorIntegrity"}}</label>
+
+        <div class="resource-values">
+          <input
+            name="system.armorIntegrity.value"
+            type="number"
+            min="0"
+            value="{{combat.armorIntegrity.value}}"
+          >
+          <span>/</span>
+          <input
+            name="system.armorIntegrity.max"
+            type="number"
+            min="0"
+            value="{{combat.armorIntegrity.max}}"
+          >
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <label>{{localize "TACTICAL.Combat.Toughness"}}</label>
+
+        <input
+          name="system.toughness"
+          type="number"
+          min="0"
+          value="{{combat.toughness}}"
+        >
+      </div>
+
+      <div class="resource-card">
+        <label>{{localize "TACTICAL.Combat.Movement"}}</label>
+        <span>{{combat.movement}}</span>
+      </div>
+
+      <div class="resource-card">
+        <label>{{localize "TACTICAL.Progression.RankDice"}}</label>
+
+        <div class="resource-values">
+          <input
+            name="system.rankDice.value"
+            type="number"
+            min="0"
+            value="{{progression.rankDice.value}}"
+          >
+          <span>/</span>
+          <span>{{progression.rankDice.max}}</span>
+        </div>
+      </div>
+
+    </section>
+
+    <hr>
+
+    <section class="attributes-section">
+
+      <h2>Attributes</h2>
+
+      <div class="attribute-grid">
+
+        <div class="attribute-card">
+          <label>{{localize "TACTICAL.Attributes.Might"}}</label>
+          <input
+            name="system.attributes.might"
+            type="number"
+            min="0"
+            value="{{attributes.might}}"
+          >
+        </div>
+
+        <div class="attribute-card">
+          <label>{{localize "TACTICAL.Attributes.Aim"}}</label>
+          <input
+            name="system.attributes.aim"
+            type="number"
+            min="0"
+            value="{{attributes.aim}}"
+          >
+        </div>
+
+        <div class="attribute-card">
+          <label>{{localize "TACTICAL.Attributes.Agility"}}</label>
+          <input
+            name="system.attributes.agility"
+            type="number"
+            min="0"
+            value="{{attributes.agility}}"
+          >
+        </div>
+
+        <div class="attribute-card">
+          <label>{{localize "TACTICAL.Attributes.Endurance"}}</label>
+          <input
+            name="system.attributes.endurance"
+            type="number"
+            min="0"
+            value="{{attributes.endurance}}"
+          >
+        </div>
+
+        <div class="attribute-card">
+          <label>{{localize "TACTICAL.Attributes.Focus"}}</label>
+          <input
+            name="system.attributes.focus"
+            type="number"
+            min="0"
+            value="{{attributes.focus}}"
+          >
+        </div>
+
+        <div class="attribute-card">
+          <label>{{localize "TACTICAL.Attributes.Resolve"}}</label>
+          <input
+            name="system.attributes.resolve"
+            type="number"
+            min="0"
+            value="{{attributes.resolve}}"
+          >
+        </div>
+
+        <div class="attribute-card">
+          <label>{{localize "TACTICAL.Attributes.Perception"}}</label>
+          <input
+            name="system.attributes.perception"
+            type="number"
+            min="0"
+            value="{{attributes.perception}}"
+          >
+        </div>
+
+      </div>
+
+    </section>
+
+    <hr>
+
+    <section class="skills-section">
+
+      <h2>Skills</h2>
+
+      <div class="skill-list">
+
+        {{#each skills as |skill|}}
+
+          <div class="skill-row">
+
+            <div class="skill-name">
+              {{skill.name}}
+            </div>
+
+            <div class="skill-attribute">
+              {{skill.attribute}}
+            </div>
+
+            <input
+              name="system.skills.{{skill.id}}"
+              type="number"
+              min="0"
+              step="1"
+              value="{{skill.value}}"
+            >
+
+          </div>
+
+        {{/each}}
+
+      </div>
+
+    </section>
+
+  </section>
+
+</form>
