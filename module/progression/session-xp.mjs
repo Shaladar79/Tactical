@@ -44,16 +44,21 @@ export function getAveragePartyRank(ranks = []) {
  */
 export function getBaseSessionXP(averageRank = 0) {
 
-  const rank = Math.floor(
-    Math.max(
-      0,
-      Number(averageRank) || 0
-    )
+  const rawRank = Math.max(
+    0,
+    Number(averageRank) || 0
   );
 
-  return 3 * (rank + 1);
-}
+  const wholeRank = Math.floor(rawRank);
+  const decimal = rawRank - wholeRank;
 
+  const roundedRank =
+    decimal <= 0.5
+      ? Math.floor(rawRank)
+      : Math.ceil(rawRank);
+
+  return 3 * (roundedRank + 1);
+}
 /**
  * Calculate a complete session XP award.
  *
