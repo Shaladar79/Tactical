@@ -9,6 +9,10 @@ import {
   rollCharacterCheck
 } from "./character-rolls.mjs";
 
+import {
+  promptTacticalRoll
+} from "../../dice/roll-dialog.mjs";
+
 const {
   api,
   sheets
@@ -279,11 +283,70 @@ export class TacticalCharacterSheet
     const attributeId =
       skill.attribute;
 
+    const attributeValue =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.attributes?.[
+            attributeId
+          ]
+        ) || 0
+      );
+
+    const skillValue =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.skills?.[
+            skillId
+          ]
+        ) || 0
+      );
+
+    const basePool =
+      attributeValue + skillValue;
+
+    const availableRankDice =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.rankDice?.value
+        ) || 0
+      );
+
     const attributeName =
       attributeId
         ? attributeId.charAt(0).toUpperCase() +
           attributeId.slice(1)
         : "Attribute";
+
+    const flavor =
+      `${this.actor.name}: ${attributeName} + ${skill.name}`;
+
+    /* -------------------------------------------- */
+    /*  Player Roll Options                         */
+    /* -------------------------------------------- */
+
+    const options =
+      await promptTacticalRoll({
+        title:
+          flavor,
+
+        basePool,
+
+        baseTN:
+          7,
+
+        availableRankDice
+      });
+
+    if (!options) {
+      return;
+    }
+
+    /* -------------------------------------------- */
+    /*  Submit Roll                                 */
+    /* -------------------------------------------- */
 
     await rollCharacterCheck(
       this.actor,
@@ -291,8 +354,19 @@ export class TacticalCharacterSheet
         attributeId,
         skillId,
 
-        flavor:
-          `${this.actor.name}: ${attributeName} + ${skill.name}`
+        specialization:
+          options.specialization,
+
+        rankDie:
+          options.rankDie,
+
+        diceModifier:
+          options.diceModifier,
+
+        baseTN:
+          7,
+
+        flavor
       }
     );
   }
@@ -324,17 +398,70 @@ export class TacticalCharacterSheet
       return;
     }
 
+    const basePool =
+      Math.max(
+        0,
+        Number(attributeValue) || 0
+      );
+
+    const availableRankDice =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.rankDice?.value
+        ) || 0
+      );
+
     const attributeName =
       attributeId.charAt(0).toUpperCase() +
       attributeId.slice(1);
+
+    const flavor =
+      `${this.actor.name}: ${attributeName} Check`;
+
+    /* -------------------------------------------- */
+    /*  Player Roll Options                         */
+    /* -------------------------------------------- */
+
+    const options =
+      await promptTacticalRoll({
+        title:
+          flavor,
+
+        basePool,
+
+        baseTN:
+          7,
+
+        availableRankDice
+      });
+
+    if (!options) {
+      return;
+    }
+
+    /* -------------------------------------------- */
+    /*  Submit Roll                                 */
+    /* -------------------------------------------- */
 
     await rollCharacterCheck(
       this.actor,
       {
         attributeId,
 
-        flavor:
-          `${this.actor.name}: ${attributeName} Check`
+        specialization:
+          options.specialization,
+
+        rankDie:
+          options.rankDie,
+
+        diceModifier:
+          options.diceModifier,
+
+        baseTN:
+          7,
+
+        flavor
       }
     );
   }
