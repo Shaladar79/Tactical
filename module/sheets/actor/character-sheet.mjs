@@ -14,6 +14,10 @@ import {
 } from "../../combat/weapon-attack.mjs";
 
 import {
+  reloadWeapon
+} from "../../combat/reload-weapon.mjs";
+
+import {
   promptTacticalRoll
 } from "../../dice/roll-dialog.mjs";
 
@@ -57,7 +61,8 @@ export class TacticalCharacterSheet
     actions: {
       rollSkill: this.#onRollSkill,
       rollAttribute: this.#onRollAttribute,
-      rollWeapon: this.#onRollWeapon
+      rollWeapon: this.#onRollWeapon,
+      reloadWeapon: this.#onReloadWeapon
     }
   };
 
@@ -587,8 +592,6 @@ export class TacticalCharacterSheet
      *
      * Ranged weapon:
      * Aim + Ranged
-     *
-     * Future weapon rules may override these.
      */
     const attributeId =
       isMelee
@@ -610,6 +613,41 @@ export class TacticalCharacterSheet
         flavor:
           `${this.actor.name}: ${weapon.name}`
       }
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  Reload Weapon                               */
+  /* -------------------------------------------- */
+
+  static async #onReloadWeapon(event, target) {
+
+    const weaponId =
+      target.dataset.weapon;
+
+    if (!weaponId) {
+      return;
+    }
+
+    const weapon =
+      this.actor.items.get(
+        weaponId
+      );
+
+    if (
+      !weapon ||
+      weapon.type !== "weapon"
+    ) {
+
+      ui.notifications.warn(
+        "Tactical | Weapon could not be found."
+      );
+
+      return;
+    }
+
+    await reloadWeapon(
+      weapon
     );
   }
 }
