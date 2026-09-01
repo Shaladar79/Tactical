@@ -6,19 +6,20 @@
  *
  * 1. Validate attacker and Weapon Item.
  * 2. Require exactly one targeted token.
- * 3. Validate combat turn / Action availability.
+ * 3. Validate turn and Action availability.
  * 4. Check ammunition.
  * 5. Read Attribute + Skill values.
  * 6. Open player pre-roll configuration.
  * 7. Build final dice pool.
  * 8. Send attack request to GM.
  * 9. GM selects range / cover / position modifiers.
- * 10. Commit the attack and spend 1 Action.
+ * 10. Commit attack and spend 1 Action.
  * 11. Spend Rank Die if selected.
  * 12. Consume ammunition.
  * 13. Roll attack.
  * 14. Calculate attack damage data.
- * 15. If successful, send damage request to GM.
+ * 15. If the attack succeeds, send a damage request
+ *     to the GM for approval and automatic application.
  */
 
 import {
@@ -47,43 +48,30 @@ import {
 } from "./action-economy.mjs";
 
 /* -------------------------------------------- */
-/*  Combat State Helpers                        */
+/*  Combat Helpers                              */
 /* -------------------------------------------- */
 
-/**
- * Determine whether the Actor is participating
- * in the currently active Combat encounter.
- *
- * @param {Actor} actor
- *
- * @returns {boolean}
- */
-function isActorInCurrentCombat(
+function getActorCombatant(
   actor
 ) {
 
   const combat =
     game.combat;
 
-  if (!combat) {
-    return false;
+  if (
+    !combat ||
+    !actor
+  ) {
+    return null;
   }
 
-  return combat.combatants.some(
+  return combat.combatants.find(
     combatant =>
       combatant.actor?.id ===
       actor.id
-  );
+  ) ?? null;
 }
 
-/**
- * Determine whether this Actor is the currently
- * active combatant.
- *
- * @param {Actor} actor
- *
- * @returns {boolean}
- */
 function isActorsTurn(
   actor
 ) {
@@ -91,7 +79,10 @@ function isActorsTurn(
   const activeCombatant =
     game.combat?.combatant;
 
-  if (!activeCombatant) {
+  if (
+    !activeCombatant ||
+    !actor
+  ) {
     return false;
   }
 
@@ -171,18 +162,22 @@ export async function rollWeaponAttack(
   /*  Combat / Action Validation                  */
   /* -------------------------------------------- */
 
-  const inCombat =
-    isActorInCurrentCombat(
+  const combatant =
+    getActorCombatant(
       actor
     );
 
+  const inCombat =
+    Boolean(
+      combatant
+    );
+
   /*
-   * Normal Attack Actions may only be performed
-   * during that Actor's own turn.
+   * Normal attacks can only be made during
+   * the Actor's own turn.
    *
-   * Reaction attacks such as Overwatch will use
-   * a separate reaction workflow later and will
-   * not call this normal Action validation.
+   * Overwatch and other Reaction attacks will
+   * use their own workflow later.
    */
   if (
     inCombat &&
@@ -287,8 +282,8 @@ export async function rollWeaponAttack(
       : null;
 
   /*
-   * Empty weapons fail before either roll dialog
-   * and therefore do not spend an Action.
+   * An empty weapon prevents the attack from
+   * being committed, so no Action is spent.
    */
   if (
     usesMagazine &&
@@ -377,8 +372,7 @@ export async function rollWeaponAttack(
 
   /*
    * Player canceled.
-   *
-   * No Action has been spent.
+   * No Action is spent.
    */
   if (!playerOptions) {
     return null;
@@ -450,27 +444,23 @@ export async function rollWeaponAttack(
     });
 
   /*
-   * GM canceled/rejected.
-   *
-   * The attack was never committed, so no
-   * Action, ammunition, or Rank Die is spent.
+   * GM rejected or canceled the attack.
+   * Nothing has been committed yet.
    */
   if (!approval) {
     return null;
   }
 
   /* -------------------------------------------- */
-  /*  Commit Attack Action                        */
+  /*  Spend Attack Action                         */
   /* -------------------------------------------- */
 
-  /*
-   * Re-check Actions immediately before spending.
-   *
-   * This protects against the Action state changing
-   * while the GM approval dialog was open.
-   */
   if (inCombat) {
 
+    /*
+     * Re-check immediately before spending in
+     * case Action state changed while awaiting GM.
+     */
     const actionState =
       await spendActions(
         actor,
@@ -566,10 +556,8 @@ export async function rollWeaponAttack(
   /* -------------------------------------------- */
 
   /*
-   * Zero Successes means the attack missed.
-   *
-   * The Attack Action and ammunition have still
-   * been spent because the attack occurred.
+   * A miss still consumed the Attack Action,
+   * Rank Die if used, and ammunition.
    */
   if (
     result.successes > 0
