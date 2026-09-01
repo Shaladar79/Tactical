@@ -300,15 +300,33 @@
 
             {{/if}}
 
-            <button
-              type="button"
-              class="weapon-attack"
-              data-action="rollWeapon"
-              data-weapon="{{weapon.id}}"
-              title="Attack with {{weapon.name}}"
-            >
-              Attack
-            </button>
+            <div class="weapon-actions">
+
+              <button
+                type="button"
+                class="weapon-attack"
+                data-action="rollWeapon"
+                data-weapon="{{weapon.id}}"
+                title="Attack with {{weapon.name}}"
+              >
+                Attack
+              </button>
+
+              {{#if weapon.usesMagazine}}
+
+                <button
+                  type="button"
+                  class="weapon-reload"
+                  data-action="reloadWeapon"
+                  data-weapon="{{weapon.id}}"
+                  title="Reload {{weapon.name}}"
+                >
+                  Reload
+                </button>
+
+              {{/if}}
+
+            </div>
 
           </div>
 
