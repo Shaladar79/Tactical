@@ -2,16 +2,10 @@
  * Tactical
  * Reload Weapon Helper
  *
- * Reloading normally costs 1 Action.
+ * Reload normally costs 1 Action during combat.
  *
- * Outside combat, reloading works normally without
- * Action Economy enforcement.
- *
- * During combat:
- * - The Actor must be the active combatant.
- * - The Actor must have at least 1 Action remaining.
- * - A successful reload spends 1 Action.
- * - Invalid reload attempts spend nothing.
+ * Invalid reload attempts spend no Actions.
+ * Outside combat, reload does not use the Action Economy.
  */
 
 import {
@@ -43,18 +37,18 @@ function getActorCombatant(actor) {
 
 function isActorsTurn(actor) {
 
-  const activeCombatant =
+  const combatant =
     game.combat?.combatant;
 
   if (
-    !activeCombatant ||
+    !combatant ||
     !actor
   ) {
     return false;
   }
 
   return (
-    activeCombatant.actor?.id === actor.id
+    combatant.actor?.id === actor.id
   );
 }
 
@@ -160,13 +154,6 @@ export async function reloadWeapon(weapon) {
   const inCombat =
     Boolean(combatant);
 
-  /*
-   * Embedded weapons should normally always have
-   * an owning Actor.
-   *
-   * If this Item is not owned by an Actor, reload
-   * still works outside the combat Action Economy.
-   */
   if (
     inCombat &&
     !isActorsTurn(actor)
@@ -201,15 +188,9 @@ export async function reloadWeapon(weapon) {
   }
 
   /* -------------------------------------------- */
-  /*  Spend Reload Action                         */
+  /*  Spend Action                                */
   /* -------------------------------------------- */
 
-  /*
-   * All reload validity checks have now passed.
-   *
-   * During combat this is the point at which
-   * Reload becomes committed and costs 1 Action.
-   */
   if (inCombat) {
 
     const actionState =
