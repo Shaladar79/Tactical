@@ -36,6 +36,10 @@ import {
   registerBleedingOutCombatHook
 } from "./module/combat/bleeding-out-combat-hook.mjs";
 
+import {
+  registerTacticalInitiative
+} from "./module/combat/initiative-handler.mjs";
+
 Hooks.once("init", () => {
   console.log("Tactical | Initializing Tactical system");
 
@@ -50,6 +54,12 @@ Hooks.once("init", () => {
   /* -------------------------------------------- */
 
   registerTacticalActorSheets();
+
+  /* -------------------------------------------- */
+  /*  Initiative                                  */
+  /* -------------------------------------------- */
+
+  registerTacticalInitiative();
 
   /* -------------------------------------------- */
   /*  Skill Registry                              */
