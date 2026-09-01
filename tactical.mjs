@@ -24,6 +24,10 @@ import {
   registerTacticalRollSocket
 } from "./module/socket/roll-request-socket.mjs";
 
+import {
+  registerTacticalDamageSocket
+} from "./module/socket/damage-request-socket.mjs";
+
 Hooks.once("init", () => {
   console.log("Tactical | Initializing Tactical system");
 
@@ -120,6 +124,7 @@ Hooks.once("ready", () => {
   /* -------------------------------------------- */
 
   registerTacticalRollSocket();
+  registerTacticalDamageSocket();
 
   console.log("Tactical | Ready");
 });
