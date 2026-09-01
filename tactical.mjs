@@ -20,6 +20,10 @@ import { registerTacticalActorSheets } from "./module/sheets/actor/register-acto
 
 import { runSessionXPAward } from "./module/progression/session-xp-coordinator.mjs";
 
+import {
+  registerTacticalRollSocket
+} from "./module/socket/roll-request-socket.mjs";
+
 Hooks.once("init", () => {
   console.log("Tactical | Initializing Tactical system");
 
@@ -55,9 +59,12 @@ Hooks.once("init", () => {
   /*  Equipment Trait Registry                    */
   /* -------------------------------------------- */
 
-  const equipmentTraitRegistry = new TacticalEquipmentTraitRegistry();
+  const equipmentTraitRegistry =
+    new TacticalEquipmentTraitRegistry();
 
-  registerCoreEquipmentTraits(equipmentTraitRegistry);
+  registerCoreEquipmentTraits(
+    equipmentTraitRegistry
+  );
 
   /* -------------------------------------------- */
   /*  Public Tactical API                         */
@@ -101,9 +108,18 @@ Hooks.once("init", () => {
     `Tactical | ${game.tactical.registries.equipmentTraits.getAll().length} Equipment Traits available`
   );
 
-  console.log("Tactical | Initialization complete");
+  console.log(
+    "Tactical | Initialization complete"
+  );
 });
 
 Hooks.once("ready", () => {
+
+  /* -------------------------------------------- */
+  /*  Socket Registration                         */
+  /* -------------------------------------------- */
+
+  registerTacticalRollSocket();
+
   console.log("Tactical | Ready");
 });
