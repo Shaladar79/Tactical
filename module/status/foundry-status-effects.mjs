@@ -51,18 +51,20 @@ const STATUS_ICONS = {
     "icons/svg/regen.svg",
 
   unconscious:
-    "icons/svg/unconscious.svg"
+    "icons/svg/unconscious.svg",
+
+  dead:
+    "icons/svg/skull.svg",
+
+  defeated:
+    "icons/svg/downgrade.svg",
+
+  disabled:
+    "icons/svg/hazard.svg"
 };
 
 /**
  * Register Tactical statuses with Foundry.
- *
- * This allows them to:
- *
- * - appear in the Token HUD
- * - exist as Actor Active Effects
- * - be applied through Actor.toggleStatusEffect()
- * - be recognized by their stable Tactical status ID
  *
  * @param {TacticalStatusRegistry} statusRegistry
  */
@@ -79,23 +81,9 @@ export function registerFoundryStatusEffects(
   const tacticalStatuses =
     statusRegistry.getAll();
 
-  /*
-   * Foundry v14 represents CONFIG.statusEffects
-   * as an object keyed by status ID.
-   *
-   * Preserve any statuses another system-level
-   * component or module may already have added.
-   */
   const existingStatuses =
     CONFIG.statusEffects ?? {};
 
-  /*
-   * Defensive compatibility:
-   *
-   * Foundry v14 uses an object, but if an older
-   * environment or compatibility layer provides
-   * an array, normalize it first.
-   */
   const normalizedStatuses =
     Array.isArray(existingStatuses)
       ? Object.fromEntries(
@@ -185,12 +173,6 @@ export async function applyTacticalStatus(
     return;
   }
 
-  /*
-   * Do not toggle an existing status off.
-   *
-   * active: true explicitly requests that the
-   * status be present.
-   */
   await actor.toggleStatusEffect(
     statusId,
     {
