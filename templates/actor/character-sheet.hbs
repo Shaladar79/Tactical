@@ -1,7 +1,8 @@
 <form class="tactical character-sheet {{cssClass}}" autocomplete="off">
 
   <header class="sheet-header">
-    <div class="character-heading">
+
+    <div class="header-portrait">
 
       <img
         class="profile-img"
@@ -12,56 +13,11 @@
         height="96"
       >
 
-      <div class="character-heading-fields">
-
-        <input
-          class="character-name"
-          name="name"
-          type="text"
-          value="{{actor.name}}"
-          placeholder="Character Name"
-        >
-
-        <div class="progression-summary">
-
-          <div class="summary-field">
-            <label>{{localize "TACTICAL.Progression.Rank"}}</label>
-            <span>{{progression.rank}}</span>
-          </div>
-
-          <div class="summary-field">
-            <label>{{localize "TACTICAL.Progression.EarnedXP"}}</label>
-            <input
-              name="system.xp.earned"
-              type="number"
-              min="0"
-              step="1"
-              value="{{progression.earnedXP}}"
-            >
-          </div>
-
-          <div class="summary-field">
-            <label>{{localize "TACTICAL.Progression.SpentXP"}}</label>
-            <span>{{progression.spentXP}}</span>
-          </div>
-
-          <div class="summary-field">
-            <label>{{localize "TACTICAL.Progression.AvailableXP"}}</label>
-            <span>{{progression.availableXP}}</span>
-          </div>
-
-        </div>
-
-      </div>
-
     </div>
-  </header>
 
-  <section class="sheet-body">
+    <div class="header-combat">
 
-    <section class="combat-summary">
-
-      <div class="resource-card">
+      <div class="header-resource">
         <label>{{localize "TACTICAL.Combat.Health"}}</label>
 
         <div class="resource-values">
@@ -76,7 +32,7 @@
         </div>
       </div>
 
-      <div class="resource-card">
+      <div class="header-resource">
         <label>{{localize "TACTICAL.Combat.Wounds"}}</label>
 
         <div class="resource-values">
@@ -91,7 +47,7 @@
         </div>
       </div>
 
-      <div class="resource-card">
+      <div class="header-resource">
         <label>{{localize "TACTICAL.Combat.ArmorIntegrity"}}</label>
 
         <div class="resource-values">
@@ -111,7 +67,7 @@
         </div>
       </div>
 
-      <div class="resource-card">
+      <div class="header-resource">
         <label>{{localize "TACTICAL.Combat.Toughness"}}</label>
 
         <input
@@ -122,24 +78,113 @@
         >
       </div>
 
-      <div class="resource-card">
+      <div class="header-resource">
         <label>{{localize "TACTICAL.Combat.Movement"}}</label>
-        <span>{{combat.movement}}</span>
+
+        <span class="derived-value">
+          {{combat.movement}}
+        </span>
       </div>
 
-      <div class="resource-card">
-        <label>{{localize "TACTICAL.Progression.RankDice"}}</label>
+    </div>
 
-        <div class="resource-values">
+    <div class="header-identity">
+
+      <div class="identity-field character-name-field">
+        <label>Name</label>
+
+        <input
+          class="character-name"
+          name="name"
+          type="text"
+          value="{{actor.name}}"
+          placeholder="Character Name"
+        >
+      </div>
+
+      <div class="identity-field">
+        <label>Ancestry</label>
+
+        <input
+          name="system.ancestryId"
+          type="text"
+          value="{{system.ancestryId}}"
+          placeholder="Ancestry"
+        >
+      </div>
+
+      <div class="identity-field">
+        <label>Archetype</label>
+
+        <input
+          name="system.archetypeId"
+          type="text"
+          value="{{system.archetypeId}}"
+          placeholder="Archetype"
+        >
+      </div>
+
+      <div class="header-progression">
+
+        <div class="header-rank">
+          <label>{{localize "TACTICAL.Progression.Rank"}}</label>
+
+          <span class="derived-value">
+            {{progression.rank}}
+          </span>
+        </div>
+
+        <div class="header-rank-dice">
+          <label>{{localize "TACTICAL.Progression.RankDice"}}</label>
+
+          <div class="resource-values">
+            <input
+              name="system.rankDice.value"
+              type="number"
+              min="0"
+              value="{{progression.rankDice.value}}"
+            >
+            <span>/</span>
+            <span>{{progression.rankDice.max}}</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <section class="sheet-body">
+
+    <section class="progression-section">
+
+      <h2>Progression</h2>
+
+      <div class="progression-summary">
+
+        <div class="summary-field">
+          <label>{{localize "TACTICAL.Progression.EarnedXP"}}</label>
+
           <input
-            name="system.rankDice.value"
+            name="system.xp.earned"
             type="number"
             min="0"
-            value="{{progression.rankDice.value}}"
+            step="1"
+            value="{{progression.earnedXP}}"
           >
-          <span>/</span>
-          <span>{{progression.rankDice.max}}</span>
         </div>
+
+        <div class="summary-field">
+          <label>{{localize "TACTICAL.Progression.SpentXP"}}</label>
+          <span>{{progression.spentXP}}</span>
+        </div>
+
+        <div class="summary-field">
+          <label>{{localize "TACTICAL.Progression.AvailableXP"}}</label>
+          <span>{{progression.availableXP}}</span>
+        </div>
+
       </div>
 
     </section>
