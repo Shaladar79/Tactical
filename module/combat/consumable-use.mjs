@@ -19,7 +19,8 @@
 
 import {
   canSpendActions,
-  spendActions
+  spendActions,
+  refundActions
 } from "./action-economy.mjs";
 
 /* -------------------------------------------- */
@@ -450,40 +451,9 @@ export async function commitConsumableUse(
       actionCost > 0
     ) {
 
-      const state =
-        actor.getFlag(
-          "tactical",
-          "actions"
-        ) ?? {};
-
-      const max =
-        Math.max(
-          0,
-          Number(
-            state.max
-          ) || 2
-        );
-
-      const current =
-        Math.max(
-          0,
-          Number(
-            state.current
-          ) || 0
-        );
-
-      await actor.setFlag(
-        "tactical",
-        "actions",
-        {
-          current:
-            Math.min(
-              max,
-              current + actionCost
-            ),
-
-          max
-        }
+      await refundActions(
+        actor,
+        actionCost
       );
     }
 
