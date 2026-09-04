@@ -30,6 +30,11 @@
  *
  * @returns {object|null}
  */
+import {
+  canSpendActions,
+  spendActions
+} from "./action-economy.mjs";
+
 export function prepareConsumableUse(
   actor,
   consumable
