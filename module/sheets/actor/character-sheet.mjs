@@ -22,6 +22,10 @@ import {
 } from "../../combat/stabilize-action.mjs";
 
 import {
+  enterOverwatch
+} from "../../combat/overwatch-action.mjs";
+
+import {
   promptTacticalRoll
 } from "../../dice/roll-dialog.mjs";
 
@@ -67,6 +71,7 @@ export class TacticalCharacterSheet
       rollAttribute: this.#onRollAttribute,
       rollWeapon: this.#onRollWeapon,
       reloadWeapon: this.#onReloadWeapon,
+      overwatch: this.#onOverwatch,
       stabilize: this.#onStabilize
     }
   };
@@ -643,6 +648,42 @@ export class TacticalCharacterSheet
     }
 
     await reloadWeapon(
+      weapon
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  Overwatch                                   */
+  /* -------------------------------------------- */
+
+  static async #onOverwatch(event, target) {
+
+    const weaponId =
+      target.dataset.weapon;
+
+    if (!weaponId) {
+      return;
+    }
+
+    const weapon =
+      this.actor.items.get(
+        weaponId
+      );
+
+    if (
+      !weapon ||
+      weapon.type !== "weapon"
+    ) {
+
+      ui.notifications.warn(
+        "Tactical | Weapon could not be found."
+      );
+
+      return;
+    }
+
+    await enterOverwatch(
+      this.actor,
       weapon
     );
   }
