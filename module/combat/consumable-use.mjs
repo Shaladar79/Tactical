@@ -17,23 +17,14 @@
  * genre-specific consumable types and traits.
  */
 
-/**
- * Prepare use of a Tactical Consumable Item.
- *
- * This does NOT consume quantity.
- *
- * @param {Actor} actor
- * Actor using the Consumable.
- *
- * @param {Item} consumable
- * Consumable Item being used.
- *
- * @returns {object|null}
- */
 import {
   canSpendActions,
   spendActions
 } from "./action-economy.mjs";
+
+/* -------------------------------------------- */
+/*  Combat Helpers                              */
+/* -------------------------------------------- */
 
 function getActorCombatant(actor) {
 
@@ -65,6 +56,20 @@ function isActorsTurn(actor) {
   );
 }
 
+/**
+ * Prepare use of a Tactical Consumable Item.
+ *
+ * This does NOT consume quantity
+ * or spend Actions.
+ *
+ * @param {Actor} actor
+ * Actor using the Consumable.
+ *
+ * @param {Item} consumable
+ * Consumable Item being used.
+ *
+ * @returns {object|null}
+ */
 export function prepareConsumableUse(
   actor,
   consumable
@@ -92,6 +97,52 @@ export function prepareConsumableUse(
 
   const system =
     consumable.system;
+
+  /* -------------------------------------------- */
+  /*  Combat / Action State                       */
+  /* -------------------------------------------- */
+
+  const combatant =
+    getActorCombatant(actor);
+
+  const inCombat =
+    combatant !== null;
+
+  const actionCost =
+    Math.max(
+      0,
+      Number(
+        system.actionCost
+      ) || 0
+    );
+
+  if (
+    inCombat &&
+    !isActorsTurn(actor)
+  ) {
+
+    ui.notifications.warn(
+      `It is not ${actor.name}'s turn.`
+    );
+
+    return null;
+  }
+
+  if (
+    inCombat &&
+    actionCost > 0 &&
+    !canSpendActions(
+      actor,
+      actionCost
+    )
+  ) {
+
+    ui.notifications.warn(
+      `${actor.name} does not have enough Actions to use ${consumable.name}.`
+    );
+
+    return null;
+  }
 
   /* -------------------------------------------- */
   /*  Quantity                                    */
@@ -208,13 +259,9 @@ export function prepareConsumableUse(
     sourceModule:
       system.sourceModule ?? "tactical",
 
-    actionCost:
-      Math.max(
-        0,
-        Number(
-          system.actionCost
-        ) || 0
-      ),
+    actionCost,
+
+    inCombat,
 
     consumedOnUse,
 
@@ -232,8 +279,9 @@ export function prepareConsumableUse(
 /**
  * Commit a prepared Consumable use.
  *
- * Quantity is only reduced here, after the caller
- * has successfully resolved the Consumable effect.
+ * Action cost and quantity are only committed
+ * after the caller has successfully resolved
+ * the Consumable effect.
  *
  * @param {Item} consumable
  * @param {object} preparedUse
@@ -277,6 +325,78 @@ export async function commitConsumableUse(
   }
 
   /* -------------------------------------------- */
+  /*  Action Commit                               */
+  /* -------------------------------------------- */
+
+  const actor =
+    consumable.actor ?? null;
+
+  const actionCost =
+    Math.max(
+      0,
+      Number(
+        preparedUse.actionCost
+      ) || 0
+    );
+
+  if (
+    preparedUse.inCombat &&
+    !actor
+  ) {
+
+    ui.notifications.error(
+      "Tactical | Could not determine the Actor using this Consumable."
+    );
+
+    return null;
+  }
+
+  if (
+    preparedUse.inCombat &&
+    !isActorsTurn(actor)
+  ) {
+
+    ui.notifications.warn(
+      `It is not ${actor.name}'s turn.`
+    );
+
+    return null;
+  }
+
+  if (
+    preparedUse.inCombat &&
+    actionCost > 0 &&
+    !canSpendActions(
+      actor,
+      actionCost
+    )
+  ) {
+
+    ui.notifications.warn(
+      `${actor.name} does not have enough Actions to use ${consumable.name}.`
+    );
+
+    return null;
+  }
+
+  if (
+    preparedUse.inCombat &&
+    actionCost > 0
+  ) {
+
+    const actionState =
+      await spendActions(
+        actor,
+        actionCost,
+        `Use ${consumable.name}`
+      );
+
+    if (!actionState) {
+      return null;
+    }
+  }
+
+  /* -------------------------------------------- */
   /*  No Consumption                              */
   /* -------------------------------------------- */
 
@@ -289,6 +409,11 @@ export async function commitConsumableUse(
 
       committed:
         true,
+
+      actionSpent:
+        preparedUse.inCombat
+          ? actionCost
+          : 0,
 
       quantity: {
         before:
@@ -304,13 +429,6 @@ export async function commitConsumableUse(
   /*  Re-Check Live Quantity                      */
   /* -------------------------------------------- */
 
-  /*
-   * Re-read the live Item value instead of trusting
-   * the prepared transaction.
-   *
-   * This protects against another action changing
-   * quantity between prepare and commit.
-   */
   const quantityBefore =
     Math.max(
       0,
@@ -319,7 +437,55 @@ export async function commitConsumableUse(
       ) || 0
     );
 
-  if (quantityBefore <= 0) {
+  if (
+    quantityBefore <= 0
+  ) {
+
+    /*
+     * Refund the Action if the quantity changed
+     * between prepare and commit.
+     */
+    if (
+      preparedUse.inCombat &&
+      actionCost > 0
+    ) {
+
+      const state =
+        actor.getFlag(
+          "tactical",
+          "actions"
+        ) ?? {};
+
+      const max =
+        Math.max(
+          0,
+          Number(
+            state.max
+          ) || 2
+        );
+
+      const current =
+        Math.max(
+          0,
+          Number(
+            state.current
+          ) || 0
+        );
+
+      await actor.setFlag(
+        "tactical",
+        "actions",
+        {
+          current:
+            Math.min(
+              max,
+              current + actionCost
+            ),
+
+          max
+        }
+      );
+    }
 
     ui.notifications.warn(
       `${consumable.name} has no uses remaining.`
@@ -335,7 +501,7 @@ export async function commitConsumableUse(
     );
 
   /* -------------------------------------------- */
-  /*  Commit                                      */
+  /*  Commit Quantity                             */
   /* -------------------------------------------- */
 
   await consumable.update({
@@ -343,11 +509,20 @@ export async function commitConsumableUse(
       quantityAfter
   });
 
+  /* -------------------------------------------- */
+  /*  Result                                      */
+  /* -------------------------------------------- */
+
   return {
     ...preparedUse,
 
     committed:
       true,
+
+    actionSpent:
+      preparedUse.inCombat
+        ? actionCost
+        : 0,
 
     quantity: {
       before:
