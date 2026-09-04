@@ -325,6 +325,20 @@
                 Attack
               </button>
 
+              {{#unless (eq weapon.weaponType "melee")}}
+
+                <button
+                  type="button"
+                  class="weapon-overwatch"
+                  data-action="overwatch"
+                  data-weapon="{{weapon.id}}"
+                  title="Enter Overwatch with {{weapon.name}}"
+                >
+                  Overwatch
+                </button>
+
+              {{/unless}}
+
               {{#if weapon.usesMagazine}}
 
                 <button
