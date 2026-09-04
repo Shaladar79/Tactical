@@ -54,6 +54,10 @@ import {
   registerOverwatchCombatHook
 } from "./module/combat/overwatch-combat-hook.mjs";
 
+import {
+  registerOverwatchMovementHook
+} from "./module/combat/overwatch-movement-hook.mjs";
+
 Hooks.once("init", () => {
   console.log(
     "Tactical | Initializing Tactical system"
@@ -188,6 +192,7 @@ Hooks.once("ready", () => {
   registerBleedingOutCombatHook();
   registerActionEconomyCombatHook();
   registerOverwatchCombatHook();
+  registerOverwatchMovementHook();
 
   console.log(
     "Tactical | Ready"
