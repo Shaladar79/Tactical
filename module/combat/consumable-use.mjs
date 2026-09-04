@@ -35,6 +35,36 @@ import {
   spendActions
 } from "./action-economy.mjs";
 
+function getActorCombatant(actor) {
+
+  if (
+    !actor ||
+    !game.combat
+  ) {
+    return null;
+  }
+
+  return game.combat.combatants.find(
+    combatant =>
+      combatant.actor?.id === actor.id
+  ) ?? null;
+}
+
+function isActorsTurn(actor) {
+
+  if (
+    !actor ||
+    !game.combat?.combatant
+  ) {
+    return false;
+  }
+
+  return (
+    game.combat.combatant.actor?.id ===
+    actor.id
+  );
+}
+
 export function prepareConsumableUse(
   actor,
   consumable
