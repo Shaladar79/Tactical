@@ -9,11 +9,13 @@
  *
  * 1. Require one target.
  * 2. Validate that the target can be stabilized.
- * 3. Build the acting character's Focus + Medicine pool.
- * 4. Open the normal player roll-options dialog.
- * 5. Send the check to the GM for TN approval.
- * 6. Roll Medicine.
- * 7. Apply the resulting Successes to the target.
+ * 3. Validate turn and Action availability.
+ * 4. Build the acting character's Focus + Medicine pool.
+ * 5. Open the normal player roll-options dialog.
+ * 6. Send the check to the GM for TN approval.
+ * 7. Roll Medicine.
+ * 8. Spend 1 Action once the roll is committed.
+ * 9. Apply the resulting Successes to the target.
  */
 
 import {
@@ -31,6 +33,45 @@ import {
 import {
   hasTacticalStatus
 } from "../status/foundry-status-effects.mjs";
+
+import {
+  canSpendActions,
+  spendActions
+} from "./action-economy.mjs";
+
+/* -------------------------------------------- */
+/*  Combat Helpers                              */
+/* -------------------------------------------- */
+
+function getActorCombatant(actor) {
+
+  if (
+    !actor ||
+    !game.combat
+  ) {
+    return null;
+  }
+
+  return game.combat.combatants.find(
+    combatant =>
+      combatant.actor?.id === actor.id
+  ) ?? null;
+}
+
+function isActorsTurn(actor) {
+
+  if (
+    !actor ||
+    !game.combat?.combatant
+  ) {
+    return false;
+  }
+
+  return (
+    game.combat.combatant.actor?.id ===
+    actor.id
+  );
+}
 
 /**
  * Perform a Stabilize Action.
@@ -56,6 +97,43 @@ export async function performStabilizeAction(
     throw new Error(
       "Tactical | Stabilize requires an acting Actor."
     );
+  }
+
+  /* -------------------------------------------- */
+  /*  Combat / Action State                       */
+  /* -------------------------------------------- */
+
+  const combatant =
+    getActorCombatant(actor);
+
+  const inCombat =
+    combatant !== null;
+
+  if (
+    inCombat &&
+    !isActorsTurn(actor)
+  ) {
+
+    ui.notifications.warn(
+      `It is not ${actor.name}'s turn.`
+    );
+
+    return null;
+  }
+
+  if (
+    inCombat &&
+    !canSpendActions(
+      actor,
+      1
+    )
+  ) {
+
+    ui.notifications.warn(
+      `${actor.name} does not have enough Actions to Stabilize.`
+    );
+
+    return null;
   }
 
   /* -------------------------------------------- */
@@ -259,6 +337,24 @@ export async function performStabilizeAction(
   }
 
   /* -------------------------------------------- */
+  /*  Spend Stabilize Action                      */
+  /* -------------------------------------------- */
+
+  if (inCombat) {
+
+    const actionState =
+      await spendActions(
+        actor,
+        1,
+        "Stabilize"
+      );
+
+    if (!actionState) {
+      return null;
+    }
+  }
+
+  /* -------------------------------------------- */
   /*  Extract Successes                           */
   /* -------------------------------------------- */
 
@@ -293,6 +389,11 @@ export async function performStabilizeAction(
 
     targetName:
       targetActor.name,
+
+    actionCost:
+      inCombat
+        ? 1
+        : 0,
 
     check:
       checkResult,
