@@ -27,6 +27,300 @@
 }
 
 /* -------------------------------------------- */
+/*  Character Sheet Structure                   */
+/* -------------------------------------------- */
+
+.tactical.character-sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* -------------------------------------------- */
+/*  Persistent Character Header                 */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .sheet-header {
+  flex: 0 0 auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.75rem;
+
+  padding: 0.75rem;
+
+  border-bottom: 2px solid var(--color-border-light-primary);
+
+  background: var(--color-bg);
+  z-index: 10;
+}
+
+/* -------------------------------------------- */
+/*  Header Top                                  */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  width: 100%;
+}
+
+/* -------------------------------------------- */
+/*  Portrait                                    */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .header-portrait {
+  flex: 0 0 112px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.tactical.character-sheet .profile-img {
+  display: block;
+
+  width: 96px;
+  height: 96px;
+
+  object-fit: cover;
+
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 4px;
+}
+
+/* -------------------------------------------- */
+/*  Identity                                    */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .header-identity {
+  flex: 1;
+
+  max-width: 390px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.4rem;
+}
+
+.tactical.character-sheet .identity-field {
+  display: grid;
+
+  grid-template-columns: 80px minmax(0, 1fr);
+
+  align-items: center;
+
+  gap: 0.5rem;
+}
+
+.tactical.character-sheet .identity-field label {
+  font-weight: 600;
+}
+
+.tactical.character-sheet .identity-field input {
+  width: 100%;
+  min-width: 0;
+}
+
+.tactical.character-sheet .character-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* -------------------------------------------- */
+/*  Rank / Rank Dice                            */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .header-progression {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 0.75rem;
+
+  margin-top: 0.25rem;
+}
+
+.tactical.character-sheet .header-rank,
+.tactical.character-sheet .header-rank-dice {
+  display: flex;
+  align-items: center;
+
+  gap: 0.5rem;
+
+  min-width: 0;
+}
+
+.tactical.character-sheet .header-rank label,
+.tactical.character-sheet .header-rank-dice label {
+  font-weight: 600;
+}
+
+.tactical.character-sheet .header-rank .derived-value {
+  min-width: 2rem;
+
+  text-align: center;
+  font-weight: 700;
+}
+
+/* -------------------------------------------- */
+/*  Header Combat Row                           */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .header-combat {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(0, 1.35fr)
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 0.5rem;
+
+  width: 100%;
+}
+
+/*
+ * Order comes from the HBS:
+ *
+ * Health
+ * Wounds
+ * Armor Integrity
+ * Toughness
+ * Movement
+ */
+
+.tactical.character-sheet .header-resource {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.25rem;
+
+  min-width: 0;
+
+  padding: 0.4rem;
+
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 4px;
+}
+
+.tactical.character-sheet .header-resource label {
+  width: 100%;
+
+  text-align: center;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.tactical.character-sheet .resource-values {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.25rem;
+
+  min-width: 0;
+}
+
+.tactical.character-sheet .header-resource input,
+.tactical.character-sheet .header-rank-dice input {
+  width: 3rem;
+  min-width: 0;
+
+  text-align: center;
+}
+
+.tactical.character-sheet .header-resource .derived-value {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 3rem;
+  min-height: 2rem;
+
+  font-weight: 700;
+}
+
+/* -------------------------------------------- */
+/*  Scrollable Sheet Body                       */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .sheet-body {
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 0.75rem;
+}
+
+/* -------------------------------------------- */
+/*  Progression                                 */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .progression-section {
+  margin-bottom: 0.75rem;
+}
+
+.tactical.character-sheet .progression-summary {
+  display: flex;
+  align-items: center;
+
+  gap: 0.75rem;
+
+  flex-wrap: wrap;
+}
+
+.tactical.character-sheet .summary-field {
+  display: flex;
+  align-items: center;
+
+  gap: 0.4rem;
+}
+
+.tactical.character-sheet .summary-field label {
+  font-weight: 600;
+}
+
+.tactical.character-sheet .summary-field input {
+  width: 5rem;
+}
+
+/* -------------------------------------------- */
+/*  Combat Actions                              */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .combat-actions {
+  display: flex;
+
+  gap: 0.5rem;
+
+  margin-bottom: 0.75rem;
+}
+
+/* -------------------------------------------- */
 /*  Session XP                                  */
 /* -------------------------------------------- */
 
