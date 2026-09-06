@@ -713,3 +713,108 @@
   width: 100%;
   margin: 0.5rem 0;
 }
+
+/* -------------------------------------------- */
+/*  Consumable Item Sheet Header                */
+/* -------------------------------------------- */
+
+.tactical.consumable-sheet .sheet-header {
+  padding: 0.75rem;
+
+  border-bottom:
+    2px solid var(--color-border-light-primary);
+
+  background: var(--color-bg);
+}
+
+.tactical.consumable-sheet .consumable-header-top {
+  display: grid;
+
+  grid-template-columns:
+    112px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 1rem;
+
+  width: 100%;
+}
+
+.tactical.consumable-sheet .header-portrait {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  min-width: 0;
+}
+
+.tactical.consumable-sheet .profile-img {
+  display: block;
+
+  width: 96px;
+  height: 96px;
+
+  object-fit: cover;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.consumable-sheet .consumable-header-identity {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.6rem;
+
+  min-width: 0;
+}
+
+.tactical.consumable-sheet .identity-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.2rem;
+
+  min-width: 0;
+}
+
+.tactical.consumable-sheet .identity-field label {
+  font-weight: 600;
+}
+
+.tactical.consumable-sheet .identity-field input {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.consumable-sheet .consumable-name-field input {
+  font-size: 1.1rem;
+
+  font-weight: 700;
+}
+
+.tactical.consumable-sheet .consumable-classification-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(0, 1.25fr)
+    minmax(100px, 0.7fr);
+
+  align-items: end;
+
+  gap: 0.65rem;
+
+  width: 100%;
+}
+
+.tactical.consumable-sheet .consumable-slot-field {
+  min-width: 0;
+}
