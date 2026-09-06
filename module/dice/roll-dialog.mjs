@@ -4,7 +4,7 @@
  *
  * Allows a player to configure their side of a Tactical roll:
  *
- * - Applicable Specialization
+ * - Applicable Specialization, when allowed
  * - Rank Die expenditure
  * - Temporary dice-pool modifier
  *
@@ -19,6 +19,8 @@
  * @param {number} options.basePool
  * @param {number} options.baseTN
  * @param {number} options.availableRankDice
+ * @param {boolean} options.allowSpecialization
+ * Whether the roll may use a Specialization.
  *
  * @returns {Promise<object|null>}
  * Returns null if the roll is cancelled.
@@ -27,7 +29,8 @@ export async function promptTacticalRoll({
   title = "Tactical Roll",
   basePool = 0,
   baseTN = 7,
-  availableRankDice = 0
+  availableRankDice = 0,
+  allowSpecialization = true
 } = {}) {
 
   const startingPool = Math.max(
@@ -47,6 +50,29 @@ export async function promptTacticalRoll({
     0,
     Number(availableRankDice) || 0
   );
+
+  const specializationContent =
+    allowSpecialization
+      ? `
+          <div class="form-group">
+
+            <label for="specialization">
+              Applicable Specialization
+            </label>
+
+            <input
+              id="specialization"
+              name="specialization"
+              type="checkbox"
+            >
+
+            <p class="hint">
+              Adds +1d12. Only one Specialization may apply to a roll.
+            </p>
+
+          </div>
+        `
+      : "";
 
   const formData =
     await foundry.applications.api.DialogV2.input({
@@ -73,23 +99,7 @@ export async function promptTacticalRoll({
 
           <hr>
 
-          <div class="form-group">
-
-            <label for="specialization">
-              Applicable Specialization
-            </label>
-
-            <input
-              id="specialization"
-              name="specialization"
-              type="checkbox"
-            >
-
-            <p class="hint">
-              Adds +1d12. Only one Specialization may apply to a roll.
-            </p>
-
-          </div>
+          ${specializationContent}
 
           <div class="form-group">
 
@@ -155,6 +165,7 @@ export async function promptTacticalRoll({
   /* -------------------------------------------- */
 
   const specialization =
+    allowSpecialization &&
     formData.get("specialization") === "on";
 
   const rankDie =
