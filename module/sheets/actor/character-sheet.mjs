@@ -326,6 +326,68 @@ export class TacticalCharacterSheet
     ];
 
     /* -------------------------------------------- */
+    /*  Saves                                       */
+    /* -------------------------------------------- */
+
+    const saveAbbreviations = {
+      might:
+        "MSB",
+
+      precision:
+        "PSB",
+
+      agility:
+        "ASB",
+
+      endurance:
+        "ESB",
+
+      focus:
+        "FSB",
+
+      resolve:
+        "RSB",
+
+      perception:
+        "PeSB"
+    };
+
+    const saves =
+      attributes.map(attribute => {
+
+        const bonus =
+          Math.max(
+            0,
+            Number(
+              system.saveBonuses?.[
+                attribute.id
+              ]
+            ) || 0
+          );
+
+        return {
+          id:
+            attribute.id,
+
+          name:
+            attribute.name,
+
+          abbreviation:
+            saveAbbreviations[
+              attribute.id
+            ],
+
+          attributeValue:
+            attribute.value,
+
+          bonus,
+
+          pool:
+            attribute.value + bonus
+        };
+      });
+
+    /* -------------------------------------------- */
     /*  Weapons                                     */
     /* -------------------------------------------- */
 
@@ -455,6 +517,8 @@ export class TacticalCharacterSheet
       attributes,
 
       skills,
+
+      saves,
 
       weapons,
 
