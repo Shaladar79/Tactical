@@ -99,7 +99,7 @@ export class TacticalCharacterData extends foundry.abstract.TypeDataModel {
 
       attributes: new SchemaField({
         might: attributeField(),
-        aim: attributeField(),
+        precision: attributeField(),
         agility: attributeField(),
         endurance: attributeField(),
         focus: attributeField(),
