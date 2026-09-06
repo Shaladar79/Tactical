@@ -25,7 +25,7 @@ export function registerCoreSkills(skillRegistry) {
 
   skillRegistry.register("ranged", {
     name: "Ranged",
-    attribute: "aim",
+    attribute: "precision",
     description:
       "Use of firearms, bows, launchers, and other ranged weapons.",
     source: "tactical"
