@@ -271,12 +271,12 @@ export class TacticalCharacterSheet
       },
 
       {
-        id: "aim",
+        id: "precision",
         name: game.i18n.localize(
-          "TACTICAL.Attributes.Aim"
+          "TACTICAL.Attributes.Precision"
         ),
         value:
-          Number(system.attributes?.aim) || 0
+          Number(system.attributes?.precision) || 0
       },
 
       {
@@ -346,7 +346,7 @@ export class TacticalCharacterSheet
           const attributeId =
             isMelee
               ? "might"
-              : "aim";
+              : "precision";
 
           const skillId =
             isMelee
@@ -770,7 +770,7 @@ export class TacticalCharacterSheet
     const attributeId =
       isMelee
         ? "might"
-        : "aim";
+        : "precision";
 
     const skillId =
       isMelee
