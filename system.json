@@ -17,7 +17,7 @@
 
   "url": "https://github.com/Shaladar79/Tactical",
   "manifest": "https://raw.githubusercontent.com/Shaladar79/Tactical/main/system.json",
-  "download": "https://github.com/Shaladar79/Tactical/releases/download/v0.1.9/tactical.zip",
+  "download": "https://github.com/Shaladar79/Tactical/archive/refs/heads/main.zip",
 
   "esmodules": [
     "tactical.mjs"
