@@ -6,7 +6,8 @@
  */
 
 import {
-  rollCharacterCheck
+  rollCharacterCheck,
+  rollCharacterSave
 } from "./character-rolls.mjs";
 
 import {
@@ -131,6 +132,7 @@ export class TacticalCharacterSheet
       switchAttributeSubTab: this.#onSwitchAttributeSubTab,
       rollSkill: this.#onRollSkill,
       rollAttribute: this.#onRollAttribute,
+      rollSave: this.#onRollSave,
       rollWeapon: this.#onRollWeapon,
       reloadWeapon: this.#onReloadWeapon,
       overwatch: this.#onOverwatch,
@@ -783,6 +785,109 @@ export class TacticalCharacterSheet
 
         specialization:
           options.specialization,
+
+        rankDie:
+          options.rankDie,
+
+        diceModifier:
+          options.diceModifier,
+
+        baseTN:
+          7,
+
+        flavor
+      }
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  Save Roll                                   */
+  /* -------------------------------------------- */
+
+  static async #onRollSave(event, target) {
+
+    const attributeId =
+      target.dataset.save;
+
+    if (!attributeId) {
+      return;
+    }
+
+    const attributeValue =
+      this.actor.system.attributes?.[
+        attributeId
+      ];
+
+    if (attributeValue === undefined) {
+
+      ui.notifications.warn(
+        `Tactical | Unknown Save Attribute: ${attributeId}`
+      );
+
+      return;
+    }
+
+    const generalSaveBonus =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.saveBonuses?.[
+            attributeId
+          ]
+        ) || 0
+      );
+
+    const basePool =
+      Math.max(
+        0,
+        Number(
+          attributeValue
+        ) || 0
+      ) +
+      generalSaveBonus;
+
+    const availableRankDice =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.rankDice?.value
+        ) || 0
+      );
+
+    const attributeName =
+      attributeId.charAt(0).toUpperCase() +
+      attributeId.slice(1);
+
+    const flavor =
+      `${this.actor.name}: ${attributeName} Save`;
+
+    const options =
+      await promptTacticalRoll({
+        title:
+          flavor,
+
+        basePool,
+
+        baseTN:
+          7,
+
+        availableRankDice,
+
+        allowSpecialization:
+          false
+      });
+
+    if (!options) {
+      return;
+    }
+
+    await rollCharacterSave(
+      this.actor,
+      {
+        attributeId,
+
+        conditionalBonus:
+          0,
 
         rankDie:
           options.rankDie,
