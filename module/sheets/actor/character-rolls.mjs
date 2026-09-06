@@ -22,6 +22,10 @@ import {
 } from "../../dice/tactical-roll.mjs";
 
 import {
+  rollActorSave
+} from "../../dice/actor-save.mjs";
+
+import {
   requestGMTNApproval
 } from "../../socket/roll-request-socket.mjs";
 
@@ -263,24 +267,8 @@ export async function rollCharacterCheck(
 /**
  * Roll a character Attribute Save.
  *
- * Save Pool =
- *
- * Attribute
- * + General Attribute Save Bonus
- * + applicable Conditional Save Bonuses
- * + other dice modifiers
- * + optional Rank Die
- *
- * Save Resolution =
- *
- * Each die meeting or exceeding the Save TN
- * generates one success.
- *
- * The Save succeeds when:
- *
- * Successes >= Save Difficulty
- *
- * Specializations do not apply to Saves by default.
+ * Character Saves use the shared Tactical
+ * Actor Save engine.
  *
  * @param {Actor} actor
  *
@@ -296,13 +284,14 @@ export async function rollCharacterCheck(
  * Whether one Rank Die is being spent.
  *
  * @param {number} options.diceModifier
- * Other dice-pool modifiers that are not Save Bonuses.
+ * Other dice-pool modifiers that are not
+ * Save Bonuses.
  *
  * @param {number} options.baseTN
- * Base Target Number before GM modifiers.
+ * Base Save Target Number before GM modifiers.
  *
  * @param {number} options.difficulty
- * Number of successes required to pass the Save.
+ * Number of successes required to pass.
  *
  * @param {string} options.flavor
  * Chat message flavor.
@@ -329,181 +318,36 @@ export async function rollCharacterSave(
 ) {
 
   /* -------------------------------------------- */
-  /*  Validation                                  */
+  /*  Character Validation                        */
   /* -------------------------------------------- */
 
   if (!actor || actor.type !== "character") {
+
     throw new Error(
       "Tactical | Character Saves require a character Actor."
     );
   }
 
-  if (!attributeId) {
-    throw new Error(
-      "Tactical | Character Saves require an Attribute."
-    );
-  }
-
-  const attributeValue =
-    actor.system.attributes?.[
-      attributeId
-    ];
-
-  if (attributeValue === undefined) {
-    throw new Error(
-      `Tactical | Unknown Save Attribute: ${attributeId}`
-    );
-  }
-
   /* -------------------------------------------- */
-  /*  Save Difficulty                             */
+  /*  Shared Actor Save                           */
   /* -------------------------------------------- */
 
-  const saveDifficulty =
-    Math.max(
-      1,
-      Math.floor(
-        Number(difficulty) || 1
-      )
-    );
+  return rollActorSave(
+    actor,
+    {
+      attributeId,
 
-  /* -------------------------------------------- */
-  /*  General Save Bonus                          */
-  /* -------------------------------------------- */
+      conditionalBonus,
 
-  const generalSaveBonus =
-    Math.max(
-      0,
-      Number(
-        actor.system.saveBonuses?.[
-          attributeId
-        ]
-      ) || 0
-    );
+      rankDie,
 
-  /* -------------------------------------------- */
-  /*  Conditional Save Bonuses                    */
-  /* -------------------------------------------- */
+      diceModifier,
 
-  const conditionalSaveBonus =
-    Math.max(
-      0,
-      Number(
-        conditionalBonus
-      ) || 0
-    );
+      baseTN,
 
-  /* -------------------------------------------- */
-  /*  Other Dice Modifiers                        */
-  /* -------------------------------------------- */
+      difficulty,
 
-  const otherDiceModifier =
-    Number(
-      diceModifier
-    ) || 0;
-
-  /*
-   * General and Conditional Save Bonuses are
-   * additional dice in the Save pool.
-   *
-   * They are passed through the shared character
-   * check helper as part of its dice modifier.
-   */
-  const totalSaveModifier =
-    generalSaveBonus +
-    conditionalSaveBonus +
-    otherDiceModifier;
-
-  /* -------------------------------------------- */
-  /*  Base Save Pool                              */
-  /* -------------------------------------------- */
-
-  const baseSavePool =
-    Math.max(
-      0,
-      Number(
-        attributeValue
-      ) || 0
-    ) +
-    generalSaveBonus +
-    conditionalSaveBonus;
-
-  /* -------------------------------------------- */
-  /*  Resolve Shared Character Roll               */
-  /* -------------------------------------------- */
-
-  const result =
-    await rollCharacterCheck(
-      actor,
-      {
-        attributeId,
-
-        skillId:
-          "",
-
-        specialization:
-          false,
-
-        rankDie,
-
-        diceModifier:
-          totalSaveModifier,
-
-        baseTN,
-
-        flavor
-      }
-    );
-
-  if (!result) {
-    return null;
-  }
-
-  /* -------------------------------------------- */
-  /*  Save Resolution                             */
-  /* -------------------------------------------- */
-
-  const successes =
-    Math.max(
-      0,
-      Number(
-        result.successes
-      ) || 0
-    );
-
-  const passed =
-    successes >= saveDifficulty;
-
-  const failed =
-    !passed;
-
-  /* -------------------------------------------- */
-  /*  Save Result                                 */
-  /* -------------------------------------------- */
-
-  return {
-    ...result,
-
-    save:
-      true,
-
-    saveBonus:
-      generalSaveBonus,
-
-    conditionalSaveBonus,
-
-    saveDiceModifier:
-      otherDiceModifier,
-
-    totalSaveModifier,
-
-    baseSavePool,
-
-    difficulty:
-      saveDifficulty,
-
-    passed,
-
-    failed
-  };
+      flavor
+    }
+  );
 }
