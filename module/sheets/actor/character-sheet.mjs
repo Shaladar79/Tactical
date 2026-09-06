@@ -34,6 +34,40 @@ const {
   sheets
 } = foundry.applications;
 
+/* -------------------------------------------- */
+/*  Character Sheet Tabs                        */
+/* -------------------------------------------- */
+
+const CHARACTER_SHEET_TABS = [
+  {
+    id: "combat",
+    label: "Combat"
+  },
+  {
+    id: "attributes",
+    label: "Attributes & Skills"
+  },
+  {
+    id: "talents",
+    label: "Talents"
+  },
+  {
+    id: "inventory",
+    label: "Inventory"
+  },
+  {
+    id: "progression",
+    label: "Progression"
+  }
+];
+
+const CHARACTER_SHEET_TAB_IDS =
+  new Set(
+    CHARACTER_SHEET_TABS.map(
+      tab => tab.id
+    )
+  );
+
 /**
  * Tactical Character Sheet
  */
@@ -67,6 +101,7 @@ export class TacticalCharacterSheet
     },
 
     actions: {
+      switchTab: this.#onSwitchTab,
       rollSkill: this.#onRollSkill,
       rollAttribute: this.#onRollAttribute,
       rollWeapon: this.#onRollWeapon,
@@ -98,6 +133,23 @@ export class TacticalCharacterSheet
 
     const actor = this.actor;
     const system = actor.system;
+
+    const activeTab =
+      CHARACTER_SHEET_TAB_IDS.has(
+        this._activeTab
+      )
+        ? this._activeTab
+        : "combat";
+
+    const tabs =
+      CHARACTER_SHEET_TABS.map(
+        tab => ({
+          ...tab,
+
+          active:
+            tab.id === activeTab
+        })
+      );
 
     const earnedXP =
       Math.max(
@@ -323,6 +375,10 @@ export class TacticalCharacterSheet
       editable:
         this.isEditable,
 
+      activeTab,
+
+      tabs,
+
       progression: {
         rank:
           system.rank ?? 0,
@@ -363,6 +419,34 @@ export class TacticalCharacterSheet
           system.movement ?? 0
       }
     };
+  }
+
+  /* -------------------------------------------- */
+  /*  Tab Switching                               */
+  /* -------------------------------------------- */
+
+  static async #onSwitchTab(event, target) {
+
+    const tabId =
+      target.dataset.tab;
+
+    if (
+      !tabId ||
+      !CHARACTER_SHEET_TAB_IDS.has(tabId)
+    ) {
+      return;
+    }
+
+    if (this._activeTab === tabId) {
+      return;
+    }
+
+    this._activeTab =
+      tabId;
+
+    await this.render({
+      force: true
+    });
   }
 
   /* -------------------------------------------- */
