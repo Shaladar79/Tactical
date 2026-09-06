@@ -14,31 +14,8 @@ import {
  */
 export function registerTacticalItemSheets() {
 
-  const {
-    Item
-  } = foundry.documents;
-
-  const {
-    ItemSheetV2
-  } = foundry.applications.sheets;
-
-  /*
-   * Remove Foundry's generic Item sheet for the
-   * Tactical system where appropriate.
-   *
-   * Tactical Item types should use their own
-   * dedicated sheets.
-   */
-  Items.unregisterSheet(
-    "core",
-    ItemSheetV2
-  );
-
-  /* -------------------------------------------- */
-  /*  Consumable                                  */
-  /* -------------------------------------------- */
-
-  Items.registerSheet(
+  DocumentSheetConfig.registerSheet(
+    Item,
     "tactical",
     TacticalConsumableSheet,
     {
@@ -46,11 +23,13 @@ export function registerTacticalItemSheets() {
         "consumable"
       ],
 
-      makeDefault:
-        true,
+      makeDefault: true,
 
-      label:
-        "Tactical Consumable"
+      label: "Tactical Consumable Sheet"
     }
+  );
+
+  console.log(
+    "Tactical | Registered Consumable Item Sheet"
   );
 }
