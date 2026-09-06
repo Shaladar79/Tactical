@@ -27,6 +27,10 @@ import {
 } from "../../combat/overwatch-action.mjs";
 
 import {
+  useExplosiveConsumable
+} from "../../combat/explosive-use.mjs";
+
+import {
   promptTacticalRoll
 } from "../../dice/roll-dialog.mjs";
 
@@ -135,6 +139,7 @@ export class TacticalCharacterSheet
       rollSave: this.#onRollSave,
       rollWeapon: this.#onRollWeapon,
       reloadWeapon: this.#onReloadWeapon,
+      useConsumable: this.#onUseConsumable,
       overwatch: this.#onOverwatch,
       stabilize: this.#onStabilize
     }
@@ -479,6 +484,108 @@ export class TacticalCharacterSheet
         });
 
     /* -------------------------------------------- */
+    /*  Consumables                                 */
+    /* -------------------------------------------- */
+
+    const consumables =
+      actor.items
+        .filter(
+          item =>
+            item.type === "consumable"
+        )
+        .map(consumable => {
+
+          const consumableSystem =
+            consumable.system;
+
+          const dps =
+            Math.max(
+              0,
+              Number(
+                consumableSystem.dps
+              ) || 0
+            );
+
+          const blastRadius =
+            Math.max(
+              0,
+              Number(
+                consumableSystem.blastRadius
+              ) || 0
+            );
+
+          return {
+            id:
+              consumable.id,
+
+            name:
+              consumable.name,
+
+            img:
+              consumable.img,
+
+            consumableType:
+              consumableSystem.consumableType ?? "",
+
+            quantity:
+              Math.max(
+                0,
+                Number(
+                  consumableSystem.quantity
+                ) || 0
+              ),
+
+            consumedOnUse:
+              consumableSystem.consumedOnUse !== false,
+
+            actionCost:
+              Math.max(
+                0,
+                Number(
+                  consumableSystem.actionCost
+                ) || 0
+              ),
+
+            dps,
+
+            penetration:
+              Math.max(
+                0,
+                Number(
+                  consumableSystem.penetration
+                ) || 0
+              ),
+
+            blastRadius,
+
+            saveTN:
+              Math.max(
+                2,
+                Math.min(
+                  12,
+                  Number(
+                    consumableSystem.saveTN
+                  ) || 7
+                )
+              ),
+
+            saveDifficulty:
+              Math.max(
+                1,
+                Math.floor(
+                  Number(
+                    consumableSystem.saveDifficulty
+                  ) || 1
+                )
+              ),
+
+            isExplosive:
+              dps > 0 &&
+              blastRadius > 0
+          };
+        });
+
+    /* -------------------------------------------- */
     /*  Sheet Context                               */
     /* -------------------------------------------- */
 
@@ -523,6 +630,8 @@ export class TacticalCharacterSheet
       saves,
 
       weapons,
+
+      consumables,
 
       combat: {
         health:
@@ -911,6 +1020,7 @@ export class TacticalCharacterSheet
       }
     );
   }
+
   /* -------------------------------------------- */
   /*  Weapon Attack                               */
   /* -------------------------------------------- */
@@ -999,6 +1109,174 @@ export class TacticalCharacterSheet
 
     await reloadWeapon(
       weapon
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  Use Consumable                              */
+  /* -------------------------------------------- */
+
+  static async #onUseConsumable(event, target) {
+
+    const consumableId =
+      target.dataset.consumable;
+
+    if (!consumableId) {
+      return;
+    }
+
+    const consumable =
+      this.actor.items.get(
+        consumableId
+      );
+
+    if (
+      !consumable ||
+      consumable.type !== "consumable"
+    ) {
+
+      ui.notifications.warn(
+        "Tactical | Consumable could not be found."
+      );
+
+      return;
+    }
+
+    const dps =
+      Math.max(
+        0,
+        Number(
+          consumable.system.dps
+        ) || 0
+      );
+
+    const blastRadius =
+      Math.max(
+        0,
+        Number(
+          consumable.system.blastRadius
+        ) || 0
+      );
+
+    /*
+     * Only damaging blast Consumables are routed
+     * through the explosive workflow for now.
+     */
+    if (
+      dps <= 0 ||
+      blastRadius <= 0
+    ) {
+
+      ui.notifications.warn(
+        `${consumable.name} does not use the explosive damage workflow.`
+      );
+
+      return;
+    }
+
+    /* -------------------------------------------- */
+    /*  Explosive Attack Pool                       */
+    /* -------------------------------------------- */
+
+    const precision =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.attributes?.precision
+        ) || 0
+      );
+
+    const athletics =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.skills?.athletics
+        ) || 0
+      );
+
+    const basePool =
+      precision + athletics;
+
+    const availableRankDice =
+      Math.max(
+        0,
+        Number(
+          this.actor.system.rankDice?.value
+        ) || 0
+      );
+
+    const flavor =
+      `${this.actor.name}: ${consumable.name} — Precision + Athletics`;
+
+    /* -------------------------------------------- */
+    /*  Player Roll Options                         */
+    /* -------------------------------------------- */
+
+    const options =
+      await promptTacticalRoll({
+        title:
+          flavor,
+
+        basePool,
+
+        baseTN:
+          7,
+
+        availableRankDice
+      });
+
+    if (!options) {
+      return;
+    }
+
+    /* -------------------------------------------- */
+    /*  Explosive Attack Roll                       */
+    /* -------------------------------------------- */
+
+    const result =
+      await rollCharacterCheck(
+        this.actor,
+        {
+          attributeId:
+            "precision",
+
+          skillId:
+            "athletics",
+
+          specialization:
+            options.specialization,
+
+          rankDie:
+            options.rankDie,
+
+          diceModifier:
+            options.diceModifier,
+
+          baseTN:
+            7,
+
+          flavor
+        }
+      );
+
+    if (!result) {
+      return;
+    }
+
+    /* -------------------------------------------- */
+    /*  Resolve Blast                               */
+    /* -------------------------------------------- */
+
+    await useExplosiveConsumable(
+      this.actor,
+      consumable,
+      {
+        successes:
+          result.successes,
+
+        criticalPoints:
+          result.criticalPoints
+      }
     );
   }
 
