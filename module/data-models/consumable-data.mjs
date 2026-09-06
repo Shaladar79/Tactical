@@ -106,6 +106,25 @@ export class TacticalConsumableData extends foundry.abstract.TypeDataModel {
       }),
 
       /* -------------------------------------------- */
+      /*  Save                                        */
+      /* -------------------------------------------- */
+
+      saveTN: new NumberField({
+        required: true,
+        integer: true,
+        min: 2,
+        max: 12,
+        initial: 7
+      }),
+
+      saveDifficulty: new NumberField({
+        required: true,
+        integer: true,
+        min: 1,
+        initial: 1
+      }),
+
+      /* -------------------------------------------- */
       /*  Logistics                                   */
       /* -------------------------------------------- */
 
