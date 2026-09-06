@@ -565,9 +565,15 @@
 
                   <div class="skill-row save-row">
 
-                    <div class="save-name">
-                      <strong>{{save.name}}</strong>
-                    </div>
+                    <button
+                      type="button"
+                      class="skill-roll save-roll"
+                      data-action="rollSave"
+                      data-save="{{save.id}}"
+                      title="Roll {{save.name}} Save"
+                    >
+                      {{save.name}}
+                    </button>
 
                     <div class="skill-attribute">
                       {{save.name}}
