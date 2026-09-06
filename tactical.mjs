@@ -27,6 +27,10 @@ import {
 } from "./module/sheets/actor/register-actor-sheets.mjs";
 
 import {
+  registerTacticalItemSheets
+} from "./module/sheets/item/register-item-sheets.mjs";
+
+import {
   runSessionXPAward
 } from "./module/progression/session-xp-coordinator.mjs";
 
@@ -74,6 +78,12 @@ Hooks.once("init", () => {
   /* -------------------------------------------- */
 
   registerTacticalActorSheets();
+
+  /* -------------------------------------------- */
+  /*  Item Sheets                                 */
+  /* -------------------------------------------- */
+
+  registerTacticalItemSheets();
 
   /* -------------------------------------------- */
   /*  Initiative                                  */
