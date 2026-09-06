@@ -1,0 +1,387 @@
+<div class="tactical item-sheet consumable-sheet {{cssClass}}">
+
+  <header class="sheet-header">
+
+    <div class="header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="header-identity">
+
+        <div class="identity-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Consumable Name"
+          >
+
+        </div>
+
+        <div class="identity-field">
+
+          <label>Consumable Type</label>
+
+          <input
+            name="system.consumableType"
+            type="text"
+            value="{{classification.consumableType}}"
+            placeholder="grenade, stim, medkit..."
+          >
+
+        </div>
+
+        <div class="identity-field">
+
+          <label>Technology Type</label>
+
+          <input
+            name="system.technologyType"
+            type="text"
+            value="{{classification.technologyType}}"
+            placeholder="Technology Type"
+          >
+
+        </div>
+
+        <div class="identity-field">
+
+          <label>Slot</label>
+
+          <input
+            name="system.slot"
+            type="text"
+            value="{{classification.slot}}"
+          >
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <section class="sheet-body">
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Usage                                    --}}
+    {{!-- ---------------------------------------- --}}
+
+    <section class="item-section">
+
+      <h2>Usage</h2>
+
+      <div class="item-field-grid">
+
+        <div class="item-field">
+
+          <label>Quantity</label>
+
+          <input
+            name="system.quantity"
+            type="number"
+            min="0"
+            step="1"
+            value="{{usage.quantity}}"
+          >
+
+        </div>
+
+        <div class="item-field">
+
+          <label>Action Cost</label>
+
+          <input
+            name="system.actionCost"
+            type="number"
+            min="0"
+            step="1"
+            value="{{usage.actionCost}}"
+          >
+
+        </div>
+
+        <div class="item-field checkbox-field">
+
+          <label>Consumed on Use</label>
+
+          <input
+            name="system.consumedOnUse"
+            type="checkbox"
+            {{checked usage.consumedOnUse}}
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <hr>
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Effects                                  --}}
+    {{!-- ---------------------------------------- --}}
+
+    <section class="item-section">
+
+      <h2>Effects</h2>
+
+      <div class="item-field-grid">
+
+        <div class="item-field">
+
+          <label>Healing</label>
+
+          <input
+            name="system.healing"
+            type="number"
+            min="0"
+            step="1"
+            value="{{effects.healing}}"
+          >
+
+        </div>
+
+        <div class="item-field">
+
+          <label>Wound Removal</label>
+
+          <input
+            name="system.woundRemoval"
+            type="number"
+            min="0"
+            step="1"
+            value="{{effects.woundRemoval}}"
+          >
+
+        </div>
+
+        <div class="item-field">
+
+          <label>DPS</label>
+
+          <input
+            name="system.dps"
+            type="number"
+            min="0"
+            step="1"
+            value="{{effects.dps}}"
+          >
+
+        </div>
+
+        <div class="item-field">
+
+          <label>Penetration</label>
+
+          <input
+            name="system.penetration"
+            type="number"
+            min="0"
+            step="1"
+            value="{{effects.penetration}}"
+          >
+
+        </div>
+
+        <div class="item-field">
+
+          <label>Blast Radius</label>
+
+          <input
+            name="system.blastRadius"
+            type="number"
+            min="0"
+            step="1"
+            value="{{effects.blastRadius}}"
+          >
+
+        </div>
+
+      </div>
+
+      <p class="hint">
+        Damaging explosives use DPS, Penetration, and Blast Radius.
+        Healing consumables may use Healing and Wound Removal instead.
+      </p>
+
+    </section>
+
+    <hr>
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Save                                     --}}
+    {{!-- ---------------------------------------- --}}
+
+    <section class="item-section">
+
+      <h2>Save</h2>
+
+      <div class="item-field-grid">
+
+        <div class="item-field">
+
+          <label>Save TN</label>
+
+          <input
+            name="system.saveTN"
+            type="number"
+            min="2"
+            max="12"
+            step="1"
+            value="{{save.tn}}"
+          >
+
+        </div>
+
+        <div class="item-field">
+
+          <label>Save Difficulty</label>
+
+          <input
+            name="system.saveDifficulty"
+            type="number"
+            min="1"
+            step="1"
+            value="{{save.difficulty}}"
+          >
+
+        </div>
+
+      </div>
+
+      <p class="hint">
+        For explosives, qualifying targets make an Agility Save.
+        A successful Save reduces Raw Damage by half.
+      </p>
+
+    </section>
+
+    <hr>
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Logistics                                --}}
+    {{!-- ---------------------------------------- --}}
+
+    <section class="item-section">
+
+      <h2>Logistics</h2>
+
+      <div class="item-field-grid">
+
+        <div class="item-field">
+
+          <label>Supply Value</label>
+
+          <input
+            name="system.supplyValue"
+            type="number"
+            min="0"
+            step="1"
+            value="{{logistics.supplyValue}}"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <hr>
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Traits                                   --}}
+    {{!-- ---------------------------------------- --}}
+
+    <section class="item-section">
+
+      <h2>Traits</h2>
+
+      <p class="hint">
+        Traits are stored as an array. Direct trait editing UI
+        will be expanded later.
+      </p>
+
+      {{#if traits.length}}
+
+        <div class="trait-list">
+
+          {{#each traits as |trait|}}
+
+            <span class="trait-tag">
+              {{trait}}
+            </span>
+
+          {{/each}}
+
+        </div>
+
+      {{else}}
+
+        <p class="hint">
+          No Traits.
+        </p>
+
+      {{/if}}
+
+    </section>
+
+    <hr>
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Restrictions / Source                    --}}
+    {{!-- ---------------------------------------- --}}
+
+    <section class="item-section">
+
+      <h2>Restrictions & Source</h2>
+
+      <div class="item-field-grid">
+
+        <div class="item-field checkbox-field">
+
+          <label>Restricted</label>
+
+          <input
+            name="system.restricted"
+            type="checkbox"
+            {{checked restrictions.restricted}}
+          >
+
+        </div>
+
+        <div class="item-field">
+
+          <label>Source Module</label>
+
+          <input
+            name="system.sourceModule"
+            type="text"
+            value="{{restrictions.sourceModule}}"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </section>
+
+</div>
