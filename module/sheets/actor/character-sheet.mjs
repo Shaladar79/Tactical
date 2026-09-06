@@ -800,7 +800,7 @@ export class TacticalCharacterSheet
     );
   }
 
-  /* -------------------------------------------- */
+   /* -------------------------------------------- */
   /*  Save Roll                                   */
   /* -------------------------------------------- */
 
@@ -874,7 +874,13 @@ export class TacticalCharacterSheet
         availableRankDice,
 
         allowSpecialization:
-          false
+          false,
+
+        allowDifficulty:
+          true,
+
+        baseDifficulty:
+          1
       });
 
     if (!options) {
@@ -898,11 +904,13 @@ export class TacticalCharacterSheet
         baseTN:
           7,
 
+        difficulty:
+          options.difficulty,
+
         flavor
       }
     );
   }
-
   /* -------------------------------------------- */
   /*  Weapon Attack                               */
   /* -------------------------------------------- */
