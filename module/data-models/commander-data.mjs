@@ -34,6 +34,30 @@ function resourceField({ value = 0, max = 0 } = {}) {
 }
 
 /**
+ * Reusable Tactical Attribute field.
+ */
+function attributeField() {
+  return new NumberField({
+    required: true,
+    integer: true,
+    min: 0,
+    initial: 0
+  });
+}
+
+/**
+ * Reusable general Save Bonus field.
+ */
+function saveBonusField() {
+  return new NumberField({
+    required: true,
+    integer: true,
+    min: 0,
+    initial: 0
+  });
+}
+
+/**
  * Commander-Class enemy data.
  */
 export class TacticalCommanderData extends foundry.abstract.TypeDataModel {
@@ -57,6 +81,62 @@ export class TacticalCommanderData extends foundry.abstract.TypeDataModel {
         integer: true,
         min: 0,
         initial: 0
+      }),
+
+      /* -------------------------------------------- */
+      /*  Tactical Attributes                         */
+      /* -------------------------------------------- */
+
+      attributes: new SchemaField({
+
+        might:
+          attributeField(),
+
+        precision:
+          attributeField(),
+
+        agility:
+          attributeField(),
+
+        endurance:
+          attributeField(),
+
+        focus:
+          attributeField(),
+
+        resolve:
+          attributeField(),
+
+        perception:
+          attributeField()
+      }),
+
+      /* -------------------------------------------- */
+      /*  General Save Bonuses                        */
+      /* -------------------------------------------- */
+
+      saveBonuses: new SchemaField({
+
+        might:
+          saveBonusField(),
+
+        precision:
+          saveBonusField(),
+
+        agility:
+          saveBonusField(),
+
+        endurance:
+          saveBonusField(),
+
+        focus:
+          saveBonusField(),
+
+        resolve:
+          saveBonusField(),
+
+        perception:
+          saveBonusField()
       }),
 
       /* -------------------------------------------- */
@@ -86,7 +166,17 @@ export class TacticalCommanderData extends foundry.abstract.TypeDataModel {
         min: 0,
         initial: 0
       }),
-      
+
+      /*
+       * Legacy enemy Resolve value.
+       *
+       * Retained temporarily for compatibility with
+       * existing enemy systems that may still read
+       * system.resolve directly.
+       *
+       * New Save logic should use:
+       * system.attributes.resolve
+       */
       resolve: new NumberField({
         required: true,
         integer: true,
@@ -136,7 +226,10 @@ export class TacticalCommanderData extends foundry.abstract.TypeDataModel {
      * R4 = 4
      * etc.
      */
-    this.wounds.max = 2 + Math.ceil(this.rank / 2);
+    this.wounds.max =
+      2 + Math.ceil(
+        this.rank / 2
+      );
 
     /*
      * Clamp current resources.
