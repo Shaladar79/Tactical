@@ -68,6 +68,32 @@ const CHARACTER_SHEET_TAB_IDS =
     )
   );
 
+/* -------------------------------------------- */
+/*  Attributes & Skills Sub-Tabs                */
+/* -------------------------------------------- */
+
+const ATTRIBUTE_SHEET_SUBTABS = [
+  {
+    id: "attributes",
+    label: "Attributes"
+  },
+  {
+    id: "skills",
+    label: "Skills"
+  },
+  {
+    id: "resists",
+    label: "Resists"
+  }
+];
+
+const ATTRIBUTE_SHEET_SUBTAB_IDS =
+  new Set(
+    ATTRIBUTE_SHEET_SUBTABS.map(
+      tab => tab.id
+    )
+  );
+
 /**
  * Tactical Character Sheet
  */
@@ -102,6 +128,7 @@ export class TacticalCharacterSheet
 
     actions: {
       switchTab: this.#onSwitchTab,
+      switchAttributeSubTab: this.#onSwitchAttributeSubTab,
       rollSkill: this.#onRollSkill,
       rollAttribute: this.#onRollAttribute,
       rollWeapon: this.#onRollWeapon,
@@ -134,6 +161,10 @@ export class TacticalCharacterSheet
     const actor = this.actor;
     const system = actor.system;
 
+    /* -------------------------------------------- */
+    /*  Main Tab State                              */
+    /* -------------------------------------------- */
+
     const activeTab =
       CHARACTER_SHEET_TAB_IDS.has(
         this._activeTab
@@ -148,6 +179,27 @@ export class TacticalCharacterSheet
 
           active:
             tab.id === activeTab
+        })
+      );
+
+    /* -------------------------------------------- */
+    /*  Attribute Sub-Tab State                     */
+    /* -------------------------------------------- */
+
+    const activeAttributeSubTab =
+      ATTRIBUTE_SHEET_SUBTAB_IDS.has(
+        this._activeAttributeSubTab
+      )
+        ? this._activeAttributeSubTab
+        : "attributes";
+
+    const attributeSubTabs =
+      ATTRIBUTE_SHEET_SUBTABS.map(
+        tab => ({
+          ...tab,
+
+          active:
+            tab.id === activeAttributeSubTab
         })
       );
 
@@ -379,6 +431,10 @@ export class TacticalCharacterSheet
 
       tabs,
 
+      activeAttributeSubTab,
+
+      attributeSubTabs,
+
       progression: {
         rank:
           system.rank ?? 0,
@@ -422,7 +478,7 @@ export class TacticalCharacterSheet
   }
 
   /* -------------------------------------------- */
-  /*  Tab Switching                               */
+  /*  Main Tab Switching                         */
   /* -------------------------------------------- */
 
   static async #onSwitchTab(event, target) {
@@ -442,6 +498,39 @@ export class TacticalCharacterSheet
     }
 
     this._activeTab =
+      tabId;
+
+    await this.render({
+      force: true
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Attribute Sub-Tab Switching                */
+  /* -------------------------------------------- */
+
+  static async #onSwitchAttributeSubTab(
+    event,
+    target
+  ) {
+
+    const tabId =
+      target.dataset.attributeSubtab;
+
+    if (
+      !tabId ||
+      !ATTRIBUTE_SHEET_SUBTAB_IDS.has(tabId)
+    ) {
+      return;
+    }
+
+    if (
+      this._activeAttributeSubTab === tabId
+    ) {
+      return;
+    }
+
+    this._activeAttributeSubTab =
       tabId;
 
     await this.render({
