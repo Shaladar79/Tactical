@@ -39,7 +39,7 @@ import {
  *
  * Default ranged pairing:
  *
- * Aim + Ranged
+ * Precision + Ranged
  *
  * @param {Actor} actor
  * Actor making the reaction attack.
@@ -193,7 +193,7 @@ export async function resolveOverwatchReaction(
     Math.max(
       0,
       Number(
-        actor.system.attributes?.aim
+        actor.system.attributes?.precision
       ) || 0
     );
 
