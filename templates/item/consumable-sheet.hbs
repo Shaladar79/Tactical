@@ -2,7 +2,7 @@
 
   <header class="sheet-header">
 
-    <div class="header-top">
+    <div class="header-top consumable-header-top">
 
       <div class="header-portrait">
 
@@ -17,9 +17,13 @@
 
       </div>
 
-      <div class="header-identity">
+      <div class="header-identity consumable-header-identity">
 
-        <div class="identity-field">
+        {{!-- ------------------------------------ --}}
+        {{!--  Name Row                             --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="identity-field consumable-name-field">
 
           <label>Name</label>
 
@@ -32,41 +36,49 @@
 
         </div>
 
-        <div class="identity-field">
+        {{!-- ------------------------------------ --}}
+        {{!--  Classification Row                   --}}
+        {{!-- ------------------------------------ --}}
 
-          <label>Consumable Type</label>
+        <div class="consumable-classification-row">
 
-          <input
-            name="system.consumableType"
-            type="text"
-            value="{{classification.consumableType}}"
-            placeholder="grenade, stim, medkit..."
-          >
+          <div class="identity-field">
 
-        </div>
+            <label>Consumable Type</label>
 
-        <div class="identity-field">
+            <input
+              name="system.consumableType"
+              type="text"
+              value="{{classification.consumableType}}"
+              placeholder="grenade, stim, medkit..."
+            >
 
-          <label>Technology Type</label>
+          </div>
 
-          <input
-            name="system.technologyType"
-            type="text"
-            value="{{classification.technologyType}}"
-            placeholder="Technology Type"
-          >
+          <div class="identity-field">
 
-        </div>
+            <label>Technology Type</label>
 
-        <div class="identity-field">
+            <input
+              name="system.technologyType"
+              type="text"
+              value="{{classification.technologyType}}"
+              placeholder="Technology Type"
+            >
 
-          <label>Slot</label>
+          </div>
 
-          <input
-            name="system.slot"
-            type="text"
-            value="{{classification.slot}}"
-          >
+          <div class="identity-field consumable-slot-field">
+
+            <label>Slot</label>
+
+            <input
+              name="system.slot"
+              type="text"
+              value="{{classification.slot}}"
+            >
+
+          </div>
 
         </div>
 
