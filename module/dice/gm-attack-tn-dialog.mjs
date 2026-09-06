@@ -321,7 +321,7 @@ export async function promptGMAttackTN({
   /* -------------------------------------------- */
 
   const rangeBand =
-    formData.get("rangeBand") || "short";
+    formData.rangeBand || "short";
 
   const rangeModifier =
     getRangeModifier(rangeBand);
@@ -333,31 +333,31 @@ export async function promptGMAttackTN({
   const modifiers = {
 
     lightCover:
-      formData.get("lightCover") === "on",
+      Boolean(formData.lightCover),
 
     heavyCover:
-      formData.get("heavyCover") === "on",
+      Boolean(formData.heavyCover),
 
     flanking:
-      formData.get("flanking") === "on",
+      Boolean(formData.flanking),
 
     higherElevation:
-      formData.get("higherElevation") === "on",
+      Boolean(formData.higherElevation),
 
     lowerElevation:
-      formData.get("lowerElevation") === "on",
+      Boolean(formData.lowerElevation),
 
     situationalMinus2:
-      formData.get("situationalMinus2") === "on",
+      Boolean(formData.situationalMinus2),
 
     situationalMinus1:
-      formData.get("situationalMinus1") === "on",
+      Boolean(formData.situationalMinus1),
 
     situationalPlus1:
-      formData.get("situationalPlus1") === "on",
+      Boolean(formData.situationalPlus1),
 
     situationalPlus2:
-      formData.get("situationalPlus2") === "on"
+      Boolean(formData.situationalPlus2)
   };
 
   /* -------------------------------------------- */
