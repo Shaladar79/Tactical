@@ -328,6 +328,7 @@ export async function requestDamageApplication({
   criticalPoints = 0,
 
   dps = 0,
+  damageMultiplier = 1,
   penetration = 0
 } = {}) {
 
@@ -386,6 +387,12 @@ export async function requestDamageApplication({
       Math.max(
         0,
         Number(dps) || 0
+      ),
+
+    damageMultiplier:
+      Math.max(
+        0,
+        Number(damageMultiplier) || 0
       ),
 
     penetration:
@@ -547,6 +554,9 @@ async function handleDamageRequest(message) {
       dps:
         message.dps,
 
+      damageMultiplier:
+        message.damageMultiplier,
+
       penetration:
         message.penetration,
 
@@ -643,6 +653,16 @@ async function handleDamageRequest(message) {
       `
       : "";
 
+  const damageMultiplierText =
+    damageResult.damageMultiplier !== 1
+      ? `
+          <p>
+            <strong>Damage Multiplier:</strong>
+            ${damageResult.damageMultiplier}
+          </p>
+        `
+      : "";
+
   const confirmed =
     await foundry.applications.api.DialogV2.confirm({
       window: {
@@ -689,6 +709,8 @@ async function handleDamageRequest(message) {
             <strong>Raw Damage:</strong>
             ${damageResult.rawDamage}
           </p>
+
+          ${damageMultiplierText}
 
           <p>
             <strong>Penetration:</strong>
