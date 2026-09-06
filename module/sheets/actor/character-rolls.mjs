@@ -271,6 +271,15 @@ export async function rollCharacterCheck(
  * + other dice modifiers
  * + optional Rank Die
  *
+ * Save Resolution =
+ *
+ * Each die meeting or exceeding the Save TN
+ * generates one success.
+ *
+ * The Save succeeds when:
+ *
+ * Successes >= Save Difficulty
+ *
  * Specializations do not apply to Saves by default.
  *
  * @param {Actor} actor
@@ -292,6 +301,9 @@ export async function rollCharacterCheck(
  * @param {number} options.baseTN
  * Base Target Number before GM modifiers.
  *
+ * @param {number} options.difficulty
+ * Number of successes required to pass the Save.
+ *
  * @param {string} options.flavor
  * Chat message flavor.
  *
@@ -309,6 +321,8 @@ export async function rollCharacterSave(
     diceModifier = 0,
 
     baseTN = 7,
+
+    difficulty = 1,
 
     flavor = "Tactical Save"
   } = {}
@@ -340,6 +354,18 @@ export async function rollCharacterSave(
       `Tactical | Unknown Save Attribute: ${attributeId}`
     );
   }
+
+  /* -------------------------------------------- */
+  /*  Save Difficulty                             */
+  /* -------------------------------------------- */
+
+  const saveDifficulty =
+    Math.max(
+      1,
+      Math.floor(
+        Number(difficulty) || 1
+      )
+    );
 
   /* -------------------------------------------- */
   /*  General Save Bonus                          */
@@ -434,6 +460,24 @@ export async function rollCharacterSave(
   }
 
   /* -------------------------------------------- */
+  /*  Save Resolution                             */
+  /* -------------------------------------------- */
+
+  const successes =
+    Math.max(
+      0,
+      Number(
+        result.successes
+      ) || 0
+    );
+
+  const passed =
+    successes >= saveDifficulty;
+
+  const failed =
+    !passed;
+
+  /* -------------------------------------------- */
   /*  Save Result                                 */
   /* -------------------------------------------- */
 
@@ -453,6 +497,13 @@ export async function rollCharacterSave(
 
     totalSaveModifier,
 
-    baseSavePool
+    baseSavePool,
+
+    difficulty:
+      saveDifficulty,
+
+    passed,
+
+    failed
   };
 }
