@@ -652,11 +652,141 @@
         data-tab-panel="inventory"
       >
 
-        <h2>Inventory</h2>
+        <section class="inventory-consumables-section">
 
-        <p class="hint">
-          Character inventory and equipment management will appear here.
-        </p>
+          <h2>Consumables</h2>
+
+          <div class="weapon-list consumable-list">
+
+            {{#each consumables as |consumable|}}
+
+              <div
+                class="weapon-row consumable-row"
+                data-item-id="{{consumable.id}}"
+              >
+
+                <img
+                  class="weapon-image consumable-image"
+                  src="{{consumable.img}}"
+                  title="{{consumable.name}}"
+                  width="32"
+                  height="32"
+                >
+
+                <div class="weapon-name consumable-name">
+                  {{consumable.name}}
+                </div>
+
+                <div class="weapon-stat consumable-stat">
+
+                  <span>Qty</span>
+
+                  <strong>
+                    {{consumable.quantity}}
+                  </strong>
+
+                </div>
+
+                <div class="weapon-stat consumable-stat">
+
+                  <span>Actions</span>
+
+                  <strong>
+                    {{consumable.actionCost}}
+                  </strong>
+
+                </div>
+
+                {{#if consumable.isExplosive}}
+
+                  <div class="weapon-stat consumable-stat">
+
+                    <span>DPS</span>
+
+                    <strong>
+                      {{consumable.dps}}
+                    </strong>
+
+                  </div>
+
+                  <div class="weapon-stat consumable-stat">
+
+                    <span>Pen</span>
+
+                    <strong>
+                      {{consumable.penetration}}
+                    </strong>
+
+                  </div>
+
+                  <div class="weapon-stat consumable-stat">
+
+                    <span>Blast</span>
+
+                    <strong>
+                      {{consumable.blastRadius}}
+                    </strong>
+
+                  </div>
+
+                  <div class="weapon-stat consumable-stat">
+
+                    <span>Save</span>
+
+                    <strong>
+                      TN {{consumable.saveTN}}
+                      /
+                      {{consumable.saveDifficulty}}
+                    </strong>
+
+                  </div>
+
+                {{/if}}
+
+                <div class="weapon-actions consumable-actions">
+
+                  {{#if consumable.isExplosive}}
+
+                    <button
+                      type="button"
+                      class="consumable-use"
+                      data-action="useConsumable"
+                      data-consumable="{{consumable.id}}"
+                      title="Use {{consumable.name}}"
+                    >
+                      Use
+                    </button>
+
+                  {{else}}
+
+                    <span
+                      class="hint"
+                      title="This Consumable type does not have an automated use workflow yet."
+                    >
+                      No Use Action
+                    </span>
+
+                  {{/if}}
+
+                </div>
+
+              </div>
+
+            {{else}}
+
+              <p class="hint">
+                This character has no Consumable Items.
+              </p>
+
+            {{/each}}
+
+          </div>
+
+          <p class="hint">
+            Explosive attacks use Precision + Athletics. Every token inside the blast radius is affected. Targets with qualifying cover may attempt an Agility Save for half Raw Damage.
+          </p>
+
+        </section>
 
       </section>
 
