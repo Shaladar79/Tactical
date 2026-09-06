@@ -545,22 +545,63 @@
         {{/if}}
 
         {{!-- ------------------------------------ --}}
-        {{!--  Resists Sub-Tab                     --}}
+        {{!--  Saves Sub-Tab                       --}}
         {{!-- ------------------------------------ --}}
 
         {{#if attributeSubTabs.2.active}}
 
           <section
-            class="attribute-subtab-panel resists-subtab"
+            class="attribute-subtab-panel saves-subtab"
             data-attribute-subtab-panel="resists"
           >
 
-            <section class="resistances-section">
+            <section class="saves-section">
 
-              <h2>Resists</h2>
+              <h2>Saves</h2>
+
+              <div class="skill-list">
+
+                {{#each saves as |save|}}
+
+                  <div class="skill-row save-row">
+
+                    <div class="save-name">
+                      <strong>{{save.name}}</strong>
+                    </div>
+
+                    <div class="skill-attribute">
+                      {{save.name}}
+                      {{save.attributeValue}}
+                    </div>
+
+                    <div class="save-bonus-field">
+
+                      <label title="{{save.name}} Save Bonus">
+                        {{save.abbreviation}}
+                      </label>
+
+                      <input
+                        name="system.saveBonuses.{{save.id}}"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value="{{save.bonus}}"
+                      >
+
+                    </div>
+
+                    <div class="skill-pool">
+                      {{save.pool}}d12
+                    </div>
+
+                  </div>
+
+                {{/each}}
+
+              </div>
 
               <p class="hint">
-                Character resists will appear here once the resistance system is implemented.
+                Save Pool = Attribute + General Save Bonus. Conditional Save Bonuses are applied when the Save is resolved.
               </p>
 
             </section>
