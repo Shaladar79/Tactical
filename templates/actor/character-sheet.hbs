@@ -412,104 +412,162 @@
         data-tab-panel="attributes"
       >
 
-        <section class="attributes-section">
+        <nav class="attribute-subtabs">
 
-          <h2>Attributes</h2>
+          {{#each attributeSubTabs as |tab|}}
 
-          <div class="attribute-grid">
+            <button
+              type="button"
+              class="attribute-subtab-button {{#if tab.active}}active{{/if}}"
+              data-action="switchAttributeSubTab"
+              data-attribute-subtab="{{tab.id}}"
+            >
+              {{tab.label}}
+            </button>
 
-            {{#each attributes as |attribute|}}
+          {{/each}}
 
-              <div class="attribute-card">
+        </nav>
 
-                <button
-                  type="button"
-                  class="attribute-roll"
-                  data-action="rollAttribute"
-                  data-attribute="{{attribute.id}}"
-                  title="Roll {{attribute.name}}"
-                >
-                  {{attribute.name}}
-                </button>
+        {{!-- ------------------------------------ --}}
+        {{!--  Attributes Sub-Tab                  --}}
+        {{!-- ------------------------------------ --}}
 
-                <input
-                  name="system.attributes.{{attribute.id}}"
-                  type="number"
-                  min="0"
-                  step="1"
-                  value="{{attribute.value}}"
-                >
+        {{#if attributeSubTabs.0.active}}
 
-                <div class="attribute-pool">
-                  {{attribute.value}}d12
-                </div>
+          <section
+            class="attribute-subtab-panel attributes-subtab"
+            data-attribute-subtab-panel="attributes"
+          >
 
-              </div>
+            <section class="attributes-section">
 
-            {{/each}}
+              <h2>Attributes</h2>
 
-          </div>
+              <div class="attribute-grid">
 
-        </section>
+                {{#each attributes as |attribute|}}
 
-        <hr>
+                  <div class="attribute-card">
 
-        <section class="skills-section">
+                    <button
+                      type="button"
+                      class="attribute-roll"
+                      data-action="rollAttribute"
+                      data-attribute="{{attribute.id}}"
+                      title="Roll {{attribute.name}}"
+                    >
+                      {{attribute.name}}
+                    </button>
 
-          <h2>Skills</h2>
+                    <input
+                      name="system.attributes.{{attribute.id}}"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value="{{attribute.value}}"
+                    >
 
-          <div class="skill-list">
+                    <div class="attribute-pool">
+                      {{attribute.value}}d12
+                    </div>
 
-            {{#each skills as |skill|}}
+                  </div>
 
-              <div class="skill-row">
-
-                <button
-                  type="button"
-                  class="skill-roll"
-                  data-action="rollSkill"
-                  data-skill="{{skill.id}}"
-                  title="Roll {{skill.name}}"
-                >
-                  {{skill.name}}
-                </button>
-
-                <div class="skill-attribute">
-                  {{skill.attribute}}
-                  {{skill.attributeValue}}
-                </div>
-
-                <input
-                  name="system.skills.{{skill.id}}"
-                  type="number"
-                  min="0"
-                  step="1"
-                  value="{{skill.value}}"
-                >
-
-                <div class="skill-pool">
-                  {{skill.pool}}d12
-                </div>
+                {{/each}}
 
               </div>
 
-            {{/each}}
+            </section>
 
-          </div>
+          </section>
 
-        </section>
+        {{/if}}
 
-        <hr>
+        {{!-- ------------------------------------ --}}
+        {{!--  Skills Sub-Tab                      --}}
+        {{!-- ------------------------------------ --}}
 
-        <section class="resistances-section">
+        {{#if attributeSubTabs.1.active}}
 
-          <h2>Resistances</h2>
+          <section
+            class="attribute-subtab-panel skills-subtab"
+            data-attribute-subtab-panel="skills"
+          >
 
-          <p class="hint">
-            Character resistances will appear here once the resistance system is implemented.
-          </p>
+            <section class="skills-section">
 
-        </section>
+              <h2>Skills</h2>
+
+              <div class="skill-list">
+
+                {{#each skills as |skill|}}
+
+                  <div class="skill-row">
+
+                    <button
+                      type="button"
+                      class="skill-roll"
+                      data-action="rollSkill"
+                      data-skill="{{skill.id}}"
+                      title="Roll {{skill.name}}"
+                    >
+                      {{skill.name}}
+                    </button>
+
+                    <div class="skill-attribute">
+                      {{skill.attribute}}
+                      {{skill.attributeValue}}
+                    </div>
+
+                    <input
+                      name="system.skills.{{skill.id}}"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value="{{skill.value}}"
+                    >
+
+                    <div class="skill-pool">
+                      {{skill.pool}}d12
+                    </div>
+
+                  </div>
+
+                {{/each}}
+
+              </div>
+
+            </section>
+
+          </section>
+
+        {{/if}}
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Resists Sub-Tab                     --}}
+        {{!-- ------------------------------------ --}}
+
+        {{#if attributeSubTabs.2.active}}
+
+          <section
+            class="attribute-subtab-panel resists-subtab"
+            data-attribute-subtab-panel="resists"
+          >
+
+            <section class="resistances-section">
+
+              <h2>Resists</h2>
+
+              <p class="hint">
+                Character resists will appear here once the resistance system is implemented.
+              </p>
+
+            </section>
+
+          </section>
+
+        {{/if}}
 
       </section>
 
