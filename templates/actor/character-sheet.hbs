@@ -215,288 +215,412 @@
 
   </header>
 
-  <section class="sheet-body">
+  <nav class="sheet-tabs">
 
-    <section class="progression-section">
-
-      <h2>Progression</h2>
-
-      <div class="progression-summary">
-
-        <div class="summary-field">
-
-          <label>
-            {{localize "TACTICAL.Progression.EarnedXP"}}
-          </label>
-
-          <input
-            name="system.xp.earned"
-            type="number"
-            min="0"
-            step="1"
-            value="{{progression.earnedXP}}"
-          >
-
-        </div>
-
-        <div class="summary-field">
-
-          <label>
-            {{localize "TACTICAL.Progression.SpentXP"}}
-          </label>
-
-          <span>
-            {{progression.spentXP}}
-          </span>
-
-        </div>
-
-        <div class="summary-field">
-
-          <label>
-            {{localize "TACTICAL.Progression.AvailableXP"}}
-          </label>
-
-          <span>
-            {{progression.availableXP}}
-          </span>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section class="combat-actions">
+    {{#each tabs as |tab|}}
 
       <button
         type="button"
-        class="stabilize-action"
-        data-action="stabilize"
-        title="Attempt to stabilize one targeted character"
+        class="sheet-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
       >
-        Stabilize
+        {{tab.label}}
       </button>
 
-    </section>
+    {{/each}}
 
-    <hr>
+  </nav>
 
-    <section class="attributes-section">
+  <section class="sheet-body">
 
-      <h2>Attributes</h2>
+    {{!-- ---------------------------------------- --}}
+    {{!--  Combat Tab                              --}}
+    {{!-- ---------------------------------------- --}}
 
-      <div class="attribute-grid">
+    {{#if tabs.0.active}}
 
-        {{#each attributes as |attribute|}}
+      <section
+        class="tab-panel combat-tab"
+        data-tab-panel="combat"
+      >
 
-          <div class="attribute-card">
+        <section class="combat-actions">
 
-            <button
-              type="button"
-              class="attribute-roll"
-              data-action="rollAttribute"
-              data-attribute="{{attribute.id}}"
-              title="Roll {{attribute.name}}"
-            >
-              {{attribute.name}}
-            </button>
-
-            <input
-              name="system.attributes.{{attribute.id}}"
-              type="number"
-              min="0"
-              step="1"
-              value="{{attribute.value}}"
-            >
-
-            <div class="attribute-pool">
-              {{attribute.value}}d12
-            </div>
-
-          </div>
-
-        {{/each}}
-
-      </div>
-
-    </section>
-
-    <hr>
-
-    <section class="skills-section">
-
-      <h2>Skills</h2>
-
-      <div class="skill-list">
-
-        {{#each skills as |skill|}}
-
-          <div class="skill-row">
-
-            <button
-              type="button"
-              class="skill-roll"
-              data-action="rollSkill"
-              data-skill="{{skill.id}}"
-              title="Roll {{skill.name}}"
-            >
-              {{skill.name}}
-            </button>
-
-            <div class="skill-attribute">
-              {{skill.attribute}}
-              {{skill.attributeValue}}
-            </div>
-
-            <input
-              name="system.skills.{{skill.id}}"
-              type="number"
-              min="0"
-              step="1"
-              value="{{skill.value}}"
-            >
-
-            <div class="skill-pool">
-              {{skill.pool}}d12
-            </div>
-
-          </div>
-
-        {{/each}}
-
-      </div>
-
-    </section>
-
-    <hr>
-
-    <section class="weapons-section">
-
-      <h2>Weapons</h2>
-
-      <div class="weapon-list">
-
-        {{#each weapons as |weapon|}}
-
-          <div
-            class="weapon-row"
-            data-item-id="{{weapon.id}}"
+          <button
+            type="button"
+            class="stabilize-action"
+            data-action="stabilize"
+            title="Attempt to stabilize one targeted character"
           >
+            Stabilize
+          </button>
 
-            <img
-              class="weapon-image"
-              src="{{weapon.img}}"
-              title="{{weapon.name}}"
-              width="32"
-              height="32"
-            >
+        </section>
 
-            <div class="weapon-name">
-              {{weapon.name}}
-            </div>
+        <section class="combat-loadout-section">
 
-            <div class="weapon-stat">
-              <span>DPS</span>
-              <strong>{{weapon.dps}}</strong>
-            </div>
+          <h2>Current Loadout</h2>
 
-            <div class="weapon-stat">
-              <span>Pen</span>
-              <strong>{{weapon.penetration}}</strong>
-            </div>
+          <div class="weapon-list">
 
-            <div class="weapon-stat">
-              <span>Range</span>
-              <strong>{{weapon.intendedRange}}</strong>
-            </div>
+            {{#each weapons as |weapon|}}
 
-            <div class="weapon-stat">
-              <span>Pool</span>
-              <strong>{{weapon.pool}}d12</strong>
-            </div>
+              <div
+                class="weapon-row"
+                data-item-id="{{weapon.id}}"
+              >
 
-            {{#if weapon.usesMagazine}}
+                <img
+                  class="weapon-image"
+                  src="{{weapon.img}}"
+                  title="{{weapon.name}}"
+                  width="32"
+                  height="32"
+                >
 
-              <div class="weapon-stat weapon-ammo">
+                <div class="weapon-name">
+                  {{weapon.name}}
+                </div>
 
-                <span>Ammo</span>
+                <div class="weapon-stat">
+                  <span>DPS</span>
+                  <strong>{{weapon.dps}}</strong>
+                </div>
 
-                <strong>
-                  {{weapon.ammoRemaining}}
-                  /
-                  {{weapon.magazineCapacity}}
-                </strong>
+                <div class="weapon-stat">
+                  <span>Pen</span>
+                  <strong>{{weapon.penetration}}</strong>
+                </div>
+
+                <div class="weapon-stat">
+                  <span>Range</span>
+                  <strong>{{weapon.intendedRange}}</strong>
+                </div>
+
+                <div class="weapon-stat">
+                  <span>Pool</span>
+                  <strong>{{weapon.pool}}d12</strong>
+                </div>
+
+                {{#if weapon.usesMagazine}}
+
+                  <div class="weapon-stat weapon-ammo">
+
+                    <span>Ammo</span>
+
+                    <strong>
+                      {{weapon.ammoRemaining}}
+                      /
+                      {{weapon.magazineCapacity}}
+                    </strong>
+
+                  </div>
+
+                {{else}}
+
+                  <div class="weapon-stat weapon-ammo">
+
+                    <span>Ammo</span>
+
+                    <strong>—</strong>
+
+                  </div>
+
+                {{/if}}
+
+                <div class="weapon-actions">
+
+                  <button
+                    type="button"
+                    class="weapon-attack"
+                    data-action="rollWeapon"
+                    data-weapon="{{weapon.id}}"
+                    title="Attack with {{weapon.name}}"
+                  >
+                    Attack
+                  </button>
+
+                  {{#unless (eq weapon.weaponType "melee")}}
+
+                    <button
+                      type="button"
+                      class="weapon-overwatch"
+                      data-action="overwatch"
+                      data-weapon="{{weapon.id}}"
+                      title="Enter Overwatch with {{weapon.name}}"
+                    >
+                      Overwatch
+                    </button>
+
+                  {{/unless}}
+
+                  {{#if weapon.usesMagazine}}
+
+                    <button
+                      type="button"
+                      class="weapon-reload"
+                      data-action="reloadWeapon"
+                      data-weapon="{{weapon.id}}"
+                      title="Reload {{weapon.name}}"
+                    >
+                      Reload
+                    </button>
+
+                  {{/if}}
+
+                </div>
 
               </div>
 
             {{else}}
 
-              <div class="weapon-stat weapon-ammo">
+              <p class="hint">
+                This character has no Weapon Items.
+              </p>
 
-                <span>Ammo</span>
+            {{/each}}
 
-                <strong>—</strong>
+          </div>
+
+        </section>
+
+        <hr>
+
+        <section class="combat-abilities-section">
+
+          <h2>Usable Abilities</h2>
+
+          <p class="hint">
+            Usable abilities will appear here.
+          </p>
+
+        </section>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Attributes & Skills Tab                 --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="tab-panel attributes-skills-tab"
+        data-tab-panel="attributes"
+      >
+
+        <section class="attributes-section">
+
+          <h2>Attributes</h2>
+
+          <div class="attribute-grid">
+
+            {{#each attributes as |attribute|}}
+
+              <div class="attribute-card">
+
+                <button
+                  type="button"
+                  class="attribute-roll"
+                  data-action="rollAttribute"
+                  data-attribute="{{attribute.id}}"
+                  title="Roll {{attribute.name}}"
+                >
+                  {{attribute.name}}
+                </button>
+
+                <input
+                  name="system.attributes.{{attribute.id}}"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="{{attribute.value}}"
+                >
+
+                <div class="attribute-pool">
+                  {{attribute.value}}d12
+                </div>
 
               </div>
 
-            {{/if}}
+            {{/each}}
 
-            <div class="weapon-actions">
+          </div>
 
-              <button
-                type="button"
-                class="weapon-attack"
-                data-action="rollWeapon"
-                data-weapon="{{weapon.id}}"
-                title="Attack with {{weapon.name}}"
+        </section>
+
+        <hr>
+
+        <section class="skills-section">
+
+          <h2>Skills</h2>
+
+          <div class="skill-list">
+
+            {{#each skills as |skill|}}
+
+              <div class="skill-row">
+
+                <button
+                  type="button"
+                  class="skill-roll"
+                  data-action="rollSkill"
+                  data-skill="{{skill.id}}"
+                  title="Roll {{skill.name}}"
+                >
+                  {{skill.name}}
+                </button>
+
+                <div class="skill-attribute">
+                  {{skill.attribute}}
+                  {{skill.attributeValue}}
+                </div>
+
+                <input
+                  name="system.skills.{{skill.id}}"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="{{skill.value}}"
+                >
+
+                <div class="skill-pool">
+                  {{skill.pool}}d12
+                </div>
+
+              </div>
+
+            {{/each}}
+
+          </div>
+
+        </section>
+
+        <hr>
+
+        <section class="resistances-section">
+
+          <h2>Resistances</h2>
+
+          <p class="hint">
+            Character resistances will appear here once the resistance system is implemented.
+          </p>
+
+        </section>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Talents Tab                             --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="tab-panel talents-tab"
+        data-tab-panel="talents"
+      >
+
+        <h2>Talents</h2>
+
+        <p class="hint">
+          Character talents will appear here.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Inventory Tab                           --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="tab-panel inventory-tab"
+        data-tab-panel="inventory"
+      >
+
+        <h2>Inventory</h2>
+
+        <p class="hint">
+          Character inventory and equipment management will appear here.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Progression Tab                         --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.4.active}}
+
+      <section
+        class="tab-panel progression-tab"
+        data-tab-panel="progression"
+      >
+
+        <section class="progression-section">
+
+          <h2>Progression</h2>
+
+          <div class="progression-summary">
+
+            <div class="summary-field">
+
+              <label>
+                {{localize "TACTICAL.Progression.EarnedXP"}}
+              </label>
+
+              <input
+                name="system.xp.earned"
+                type="number"
+                min="0"
+                step="1"
+                value="{{progression.earnedXP}}"
               >
-                Attack
-              </button>
 
-              {{#unless (eq weapon.weaponType "melee")}}
+            </div>
 
-                <button
-                  type="button"
-                  class="weapon-overwatch"
-                  data-action="overwatch"
-                  data-weapon="{{weapon.id}}"
-                  title="Enter Overwatch with {{weapon.name}}"
-                >
-                  Overwatch
-                </button>
+            <div class="summary-field">
 
-              {{/unless}}
+              <label>
+                {{localize "TACTICAL.Progression.SpentXP"}}
+              </label>
 
-              {{#if weapon.usesMagazine}}
+              <span>
+                {{progression.spentXP}}
+              </span>
 
-                <button
-                  type="button"
-                  class="weapon-reload"
-                  data-action="reloadWeapon"
-                  data-weapon="{{weapon.id}}"
-                  title="Reload {{weapon.name}}"
-                >
-                  Reload
-                </button>
+            </div>
 
-              {{/if}}
+            <div class="summary-field">
+
+              <label>
+                {{localize "TACTICAL.Progression.AvailableXP"}}
+              </label>
+
+              <span>
+                {{progression.availableXP}}
+              </span>
 
             </div>
 
           </div>
 
-        {{else}}
+        </section>
 
-          <p class="hint">
-            This character has no Weapon Items.
-          </p>
+      </section>
 
-        {{/each}}
-
-      </div>
-
-    </section>
+    {{/if}}
 
   </section>
 
