@@ -82,8 +82,8 @@ const ATTRIBUTE_SHEET_SUBTABS = [
     label: "Skills"
   },
   {
-    id: "resists",
-    label: "Resists"
+    id: "saves",
+    label: "Saves"
   }
 ];
 
