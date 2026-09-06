@@ -166,15 +166,15 @@ export async function promptTacticalRoll({
 
   const specialization =
     allowSpecialization &&
-    formData.get("specialization") === "on";
+    Boolean(formData.specialization);
 
   const rankDie =
     rankDiceAvailable > 0 &&
-    formData.get("rankDie") === "on";
+    Boolean(formData.rankDie);
 
   const diceModifier =
     Number(
-      formData.get("diceModifier")
+      formData.diceModifier
     ) || 0;
 
   /* -------------------------------------------- */
