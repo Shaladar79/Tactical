@@ -459,7 +459,95 @@
 }
 
 /* -------------------------------------------- */
-/*  Attributes & Skills Tab                     */
+/*  Attributes & Skills Sub-Tabs                */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .attribute-subtabs {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 0;
+
+  width: 100%;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+
+  overflow: hidden;
+
+  background:
+    rgba(255, 255, 255, 0.03);
+}
+
+.tactical.character-sheet .attribute-subtab-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+
+  padding: 0.45rem 0.5rem;
+
+  border: 0;
+  border-right:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 0;
+
+  background: transparent;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  line-height: 1.1;
+
+  text-align: center;
+
+  cursor: pointer;
+}
+
+.tactical.character-sheet .attribute-subtab-button:last-child {
+  border-right: 0;
+}
+
+.tactical.character-sheet .attribute-subtab-button:hover,
+.tactical.character-sheet .attribute-subtab-button:focus-visible {
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.tactical.character-sheet .attribute-subtab-button.active {
+  font-weight: 700;
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  box-shadow:
+    inset 0 -3px 0
+    var(--color-border-highlight);
+}
+
+.tactical.character-sheet .attribute-subtab-panel {
+  display: block;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.character-sheet .attributes-subtab,
+.tactical.character-sheet .skills-subtab,
+.tactical.character-sheet .resists-subtab {
+  width: 100%;
+}
+
+/* -------------------------------------------- */
+/*  Attributes                                  */
 /* -------------------------------------------- */
 
 .tactical.character-sheet .attribute-grid {
@@ -503,6 +591,10 @@
   font-weight: 700;
 }
 
+/* -------------------------------------------- */
+/*  Skills                                      */
+/* -------------------------------------------- */
+
 .tactical.character-sheet .skill-list {
   display: flex;
   flex-direction: column;
@@ -542,7 +634,7 @@
 }
 
 /* -------------------------------------------- */
-/*  Resistances                                 */
+/*  Resists                                     */
 /* -------------------------------------------- */
 
 .tactical.character-sheet .resistances-section {
