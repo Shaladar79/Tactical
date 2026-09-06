@@ -108,6 +108,38 @@ export class TacticalCharacterData extends foundry.abstract.TypeDataModel {
       }),
 
       /* -------------------------------------------- */
+      /*  Save Bonuses                                */
+      /* -------------------------------------------- */
+
+      /**
+       * General Attribute Save Bonuses.
+       *
+       * Save Pool =
+       * Attribute
+       * + General Attribute Save Bonus
+       * + applicable Conditional Save Bonuses
+       *
+       * Sheet abbreviations:
+       *
+       * Might      = MSB
+       * Precision  = PSB
+       * Agility    = ASB
+       * Endurance  = ESB
+       * Focus      = FSB
+       * Resolve    = RSB
+       * Perception = PeSB
+       */
+      saveBonuses: new SchemaField({
+        might: attributeField(),
+        precision: attributeField(),
+        agility: attributeField(),
+        endurance: attributeField(),
+        focus: attributeField(),
+        resolve: attributeField(),
+        perception: attributeField()
+      }),
+
+      /* -------------------------------------------- */
       /*  Skills                                      */
       /* -------------------------------------------- */
 
