@@ -7,6 +7,7 @@
  * - Applicable Specialization, when allowed
  * - Rank Die expenditure
  * - Temporary dice-pool modifier
+ * - Save Difficulty, when enabled
  *
  * Target Number modifiers are controlled separately by the GM.
  */
@@ -22,6 +23,12 @@
  * @param {boolean} options.allowSpecialization
  * Whether the roll may use a Specialization.
  *
+ * @param {boolean} options.allowDifficulty
+ * Whether the roll uses Save Difficulty.
+ *
+ * @param {number} options.baseDifficulty
+ * Number of successes required when Difficulty is enabled.
+ *
  * @returns {Promise<object|null>}
  * Returns null if the roll is cancelled.
  */
@@ -30,7 +37,9 @@ export async function promptTacticalRoll({
   basePool = 0,
   baseTN = 7,
   availableRankDice = 0,
-  allowSpecialization = true
+  allowSpecialization = true,
+  allowDifficulty = false,
+  baseDifficulty = 1
 } = {}) {
 
   const startingPool = Math.max(
@@ -50,6 +59,18 @@ export async function promptTacticalRoll({
     0,
     Number(availableRankDice) || 0
   );
+
+  const startingDifficulty =
+    Math.max(
+      1,
+      Math.floor(
+        Number(baseDifficulty) || 1
+      )
+    );
+
+  /* -------------------------------------------- */
+  /*  Optional Specialization                     */
+  /* -------------------------------------------- */
 
   const specializationContent =
     allowSpecialization
@@ -74,6 +95,40 @@ export async function promptTacticalRoll({
         `
       : "";
 
+  /* -------------------------------------------- */
+  /*  Optional Save Difficulty                    */
+  /* -------------------------------------------- */
+
+  const difficultyContent =
+    allowDifficulty
+      ? `
+          <div class="form-group">
+
+            <label for="save-difficulty">
+              Save Difficulty
+            </label>
+
+            <input
+              id="save-difficulty"
+              name="difficulty"
+              type="number"
+              min="1"
+              step="1"
+              value="${startingDifficulty}"
+            >
+
+            <p class="hint">
+              Number of successes required to pass the Save.
+            </p>
+
+          </div>
+        `
+      : "";
+
+  /* -------------------------------------------- */
+  /*  Dialog                                      */
+  /* -------------------------------------------- */
+
   const formData =
     await foundry.applications.api.DialogV2.input({
       window: {
@@ -95,11 +150,24 @@ export async function promptTacticalRoll({
               ${startingTN}
             </p>
 
+            ${
+              allowDifficulty
+                ? `
+                    <p>
+                      <strong>Save Difficulty:</strong>
+                      ${startingDifficulty}
+                    </p>
+                  `
+                : ""
+            }
+
           </div>
 
           <hr>
 
           ${specializationContent}
+
+          ${difficultyContent}
 
           <div class="form-group">
 
@@ -177,6 +245,18 @@ export async function promptTacticalRoll({
       formData.diceModifier
     ) || 0;
 
+  const difficulty =
+    allowDifficulty
+      ? Math.max(
+          1,
+          Math.floor(
+            Number(
+              formData.difficulty
+            ) || startingDifficulty
+          )
+        )
+      : startingDifficulty;
+
   /* -------------------------------------------- */
   /*  Preview Pool                                */
   /* -------------------------------------------- */
@@ -197,6 +277,7 @@ export async function promptTacticalRoll({
     specialization,
     rankDie,
     diceModifier,
+    difficulty,
 
     baseTN:
       startingTN,
