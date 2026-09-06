@@ -262,6 +262,79 @@
 }
 
 /* -------------------------------------------- */
+/*  Character Sheet Tabs                        */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .sheet-tabs {
+  flex: 0 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 0;
+
+  width: 100%;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  background: var(--color-bg);
+
+  z-index: 9;
+}
+
+.tactical.character-sheet .sheet-tab-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+
+  padding: 0.55rem 0.35rem;
+
+  border: 0;
+  border-right:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 0;
+
+  background: transparent;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  line-height: 1.1;
+
+  text-align: center;
+
+  cursor: pointer;
+}
+
+.tactical.character-sheet .sheet-tab-button:last-child {
+  border-right: 0;
+}
+
+.tactical.character-sheet .sheet-tab-button:hover,
+.tactical.character-sheet .sheet-tab-button:focus-visible {
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.tactical.character-sheet .sheet-tab-button.active {
+  font-weight: 700;
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  box-shadow:
+    inset 0 -3px 0
+    var(--color-border-highlight);
+}
+
+/* -------------------------------------------- */
 /*  Scrollable Sheet Body                       */
 /* -------------------------------------------- */
 
@@ -274,6 +347,206 @@
   overflow-x: hidden;
 
   padding: 0.75rem;
+}
+
+/* -------------------------------------------- */
+/*  Tab Panels                                  */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .tab-panel {
+  width: 100%;
+
+  min-width: 0;
+  min-height: 100%;
+}
+
+.tactical.character-sheet .tab-panel > h2,
+.tactical.character-sheet .tab-panel section > h2 {
+  margin-top: 0;
+}
+
+.tactical.character-sheet .combat-tab,
+.tactical.character-sheet .attributes-skills-tab,
+.tactical.character-sheet .talents-tab,
+.tactical.character-sheet .inventory-tab,
+.tactical.character-sheet .progression-tab {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.75rem;
+}
+
+/* -------------------------------------------- */
+/*  Combat Tab                                  */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .combat-loadout-section,
+.tactical.character-sheet .combat-abilities-section {
+  width: 100%;
+}
+
+.tactical.character-sheet .combat-actions {
+  display: flex;
+
+  gap: 0.5rem;
+
+  flex-wrap: wrap;
+}
+
+.tactical.character-sheet .weapon-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.5rem;
+}
+
+.tactical.character-sheet .weapon-row {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  width: 100%;
+
+  padding: 0.4rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.character-sheet .weapon-image {
+  flex: 0 0 auto;
+}
+
+.tactical.character-sheet .weapon-name {
+  flex: 1 1 120px;
+
+  min-width: 90px;
+
+  font-weight: 700;
+}
+
+.tactical.character-sheet .weapon-stat {
+  flex: 0 0 auto;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  min-width: 48px;
+
+  font-size: 0.8rem;
+}
+
+.tactical.character-sheet .weapon-stat span {
+  font-size: 0.75rem;
+}
+
+.tactical.character-sheet .weapon-actions {
+  flex: 0 0 auto;
+
+  display: flex;
+
+  gap: 0.25rem;
+
+  flex-wrap: wrap;
+
+  justify-content: flex-end;
+}
+
+/* -------------------------------------------- */
+/*  Attributes & Skills Tab                     */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .attribute-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 0.5rem;
+}
+
+.tactical.character-sheet .attribute-card {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    3.5rem
+    4rem;
+
+  align-items: center;
+
+  gap: 0.4rem;
+
+  padding: 0.4rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.character-sheet .attribute-card input {
+  width: 100%;
+
+  text-align: center;
+}
+
+.tactical.character-sheet .attribute-pool {
+  text-align: center;
+
+  font-weight: 700;
+}
+
+.tactical.character-sheet .skill-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.35rem;
+}
+
+.tactical.character-sheet .skill-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(120px, 1.25fr)
+    minmax(100px, 1fr)
+    3.5rem
+    4rem;
+
+  align-items: center;
+
+  gap: 0.4rem;
+
+  padding: 0.35rem;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+}
+
+.tactical.character-sheet .skill-row input {
+  width: 100%;
+
+  text-align: center;
+}
+
+.tactical.character-sheet .skill-pool {
+  text-align: center;
+
+  font-weight: 700;
+}
+
+/* -------------------------------------------- */
+/*  Resistances                                 */
+/* -------------------------------------------- */
+
+.tactical.character-sheet .resistances-section {
+  width: 100%;
 }
 
 /* -------------------------------------------- */
@@ -309,15 +582,13 @@
 }
 
 /* -------------------------------------------- */
-/*  Combat Actions                              */
+/*  Placeholder / Hint Text                     */
 /* -------------------------------------------- */
 
-.tactical.character-sheet .combat-actions {
-  display: flex;
+.tactical.character-sheet .hint {
+  opacity: 0.75;
 
-  gap: 0.5rem;
-
-  margin-bottom: 0.75rem;
+  font-style: italic;
 }
 
 /* -------------------------------------------- */
