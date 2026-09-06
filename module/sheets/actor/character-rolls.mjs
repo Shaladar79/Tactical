@@ -26,7 +26,8 @@ import {
 } from "../../socket/roll-request-socket.mjs";
 
 /**
- * Roll a standard character Attribute + Skill check.
+ * Roll a standard character Attribute or
+ * Attribute + Skill check.
  *
  * @param {Actor} actor
  *
@@ -256,5 +257,202 @@ export async function rollCharacterCheck(
         ...(approval.modifiers ?? {})
       }
     }
+  };
+}
+
+/**
+ * Roll a character Attribute Save.
+ *
+ * Save Pool =
+ *
+ * Attribute
+ * + General Attribute Save Bonus
+ * + applicable Conditional Save Bonuses
+ * + other dice modifiers
+ * + optional Rank Die
+ *
+ * Specializations do not apply to Saves by default.
+ *
+ * @param {Actor} actor
+ *
+ * @param {object} options
+ *
+ * @param {string} options.attributeId
+ * Attribute used for the Save.
+ *
+ * @param {number} options.conditionalBonus
+ * Total applicable Conditional Save Bonuses.
+ *
+ * @param {boolean} options.rankDie
+ * Whether one Rank Die is being spent.
+ *
+ * @param {number} options.diceModifier
+ * Other dice-pool modifiers that are not Save Bonuses.
+ *
+ * @param {number} options.baseTN
+ * Base Target Number before GM modifiers.
+ *
+ * @param {string} options.flavor
+ * Chat message flavor.
+ *
+ * @returns {Promise<object|null>}
+ */
+export async function rollCharacterSave(
+  actor,
+  {
+    attributeId,
+
+    conditionalBonus = 0,
+
+    rankDie = false,
+
+    diceModifier = 0,
+
+    baseTN = 7,
+
+    flavor = "Tactical Save"
+  } = {}
+) {
+
+  /* -------------------------------------------- */
+  /*  Validation                                  */
+  /* -------------------------------------------- */
+
+  if (!actor || actor.type !== "character") {
+    throw new Error(
+      "Tactical | Character Saves require a character Actor."
+    );
+  }
+
+  if (!attributeId) {
+    throw new Error(
+      "Tactical | Character Saves require an Attribute."
+    );
+  }
+
+  const attributeValue =
+    actor.system.attributes?.[
+      attributeId
+    ];
+
+  if (attributeValue === undefined) {
+    throw new Error(
+      `Tactical | Unknown Save Attribute: ${attributeId}`
+    );
+  }
+
+  /* -------------------------------------------- */
+  /*  General Save Bonus                          */
+  /* -------------------------------------------- */
+
+  const generalSaveBonus =
+    Math.max(
+      0,
+      Number(
+        actor.system.saveBonuses?.[
+          attributeId
+        ]
+      ) || 0
+    );
+
+  /* -------------------------------------------- */
+  /*  Conditional Save Bonuses                    */
+  /* -------------------------------------------- */
+
+  const conditionalSaveBonus =
+    Math.max(
+      0,
+      Number(
+        conditionalBonus
+      ) || 0
+    );
+
+  /* -------------------------------------------- */
+  /*  Other Dice Modifiers                        */
+  /* -------------------------------------------- */
+
+  const otherDiceModifier =
+    Number(
+      diceModifier
+    ) || 0;
+
+  /*
+   * General and Conditional Save Bonuses are
+   * additional dice in the Save pool.
+   *
+   * They are passed through the shared character
+   * check helper as part of its dice modifier.
+   */
+  const totalSaveModifier =
+    generalSaveBonus +
+    conditionalSaveBonus +
+    otherDiceModifier;
+
+  /* -------------------------------------------- */
+  /*  Base Save Pool                              */
+  /* -------------------------------------------- */
+
+  const baseSavePool =
+    Math.max(
+      0,
+      Number(
+        attributeValue
+      ) || 0
+    ) +
+    generalSaveBonus +
+    conditionalSaveBonus;
+
+  /* -------------------------------------------- */
+  /*  Resolve Shared Character Roll               */
+  /* -------------------------------------------- */
+
+  const result =
+    await rollCharacterCheck(
+      actor,
+      {
+        attributeId,
+
+        skillId:
+          "",
+
+        specialization:
+          false,
+
+        rankDie,
+
+        diceModifier:
+          totalSaveModifier,
+
+        baseTN,
+
+        flavor
+      }
+    );
+
+  if (!result) {
+    return null;
+  }
+
+  /* -------------------------------------------- */
+  /*  Save Result                                 */
+  /* -------------------------------------------- */
+
+  return {
+    ...result,
+
+    save:
+      true,
+
+    saveBonus:
+      generalSaveBonus,
+
+    conditionalSaveBonus,
+
+    saveDiceModifier:
+      otherDiceModifier,
+
+    totalSaveModifier,
+
+    baseSavePool
   };
 }
