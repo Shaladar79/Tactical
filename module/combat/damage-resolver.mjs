@@ -15,6 +15,10 @@
  * @param {number} options.dps
  * Damage dealt per success.
  *
+ * @param {number} options.damageMultiplier
+ * Multiplier applied to Raw Damage before defenses.
+ * Defaults to 1.
+ *
  * @param {number} options.penetration
  * Amount of Toughness ignored by this attack.
  *
@@ -32,6 +36,7 @@
 export function resolveTacticalDamage({
   successes = 0,
   dps = 0,
+  damageMultiplier = 1,
   penetration = 0,
   toughness = 0,
   integrity = 0,
@@ -46,6 +51,11 @@ export function resolveTacticalDamage({
   const damagePerSuccess = Math.max(
     0,
     Number(dps) || 0
+  );
+
+  const appliedDamageMultiplier = Math.max(
+    0,
+    Number(damageMultiplier) || 0
   );
 
   const attackPenetration = Math.max(
@@ -72,8 +82,29 @@ export function resolveTacticalDamage({
   /*  Raw Damage                                  */
   /* -------------------------------------------- */
 
-  const rawDamage =
+  const baseRawDamage =
     attackSuccesses * damagePerSuccess;
+
+  let rawDamage = Math.floor(
+    baseRawDamage *
+    appliedDamageMultiplier
+  );
+
+  /*
+   * If a positive multiplier reduces positive
+   * Raw Damage below 1, the attack still deals
+   * at least 1 Raw Damage.
+   */
+  if (
+    baseRawDamage > 0 &&
+    appliedDamageMultiplier > 0
+  ) {
+
+    rawDamage = Math.max(
+      1,
+      rawDamage
+    );
+  }
 
   /* -------------------------------------------- */
   /*  Toughness                                   */
@@ -127,7 +158,11 @@ export function resolveTacticalDamage({
   return {
     successes: attackSuccesses,
 
+    baseRawDamage,
     rawDamage,
+    damageMultiplier:
+      appliedDamageMultiplier,
+
     dps: damagePerSuccess,
     penetration: attackPenetration,
 
