@@ -1357,3 +1357,314 @@
 
   font-size: 0.85rem;
 }
+
+/* -------------------------------------------- */
+/*  Armor Item Sheet Header                     */
+/* -------------------------------------------- */
+
+.tactical.armor-sheet .sheet-header {
+  padding: 0.75rem;
+
+  border-bottom:
+    2px solid var(--color-border-light-primary);
+
+  background: var(--color-bg);
+}
+
+.tactical.armor-sheet .armor-header-top {
+  display: grid;
+
+  grid-template-columns:
+    112px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 1rem;
+
+  width: 100%;
+}
+
+.tactical.armor-sheet .header-portrait {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  min-width: 0;
+}
+
+.tactical.armor-sheet .profile-img {
+  display: block;
+
+  width: 96px;
+  height: 96px;
+
+  object-fit: cover;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.armor-sheet .armor-header-identity {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.6rem;
+
+  min-width: 0;
+}
+
+.tactical.armor-sheet .identity-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.2rem;
+
+  min-width: 0;
+}
+
+.tactical.armor-sheet .identity-field label {
+  font-weight: 600;
+}
+
+.tactical.armor-sheet .identity-field input {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.armor-sheet .armor-name-field input {
+  font-size: 1.1rem;
+
+  font-weight: 700;
+}
+
+.tactical.armor-sheet .armor-classification-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(0, 1.25fr)
+    minmax(100px, 0.7fr);
+
+  align-items: end;
+
+  gap: 0.65rem;
+
+  width: 100%;
+}
+
+.tactical.armor-sheet .armor-slot-field {
+  min-width: 0;
+}
+
+/* -------------------------------------------- */
+/*  Armor Item Sheet Tabs                       */
+/* -------------------------------------------- */
+
+.tactical.armor-sheet .armor-sheet-tabs {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 0;
+
+  width: 100%;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  background:
+    var(--color-bg);
+}
+
+.tactical.armor-sheet .armor-tab-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 2.6rem;
+
+  padding:
+    0.45rem
+    0.3rem;
+
+  border: 0;
+
+  border-right:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 0;
+
+  background:
+    transparent;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  line-height: 1.1;
+
+  text-align: center;
+
+  white-space: normal;
+
+  cursor: pointer;
+}
+
+.tactical.armor-sheet .armor-tab-button:last-child {
+  border-right: 0;
+}
+
+.tactical.armor-sheet .armor-tab-button:hover,
+.tactical.armor-sheet .armor-tab-button:focus-visible {
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.tactical.armor-sheet .armor-tab-button.active {
+  font-weight: 700;
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  box-shadow:
+    inset 0 -3px 0
+    var(--color-border-highlight);
+}
+
+/* -------------------------------------------- */
+/*  Armor Sheet Body                            */
+/* -------------------------------------------- */
+
+.tactical.armor-sheet .armor-sheet-body {
+  padding: 0.9rem;
+
+  width: 100%;
+
+  min-width: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tactical.armor-sheet .armor-tab-panel {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.75rem;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.armor-sheet .armor-tab-panel > h2 {
+  margin:
+    0
+    0
+    0.15rem
+    0;
+
+  padding-bottom: 0.35rem;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+}
+
+/* -------------------------------------------- */
+/*  Armor Item Fields                           */
+/* -------------------------------------------- */
+
+.tactical.armor-sheet .item-field-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  align-items: start;
+
+  gap: 0.75rem;
+}
+
+.tactical.armor-sheet .item-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.25rem;
+
+  min-width: 0;
+}
+
+.tactical.armor-sheet .item-field label {
+  font-weight: 600;
+}
+
+.tactical.armor-sheet .item-field input {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.armor-sheet .item-field input[type="number"] {
+  text-align: center;
+}
+
+.tactical.armor-sheet .checkbox-field {
+  justify-content: flex-start;
+}
+
+.tactical.armor-sheet .checkbox-field input[type="checkbox"] {
+  width: auto;
+
+  align-self: flex-start;
+}
+
+.tactical.armor-sheet .hint {
+  margin:
+    0.35rem
+    0
+    0;
+
+  opacity: 0.75;
+
+  font-style: italic;
+}
+
+/* -------------------------------------------- */
+/*  Armor Traits                                */
+/* -------------------------------------------- */
+
+.tactical.armor-sheet .trait-list {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 0.4rem;
+}
+
+.tactical.armor-sheet .trait-tag {
+  display: inline-flex;
+
+  align-items: center;
+
+  padding:
+    0.25rem
+    0.45rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+
+  font-size: 0.85rem;
+}
