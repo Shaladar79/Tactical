@@ -10,10 +10,7 @@
 /* -------------------------------------------- */
 
 import { TacticalCharacterData } from "./character-data.mjs";
-import { TacticalTrooperData } from "./trooper-data.mjs";
-import { TacticalLieutenantData } from "./lieutenant-data.mjs";
-import { TacticalCommanderData } from "./commander-data.mjs";
-import { TacticalOverlordData } from "./overlord-data.mjs";
+import { TacticalEnemyData } from "./enemy-data.mjs";
 import { TacticalVehicleData } from "./vehicle-data.mjs";
 
 /* -------------------------------------------- */
@@ -44,10 +41,7 @@ export function registerTacticalDataModels() {
     ...CONFIG.Actor.dataModels,
 
     character: TacticalCharacterData,
-    trooper: TacticalTrooperData,
-    lieutenant: TacticalLieutenantData,
-    commander: TacticalCommanderData,
-    overlord: TacticalOverlordData,
+    enemy: TacticalEnemyData,
     vehicle: TacticalVehicleData
   };
 
@@ -70,6 +64,6 @@ export function registerTacticalDataModels() {
   };
 
   console.log(
-    "Tactical | Registered 6 Actor Data Models and 9 Item Data Models"
+    "Tactical | Registered 3 Actor Data Models and 9 Item Data Models"
   );
 }
