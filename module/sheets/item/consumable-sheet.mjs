@@ -11,6 +11,44 @@ const {
   sheets
 } = foundry.applications;
 
+/* -------------------------------------------- */
+/*  Consumable Sheet Tabs                      */
+/* -------------------------------------------- */
+
+const CONSUMABLE_SHEET_TABS = [
+  {
+    id: "usage",
+    label: "Usage"
+  },
+  {
+    id: "effects",
+    label: "Effects"
+  },
+  {
+    id: "save",
+    label: "Save"
+  },
+  {
+    id: "logistics",
+    label: "Logistics"
+  },
+  {
+    id: "traits",
+    label: "Traits"
+  },
+  {
+    id: "restrictions",
+    label: "Restrictions & Source"
+  }
+];
+
+const CONSUMABLE_SHEET_TAB_IDS =
+  new Set(
+    CONSUMABLE_SHEET_TABS.map(
+      tab => tab.id
+    )
+  );
+
 /**
  * Tactical Consumable Sheet
  */
@@ -41,6 +79,11 @@ export class TacticalConsumableSheet
     window: {
       resizable: true,
       title: "Tactical Consumable"
+    },
+
+    actions: {
+      switchTab:
+        this.#onSwitchTab
     }
   };
 
@@ -70,6 +113,31 @@ export class TacticalConsumableSheet
     const system =
       item.system;
 
+    /* -------------------------------------------- */
+    /*  Tab State                                   */
+    /* -------------------------------------------- */
+
+    const activeTab =
+      CONSUMABLE_SHEET_TAB_IDS.has(
+        this._activeTab
+      )
+        ? this._activeTab
+        : "usage";
+
+    const tabs =
+      CONSUMABLE_SHEET_TABS.map(
+        tab => ({
+          ...tab,
+
+          active:
+            tab.id === activeTab
+        })
+      );
+
+    /* -------------------------------------------- */
+    /*  Sheet Context                               */
+    /* -------------------------------------------- */
+
     return {
       ...context,
 
@@ -78,6 +146,10 @@ export class TacticalConsumableSheet
 
       editable:
         this.isEditable,
+
+      activeTab,
+
+      tabs,
 
       classification: {
         slot:
@@ -179,5 +251,40 @@ export class TacticalConsumableSheet
           ? system.traits
           : []
     };
+  }
+
+  /* -------------------------------------------- */
+  /*  Tab Switching                              */
+  /* -------------------------------------------- */
+
+  static async #onSwitchTab(
+    event,
+    target
+  ) {
+
+    const tabId =
+      target.dataset.tab;
+
+    if (
+      !tabId ||
+      !CONSUMABLE_SHEET_TAB_IDS.has(
+        tabId
+      )
+    ) {
+      return;
+    }
+
+    if (
+      this._activeTab === tabId
+    ) {
+      return;
+    }
+
+    this._activeTab =
+      tabId;
+
+    await this.render({
+      force: true
+    });
   }
 }
