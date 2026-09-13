@@ -10,6 +10,10 @@ import {
 } from "./character-sheet.mjs";
 
 import {
+  TacticalEnemySheet
+} from "./enemy-sheet.mjs";
+
+import {
   TacticalVehicleSheet
 } from "./vehicle-sheet.mjs";
 
@@ -36,6 +40,21 @@ export function registerTacticalActorSheets() {
   DocumentSheetConfig.registerSheet(
     Actor,
     "tactical",
+    TacticalEnemySheet,
+    {
+      types: [
+        "enemy"
+      ],
+
+      makeDefault: true,
+
+      label: "Tactical Enemy Sheet"
+    }
+  );
+
+  DocumentSheetConfig.registerSheet(
+    Actor,
+    "tactical",
     TacticalVehicleSheet,
     {
       types: [
@@ -49,6 +68,6 @@ export function registerTacticalActorSheets() {
   );
 
   console.log(
-    "Tactical | Registered Character and Vehicle Actor Sheets"
+    "Tactical | Registered Character, Enemy, and Vehicle Actor Sheets"
   );
 }
