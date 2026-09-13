@@ -233,17 +233,11 @@ export class TacticalEnemySheet
       usesReactions,
 
       progression: {
-        tier:
-          Math.max(
-            1,
-            Number(system.tier) || 1
-          ),
-
-        rank:
-          Math.max(
-            0,
-            Number(system.rank) || 0
-          )
+       rank:
+         Math.max(
+          0,
+          Number(system.rank) || 0
+         )
       },
 
       combat: {
