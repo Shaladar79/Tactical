@@ -235,8 +235,8 @@ export class TacticalEnemySheet
       progression: {
        rank:
          Math.max(
-          0,
-          Number(system.rank) || 0
+           0,
+           Number(system.rank) || 0
          )
       },
 
