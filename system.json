@@ -38,10 +38,7 @@
   "documentTypes": {
     "Actor": {
       "character": {},
-      "trooper": {},
-      "lieutenant": {},
-      "commander": {},
-      "overlord": {},
+      "enemy": {},
       "vehicle": {}
     },
 
