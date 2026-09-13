@@ -1,0 +1,504 @@
+<div class="tactical item-sheet weapon-sheet {{cssClass}}">
+
+  <header class="sheet-header">
+
+    <div class="header-top weapon-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="header-identity weapon-header-identity">
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Name Row                             --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="identity-field weapon-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Weapon Name"
+          >
+
+        </div>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Classification Row                   --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="weapon-classification-row">
+
+          <div class="identity-field">
+
+            <label>Weapon Type</label>
+
+            <input
+              name="system.weaponType"
+              type="text"
+              value="{{classification.weaponType}}"
+              placeholder="ranged, melee..."
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Technology Type</label>
+
+            <input
+              name="system.technologyType"
+              type="text"
+              value="{{classification.technologyType}}"
+              placeholder="Technology Type"
+            >
+
+          </div>
+
+          <div class="identity-field weapon-slot-field">
+
+            <label>Slot</label>
+
+            <input
+              name="system.slot"
+              type="text"
+              value="{{classification.slot}}"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="weapon-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="weapon-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  <section class="sheet-body weapon-sheet-body">
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Damage Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="item-section weapon-tab-panel"
+        data-tab-panel="damage"
+      >
+
+        <h2>Damage</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>DPS</label>
+
+            <input
+              name="system.dps"
+              type="number"
+              min="0"
+              step="1"
+              value="{{damage.dps}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Penetration</label>
+
+            <input
+              name="system.penetration"
+              type="number"
+              min="0"
+              step="1"
+              value="{{damage.penetration}}"
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Each successful attack die adds the weapon's DPS.
+          Penetration reduces Toughness before Armor Integrity
+          and Health are affected.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Ammunition Tab                          --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="item-section weapon-tab-panel"
+        data-tab-panel="ammunition"
+      >
+
+        <h2>Ammunition</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Magazine Capacity</label>
+
+            <input
+              name="system.magazineCapacity"
+              type="number"
+              min="0"
+              step="1"
+              value="{{ammunition.magazineCapacity}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Ammo Remaining</label>
+
+            <input
+              name="system.ammoRemaining"
+              type="number"
+              min="0"
+              step="1"
+              value="{{ammunition.ammoRemaining}}"
+            >
+
+          </div>
+
+          <div class="item-field checkbox-field">
+
+            <label>Uses Magazine</label>
+
+            <input
+              name="system.usesMagazine"
+              type="checkbox"
+              {{checked ammunition.usesMagazine}}
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Ammo Remaining cannot exceed Magazine Capacity
+          when this weapon uses a magazine.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Range Tab                               --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="item-section weapon-tab-panel"
+        data-tab-panel="range"
+      >
+
+        <h2>Range</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Intended Range</label>
+
+            <input
+              name="system.intendedRange"
+              type="text"
+              value="{{range.intendedRange}}"
+              placeholder="short, medium, long..."
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Minimum Range</label>
+
+            <input
+              name="system.minimumRange"
+              type="number"
+              min="0"
+              step="1"
+              value="{{range.minimumRange}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Range</label>
+
+            <input
+              name="system.maximumRange"
+              type="number"
+              min="0"
+              step="1"
+              value="{{range.maximumRange}}"
+            >
+
+          </div>
+
+        </div>
+
+        <h3>Range TN Overrides</h3>
+
+        <div class="range-override-grid">
+
+          <div class="item-field">
+
+            <label>Melee</label>
+
+            <input
+              name="system.rangeOverrides.melee"
+              type="number"
+              step="1"
+              value="{{range.overrides.melee}}"
+              placeholder="Default"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Short</label>
+
+            <input
+              name="system.rangeOverrides.short"
+              type="number"
+              step="1"
+              value="{{range.overrides.short}}"
+              placeholder="Default"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Medium</label>
+
+            <input
+              name="system.rangeOverrides.medium"
+              type="number"
+              step="1"
+              value="{{range.overrides.medium}}"
+              placeholder="Default"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Long</label>
+
+            <input
+              name="system.rangeOverrides.long"
+              type="number"
+              step="1"
+              value="{{range.overrides.long}}"
+              placeholder="Default"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Extreme</label>
+
+            <input
+              name="system.rangeOverrides.extreme"
+              type="number"
+              step="1"
+              value="{{range.overrides.extreme}}"
+              placeholder="Default"
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Leave a range override blank to use the normal Tactical
+          modifier for that range band.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Logistics Tab                           --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="item-section weapon-tab-panel"
+        data-tab-panel="logistics"
+      >
+
+        <h2>Logistics</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Supply Value</label>
+
+            <input
+              name="system.supplyValue"
+              type="number"
+              min="0"
+              step="1"
+              value="{{logistics.supplyValue}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Traits Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.4.active}}
+
+      <section
+        class="item-section weapon-tab-panel"
+        data-tab-panel="traits"
+      >
+
+        <h2>Traits</h2>
+
+        <p class="hint">
+          Traits are stored as an array. Direct trait editing UI
+          will be expanded later.
+        </p>
+
+        {{#if traits.length}}
+
+          <div class="trait-list">
+
+            {{#each traits as |trait|}}
+
+              <span class="trait-tag">
+                {{trait}}
+              </span>
+
+            {{/each}}
+
+          </div>
+
+        {{else}}
+
+          <p class="hint">
+            No Traits.
+          </p>
+
+        {{/if}}
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Restrictions Tab                        --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.5.active}}
+
+      <section
+        class="item-section weapon-tab-panel"
+        data-tab-panel="restrictions"
+      >
+
+        <h2>Restrictions & Source</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field checkbox-field">
+
+            <label>Restricted</label>
+
+            <input
+              name="system.restricted"
+              type="checkbox"
+              {{checked restrictions.restricted}}
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{restrictions.sourceModule}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
