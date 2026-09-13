@@ -9,6 +9,10 @@ import {
   TacticalConsumableSheet
 } from "./consumable-sheet.mjs";
 
+import {
+  TacticalWeaponSheet
+} from "./weapon-sheet.mjs";
+
 /**
  * Register Tactical Item sheets.
  */
@@ -29,7 +33,22 @@ export function registerTacticalItemSheets() {
     }
   );
 
+  DocumentSheetConfig.registerSheet(
+    Item,
+    "tactical",
+    TacticalWeaponSheet,
+    {
+      types: [
+        "weapon"
+      ],
+
+      makeDefault: true,
+
+      label: "Tactical Weapon Sheet"
+    }
+  );
+
   console.log(
-    "Tactical | Registered Consumable Item Sheet"
+    "Tactical | Registered Consumable and Weapon Item Sheets"
   );
 }
