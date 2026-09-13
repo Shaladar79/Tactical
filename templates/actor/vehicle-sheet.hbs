@@ -1,0 +1,358 @@
+<div class="tactical actor-sheet vehicle-sheet {{cssClass}}">
+
+  <header class="sheet-header">
+
+    <div class="header-top vehicle-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{actor.img}}"
+          data-edit="img"
+          title="{{actor.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="header-identity vehicle-header-identity">
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Name Row                             --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="identity-field vehicle-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{actor.name}}"
+            placeholder="Vehicle Name"
+          >
+
+        </div>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Progression / Classification         --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="vehicle-classification-row">
+
+          <div class="identity-field">
+
+            <label>Tier</label>
+
+            <input
+              name="system.tier"
+              type="number"
+              min="1"
+              step="1"
+              value="{{progression.tier}}"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Rank</label>
+
+            <input
+              name="system.rank"
+              type="number"
+              min="0"
+              step="1"
+              value="{{progression.rank}}"
+            >
+
+          </div>
+
+          <div class="identity-field checkbox-field vehicle-autonomous-field">
+
+            <label>Autonomous</label>
+
+            <input
+              name="system.autonomous"
+              type="checkbox"
+              {{checked progression.autonomous}}
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="vehicle-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="vehicle-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  <section class="sheet-body vehicle-sheet-body">
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Combat Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="vehicle-tab-panel"
+        data-tab-panel="combat"
+      >
+
+        <h2>Combat</h2>
+
+        <h3>Hull</h3>
+
+        <div class="vehicle-resource-grid">
+
+          <div class="item-field">
+
+            <label>Current Hull</label>
+
+            <input
+              name="system.hull.value"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.hull.value}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Hull</label>
+
+            <input
+              name="system.hull.max"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.hull.max}}"
+            >
+
+          </div>
+
+        </div>
+
+        <h3>Armor Integrity</h3>
+
+        <div class="vehicle-resource-grid">
+
+          <div class="item-field">
+
+            <label>Current Integrity</label>
+
+            <input
+              name="system.armorIntegrity.value"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.armorIntegrity.value}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Integrity</label>
+
+            <input
+              name="system.armorIntegrity.max"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.armorIntegrity.max}}"
+            >
+
+          </div>
+
+        </div>
+
+        <h3>Combat Statistics</h3>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Movement</label>
+
+            <input
+              name="system.movement"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.movement}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Initiative</label>
+
+            <input
+              name="system.initiative"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.initiative}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Resolve</label>
+
+            <input
+              name="system.resolve"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.resolve}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Toughness</label>
+
+            <input
+              name="system.toughness"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.toughness}}"
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Vehicles and autonomous units use Hull instead of Health.
+          Current Hull and Armor Integrity cannot exceed their maximum values.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Action Economy Tab                      --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="vehicle-tab-panel"
+        data-tab-panel="actions"
+      >
+
+        <h2>Action Economy</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Actions</label>
+
+            <input
+              name="system.actions"
+              type="number"
+              min="0"
+              step="1"
+              value="{{actionEconomy.actions}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Reactions per Round</label>
+
+            <input
+              name="system.reactionsPerRound"
+              type="number"
+              min="0"
+              step="1"
+              value="{{actionEconomy.reactionsPerRound}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Attack Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="vehicle-tab-panel"
+        data-tab-panel="attack"
+      >
+
+        <h2>Attack</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Attack Pool</label>
+
+            <input
+              name="system.attackPool"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attack.attackPool}}"
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Attack Pool is the Vehicle's default attack dice pool.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
