@@ -1,0 +1,663 @@
+<div class="tactical actor-sheet enemy-sheet {{cssClass}}">
+
+  <header class="sheet-header">
+
+    <div class="header-top enemy-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{actor.img}}"
+          data-edit="img"
+          title="{{actor.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="header-identity enemy-header-identity">
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Name                                 --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="identity-field enemy-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{actor.name}}"
+            placeholder="Enemy Name"
+          >
+
+        </div>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Enemy Classification                 --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="enemy-classification-row">
+
+          <div class="identity-field enemy-class-field">
+
+            <label>Enemy Class</label>
+
+            <select name="system.enemyClass">
+
+              {{#each enemyClasses as |entry|}}
+
+                <option
+                  value="{{entry.id}}"
+                  {{#if entry.selected}}selected{{/if}}
+                >
+                  {{entry.label}}
+                </option>
+
+              {{/each}}
+
+            </select>
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Tier</label>
+
+            <input
+              name="system.tier"
+              type="number"
+              min="1"
+              step="1"
+              value="{{progression.tier}}"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Rank</label>
+
+            <input
+              name="system.rank"
+              type="number"
+              min="0"
+              step="1"
+              value="{{progression.rank}}"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="enemy-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="enemy-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  <section class="sheet-body enemy-sheet-body">
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Combat Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="enemy-tab-panel"
+        data-tab-panel="combat"
+      >
+
+        <h2>Combat</h2>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Health                               --}}
+        {{!-- ------------------------------------ --}}
+
+        <h3>Health</h3>
+
+        <div class="enemy-resource-grid">
+
+          <div class="item-field">
+
+            <label>Current Health</label>
+
+            <input
+              name="system.health.value"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.health.value}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Health</label>
+
+            <input
+              name="system.health.max"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.health.max}}"
+            >
+
+          </div>
+
+        </div>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Wounds                               --}}
+        {{!-- ------------------------------------ --}}
+
+        {{#if usesWounds}}
+
+          <h3>Wounds</h3>
+
+          <div class="enemy-resource-grid">
+
+            <div class="item-field">
+
+              <label>Wounds Taken</label>
+
+              <input
+                name="system.wounds.value"
+                type="number"
+                min="0"
+                step="1"
+                value="{{combat.wounds.value}}"
+              >
+
+            </div>
+
+            <div class="item-field">
+
+              <label>Maximum Wounds</label>
+
+              {{#if usesManualWounds}}
+
+                <input
+                  name="system.wounds.max"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="{{combat.wounds.max}}"
+                >
+
+              {{else}}
+
+                <div class="derived-value">
+                  {{combat.wounds.max}}
+                </div>
+
+              {{/if}}
+
+            </div>
+
+          </div>
+
+          {{#if usesDerivedWounds}}
+
+            <p class="hint">
+              Maximum Wounds are derived from Rank using the
+              same progression as player characters.
+            </p>
+
+          {{/if}}
+
+          {{#if usesManualWounds}}
+
+            <p class="hint">
+              Overlord Maximum Wounds are set manually.
+            </p>
+
+          {{/if}}
+
+        {{/if}}
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Armor Integrity                      --}}
+        {{!-- ------------------------------------ --}}
+
+        <h3>Armor Integrity</h3>
+
+        <div class="enemy-resource-grid">
+
+          <div class="item-field">
+
+            <label>Current Integrity</label>
+
+            <input
+              name="system.armorIntegrity.value"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.armorIntegrity.value}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Integrity</label>
+
+            <input
+              name="system.armorIntegrity.max"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.armorIntegrity.max}}"
+            >
+
+          </div>
+
+        </div>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Combat Statistics                    --}}
+        {{!-- ------------------------------------ --}}
+
+        <h3>Combat Statistics</h3>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Movement</label>
+
+            <input
+              name="system.movement"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.movement}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Initiative</label>
+
+            <input
+              name="system.initiative"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.initiative}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Toughness</label>
+
+            <input
+              name="system.toughness"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.toughness}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Legacy Resolve</label>
+
+            <input
+              name="system.resolve"
+              type="number"
+              min="0"
+              step="1"
+              value="{{combat.resolve}}"
+            >
+
+          </div>
+
+          {{#if usesReactions}}
+
+            <div class="item-field">
+
+              <label>Reactions per Round</label>
+
+              <input
+                name="system.reactionsPerRound"
+                type="number"
+                min="0"
+                step="1"
+                value="{{combat.reactionsPerRound}}"
+              >
+
+            </div>
+
+          {{/if}}
+
+        </div>
+
+        {{#if isTrooper}}
+
+          <p class="hint">
+            Troopers use Health but do not use Wounds.
+          </p>
+
+        {{/if}}
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Attributes Tab                          --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="enemy-tab-panel"
+        data-tab-panel="attributes"
+      >
+
+        <h2>Attributes</h2>
+
+        <div class="enemy-stat-grid">
+
+          <div class="item-field">
+
+            <label>Might</label>
+
+            <input
+              name="system.attributes.might"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attributes.might}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Precision</label>
+
+            <input
+              name="system.attributes.precision"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attributes.precision}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Agility</label>
+
+            <input
+              name="system.attributes.agility"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attributes.agility}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Endurance</label>
+
+            <input
+              name="system.attributes.endurance"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attributes.endurance}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Focus</label>
+
+            <input
+              name="system.attributes.focus"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attributes.focus}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Resolve</label>
+
+            <input
+              name="system.attributes.resolve"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attributes.resolve}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Perception</label>
+
+            <input
+              name="system.attributes.perception"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attributes.perception}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Saves Tab                               --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="enemy-tab-panel"
+        data-tab-panel="saves"
+      >
+
+        <h2>General Save Bonuses</h2>
+
+        <div class="enemy-stat-grid">
+
+          <div class="item-field">
+
+            <label>Might</label>
+
+            <input
+              name="system.saveBonuses.might"
+              type="number"
+              min="0"
+              step="1"
+              value="{{saveBonuses.might}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Precision</label>
+
+            <input
+              name="system.saveBonuses.precision"
+              type="number"
+              min="0"
+              step="1"
+              value="{{saveBonuses.precision}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Agility</label>
+
+            <input
+              name="system.saveBonuses.agility"
+              type="number"
+              min="0"
+              step="1"
+              value="{{saveBonuses.agility}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Endurance</label>
+
+            <input
+              name="system.saveBonuses.endurance"
+              type="number"
+              min="0"
+              step="1"
+              value="{{saveBonuses.endurance}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Focus</label>
+
+            <input
+              name="system.saveBonuses.focus"
+              type="number"
+              min="0"
+              step="1"
+              value="{{saveBonuses.focus}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Resolve</label>
+
+            <input
+              name="system.saveBonuses.resolve"
+              type="number"
+              min="0"
+              step="1"
+              value="{{saveBonuses.resolve}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Perception</label>
+
+            <input
+              name="system.saveBonuses.perception"
+              type="number"
+              min="0"
+              step="1"
+              value="{{saveBonuses.perception}}"
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Save pools use the appropriate Attribute plus its
+          General Save Bonus and any conditional bonuses.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Attack Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="enemy-tab-panel"
+        data-tab-panel="attack"
+      >
+
+        <h2>Attack</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Attack Pool</label>
+
+            <input
+              name="system.attackPool"
+              type="number"
+              min="0"
+              step="1"
+              value="{{attack.attackPool}}"
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Attack Pool is the Enemy's default attack dice pool.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
