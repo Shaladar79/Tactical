@@ -1979,3 +1979,299 @@
 
   font-size: 0.85rem;
 }
+
+/* -------------------------------------------- */
+/*  Vehicle Actor Sheet Header                  */
+/* -------------------------------------------- */
+
+.tactical.vehicle-sheet .sheet-header {
+  padding: 0.75rem;
+
+  border-bottom:
+    2px solid var(--color-border-light-primary);
+
+  background: var(--color-bg);
+}
+
+.tactical.vehicle-sheet .vehicle-header-top {
+  display: grid;
+
+  grid-template-columns:
+    112px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 1rem;
+
+  width: 100%;
+}
+
+.tactical.vehicle-sheet .header-portrait {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .profile-img {
+  display: block;
+
+  width: 96px;
+  height: 96px;
+
+  object-fit: cover;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.vehicle-sheet .vehicle-header-identity {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.6rem;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .identity-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.2rem;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .identity-field label {
+  font-weight: 600;
+}
+
+.tactical.vehicle-sheet .identity-field input {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .vehicle-name-field input {
+  font-size: 1.1rem;
+
+  font-weight: 700;
+}
+
+.tactical.vehicle-sheet .vehicle-classification-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(120px, 0.8fr);
+
+  align-items: end;
+
+  gap: 0.65rem;
+
+  width: 100%;
+}
+
+.tactical.vehicle-sheet .vehicle-autonomous-field {
+  justify-content: flex-start;
+}
+
+.tactical.vehicle-sheet .vehicle-autonomous-field input[type="checkbox"] {
+  width: auto;
+
+  align-self: flex-start;
+}
+
+/* -------------------------------------------- */
+/*  Vehicle Actor Sheet Tabs                    */
+/* -------------------------------------------- */
+
+.tactical.vehicle-sheet .vehicle-sheet-tabs {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 0;
+
+  width: 100%;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  background:
+    var(--color-bg);
+}
+
+.tactical.vehicle-sheet .vehicle-tab-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 2.6rem;
+
+  padding:
+    0.45rem
+    0.3rem;
+
+  border: 0;
+
+  border-right:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 0;
+
+  background:
+    transparent;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  line-height: 1.1;
+
+  text-align: center;
+
+  white-space: normal;
+
+  cursor: pointer;
+}
+
+.tactical.vehicle-sheet .vehicle-tab-button:last-child {
+  border-right: 0;
+}
+
+.tactical.vehicle-sheet .vehicle-tab-button:hover,
+.tactical.vehicle-sheet .vehicle-tab-button:focus-visible {
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.tactical.vehicle-sheet .vehicle-tab-button.active {
+  font-weight: 700;
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  box-shadow:
+    inset 0 -3px 0
+    var(--color-border-highlight);
+}
+
+/* -------------------------------------------- */
+/*  Vehicle Sheet Body                          */
+/* -------------------------------------------- */
+
+.tactical.vehicle-sheet .vehicle-sheet-body {
+  padding: 0.9rem;
+
+  width: 100%;
+
+  min-width: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tactical.vehicle-sheet .vehicle-tab-panel {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.75rem;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .vehicle-tab-panel > h2 {
+  margin:
+    0
+    0
+    0.15rem
+    0;
+
+  padding-bottom: 0.35rem;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+}
+
+.tactical.vehicle-sheet .vehicle-tab-panel > h3 {
+  margin:
+    0.35rem
+    0
+    0;
+}
+
+/* -------------------------------------------- */
+/*  Vehicle Fields                              */
+/* -------------------------------------------- */
+
+.tactical.vehicle-sheet .item-field-grid,
+.tactical.vehicle-sheet .vehicle-resource-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  align-items: start;
+
+  gap: 0.75rem;
+}
+
+.tactical.vehicle-sheet .item-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.25rem;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .item-field label {
+  font-weight: 600;
+}
+
+.tactical.vehicle-sheet .item-field input {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .item-field input[type="number"] {
+  text-align: center;
+}
+
+.tactical.vehicle-sheet .checkbox-field {
+  justify-content: flex-start;
+}
+
+.tactical.vehicle-sheet .checkbox-field input[type="checkbox"] {
+  width: auto;
+
+  align-self: flex-start;
+}
+
+.tactical.vehicle-sheet .hint {
+  margin:
+    0.35rem
+    0
+    0;
+
+  opacity: 0.75;
+
+  font-style: italic;
+}
