@@ -1,0 +1,340 @@
+<div class="tactical item-sheet utility-sheet {{cssClass}}">
+
+  <header class="sheet-header">
+
+    <div class="header-top utility-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="header-identity utility-header-identity">
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Name Row                             --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="identity-field utility-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Utility Name"
+          >
+
+        </div>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Classification Row                   --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="utility-classification-row">
+
+          <div class="identity-field">
+
+            <label>Utility Type</label>
+
+            <input
+              name="system.utilityType"
+              type="text"
+              value="{{classification.utilityType}}"
+              placeholder="Utility Type"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Technology Type</label>
+
+            <input
+              name="system.technologyType"
+              type="text"
+              value="{{classification.technologyType}}"
+              placeholder="Technology Type"
+            >
+
+          </div>
+
+          <div class="identity-field utility-slot-field">
+
+            <label>Slot</label>
+
+            <input
+              name="system.slot"
+              type="text"
+              value="{{classification.slot}}"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="utility-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="utility-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  <section class="sheet-body utility-sheet-body">
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Charges Tab                             --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="item-section utility-tab-panel"
+        data-tab-panel="charges"
+      >
+
+        <h2>Charges</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field checkbox-field">
+
+            <label>Uses Charges</label>
+
+            <input
+              name="system.usesCharges"
+              type="checkbox"
+              {{checked charges.usesCharges}}
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Current Charges</label>
+
+            <input
+              name="system.charges"
+              type="number"
+              min="0"
+              step="1"
+              value="{{charges.charges}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Charges</label>
+
+            <input
+              name="system.maxCharges"
+              type="number"
+              min="0"
+              step="1"
+              value="{{charges.maxCharges}}"
+            >
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          If this Utility uses charges, current Charges cannot exceed Maximum Charges.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Action Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="item-section utility-tab-panel"
+        data-tab-panel="action"
+      >
+
+        <h2>Action</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Action Cost</label>
+
+            <input
+              name="system.actionCost"
+              type="number"
+              min="0"
+              step="1"
+              value="{{action.actionCost}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Logistics Tab                           --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="item-section utility-tab-panel"
+        data-tab-panel="logistics"
+      >
+
+        <h2>Logistics</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field">
+
+            <label>Supply Value</label>
+
+            <input
+              name="system.supplyValue"
+              type="number"
+              min="0"
+              step="1"
+              value="{{logistics.supplyValue}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Traits Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="item-section utility-tab-panel"
+        data-tab-panel="traits"
+      >
+
+        <h2>Traits</h2>
+
+        <p class="hint">
+          Traits are stored as an array. Direct trait editing UI
+          will be expanded later.
+        </p>
+
+        {{#if traits.length}}
+
+          <div class="trait-list">
+
+            {{#each traits as |trait|}}
+
+              <span class="trait-tag">
+                {{trait}}
+              </span>
+
+            {{/each}}
+
+          </div>
+
+        {{else}}
+
+          <p class="hint">
+            No Traits.
+          </p>
+
+        {{/if}}
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Restrictions Tab                        --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.4.active}}
+
+      <section
+        class="item-section utility-tab-panel"
+        data-tab-panel="restrictions"
+      >
+
+        <h2>Restrictions & Source</h2>
+
+        <div class="item-field-grid">
+
+          <div class="item-field checkbox-field">
+
+            <label>Restricted</label>
+
+            <input
+              name="system.restricted"
+              type="checkbox"
+              {{checked restrictions.restricted}}
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{restrictions.sourceModule}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
