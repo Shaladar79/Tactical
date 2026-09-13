@@ -92,13 +92,6 @@ export class TacticalEnemyData extends foundry.abstract.TypeDataModel {
       /*  Enemy Progression                           */
       /* -------------------------------------------- */
 
-      tier: new NumberField({
-        required: true,
-        integer: true,
-        min: 1,
-        initial: 1
-      }),
-
       rank: new NumberField({
         required: true,
         integer: true,
