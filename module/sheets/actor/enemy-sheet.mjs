@@ -89,8 +89,8 @@ export class TacticalEnemySheet
     ],
 
     position: {
-      width: 720,
-      height: 760
+      width: 640,
+      height: 600
     },
 
     form: {
