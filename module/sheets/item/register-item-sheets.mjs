@@ -17,6 +17,10 @@ import {
   TacticalArmorSheet
 } from "./armor-sheet.mjs";
 
+import {
+  TacticalUtilitySheet
+} from "./utility-sheet.mjs";
+
 /**
  * Register Tactical Item sheets.
  */
@@ -67,7 +71,22 @@ export function registerTacticalItemSheets() {
     }
   );
 
+  DocumentSheetConfig.registerSheet(
+    Item,
+    "tactical",
+    TacticalUtilitySheet,
+    {
+      types: [
+        "utility"
+      ],
+
+      makeDefault: true,
+
+      label: "Tactical Utility Sheet"
+    }
+  );
+
   console.log(
-    "Tactical | Registered Consumable, Weapon, and Armor Item Sheets"
+    "Tactical | Registered Consumable, Weapon, Armor, and Utility Item Sheets"
   );
 }
