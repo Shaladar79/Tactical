@@ -45,6 +45,82 @@ const ARCHETYPE_SHEET_TAB_IDS =
     )
   );
 
+/* -------------------------------------------- */
+/*  Shared Array Helpers                        */
+/* -------------------------------------------- */
+
+async function appendToArray(
+  sheet,
+  fieldName
+) {
+
+  const current =
+    sheet.item.system[
+      fieldName
+    ];
+
+  const values =
+    Array.isArray(current)
+      ? [
+          ...current
+        ]
+      : [];
+
+  values.push("");
+
+  await sheet.item.update({
+    [`system.${fieldName}`]:
+      values
+  });
+}
+
+async function removeFromArray(
+  sheet,
+  fieldName,
+  target
+) {
+
+  const index =
+    Number(
+      target.dataset.index
+    );
+
+  if (
+    !Number.isInteger(index)
+  ) {
+    return;
+  }
+
+  const current =
+    sheet.item.system[
+      fieldName
+    ];
+
+  const values =
+    Array.isArray(current)
+      ? [
+          ...current
+        ]
+      : [];
+
+  if (
+    index < 0 ||
+    index >= values.length
+  ) {
+    return;
+  }
+
+  values.splice(
+    index,
+    1
+  );
+
+  await sheet.item.update({
+    [`system.${fieldName}`]:
+      values
+  });
+}
+
 /**
  * Tactical Archetype Sheet
  */
@@ -156,6 +232,7 @@ export class TacticalArchetypeSheet
       ARCHETYPE_SHEET_TABS.map(
         tab => ({
           ...tab,
+
           active:
             tab.id === activeTab
         })
@@ -271,86 +348,13 @@ export class TacticalArchetypeSheet
   }
 
   /* -------------------------------------------- */
-  /*  Generic Array Helpers                      */
-  /* -------------------------------------------- */
-
-  static async #appendToArray(
-    fieldName
-  ) {
-
-    const current =
-      this.item.system[
-        fieldName
-      ];
-
-    const values =
-      Array.isArray(current)
-        ? [
-            ...current
-          ]
-        : [];
-
-    values.push("");
-
-    await this.item.update({
-      [`system.${fieldName}`]:
-        values
-    });
-  }
-
-  static async #removeFromArray(
-    fieldName,
-    target
-  ) {
-
-    const index =
-      Number(
-        target.dataset.index
-      );
-
-    if (
-      !Number.isInteger(index)
-    ) {
-      return;
-    }
-
-    const current =
-      this.item.system[
-        fieldName
-      ];
-
-    const values =
-      Array.isArray(current)
-        ? [
-            ...current
-          ]
-        : [];
-
-    if (
-      index < 0 ||
-      index >= values.length
-    ) {
-      return;
-    }
-
-    values.splice(
-      index,
-      1
-    );
-
-    await this.item.update({
-      [`system.${fieldName}`]:
-        values
-    });
-  }
-
-  /* -------------------------------------------- */
   /*  Granted Specializations                    */
   /* -------------------------------------------- */
 
   static async #onAddSpecialization() {
 
-    await this.#appendToArray(
+    await appendToArray(
+      this,
       "grantedSpecializations"
     );
   }
@@ -360,7 +364,8 @@ export class TacticalArchetypeSheet
     target
   ) {
 
-    await this.#removeFromArray(
+    await removeFromArray(
+      this,
       "grantedSpecializations",
       target
     );
@@ -372,7 +377,8 @@ export class TacticalArchetypeSheet
 
   static async #onAddAbility() {
 
-    await this.#appendToArray(
+    await appendToArray(
+      this,
       "grantedAbilities"
     );
   }
@@ -382,7 +388,8 @@ export class TacticalArchetypeSheet
     target
   ) {
 
-    await this.#removeFromArray(
+    await removeFromArray(
+      this,
       "grantedAbilities",
       target
     );
@@ -394,7 +401,8 @@ export class TacticalArchetypeSheet
 
   static async #onAddTalent() {
 
-    await this.#appendToArray(
+    await appendToArray(
+      this,
       "grantedTalents"
     );
   }
@@ -404,7 +412,8 @@ export class TacticalArchetypeSheet
     target
   ) {
 
-    await this.#removeFromArray(
+    await removeFromArray(
+      this,
       "grantedTalents",
       target
     );
@@ -416,7 +425,8 @@ export class TacticalArchetypeSheet
 
   static async #onAddPermission() {
 
-    await this.#appendToArray(
+    await appendToArray(
+      this,
       "equipmentPermissions"
     );
   }
@@ -426,7 +436,8 @@ export class TacticalArchetypeSheet
     target
   ) {
 
-    await this.#removeFromArray(
+    await removeFromArray(
+      this,
       "equipmentPermissions",
       target
     );
@@ -438,7 +449,8 @@ export class TacticalArchetypeSheet
 
   static async #onAddEquipment() {
 
-    await this.#appendToArray(
+    await appendToArray(
+      this,
       "standardEquipment"
     );
   }
@@ -448,7 +460,8 @@ export class TacticalArchetypeSheet
     target
   ) {
 
-    await this.#removeFromArray(
+    await removeFromArray(
+      this,
       "standardEquipment",
       target
     );
@@ -460,7 +473,8 @@ export class TacticalArchetypeSheet
 
   static async #onAddTrait() {
 
-    await this.#appendToArray(
+    await appendToArray(
+      this,
       "traits"
     );
   }
@@ -470,7 +484,8 @@ export class TacticalArchetypeSheet
     target
   ) {
 
-    await this.#removeFromArray(
+    await removeFromArray(
+      this,
       "traits",
       target
     );
