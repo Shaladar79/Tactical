@@ -1,0 +1,399 @@
+/**
+ * Tactical
+ * Enemy Actor Sheet Styles
+ */
+
+/* -------------------------------------------- */
+/*  Enemy Actor Sheet Structure                 */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Actor Sheet Header                    */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .sheet-header {
+  flex: 0 0 auto;
+
+  padding: 0.55rem;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  background:
+    var(--color-bg);
+}
+
+.tactical.enemy-sheet .enemy-header-top {
+  display: grid;
+
+  grid-template-columns:
+    86px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 0.65rem;
+
+  width: 100%;
+}
+
+.tactical.enemy-sheet .header-portrait {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: center;
+
+  min-width: 0;
+}
+
+.tactical.enemy-sheet .profile-img {
+  display: block;
+
+  width: 76px;
+  height: 76px;
+
+  object-fit: cover;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.enemy-sheet .enemy-header-identity {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.3rem;
+
+  min-width: 0;
+}
+
+.tactical.enemy-sheet .identity-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.1rem;
+
+  min-width: 0;
+}
+
+.tactical.enemy-sheet .identity-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.tactical.enemy-sheet .identity-field input,
+.tactical.enemy-sheet .identity-field select {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.enemy-sheet .enemy-name-field input {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tactical.enemy-sheet .enemy-classification-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    72px
+    72px;
+
+  align-items: end;
+
+  gap: 0.4rem;
+
+  width: 100%;
+}
+
+.tactical.enemy-sheet .enemy-classification-row input[type="number"] {
+  text-align: center;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Actor Sheet Tabs                      */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .enemy-sheet-tabs {
+  flex: 0 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 0;
+
+  width: 100%;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  background:
+    var(--color-bg);
+}
+
+.tactical.enemy-sheet .enemy-tab-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 2.1rem;
+
+  padding:
+    0.3rem
+    0.25rem;
+
+  border: 0;
+
+  border-right:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 0;
+
+  background:
+    transparent;
+
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  line-height: 1;
+
+  text-align: center;
+
+  white-space: normal;
+
+  cursor: pointer;
+}
+
+.tactical.enemy-sheet .enemy-tab-button:last-child {
+  border-right: 0;
+}
+
+.tactical.enemy-sheet .enemy-tab-button:hover,
+.tactical.enemy-sheet .enemy-tab-button:focus-visible {
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.tactical.enemy-sheet .enemy-tab-button.active {
+  font-weight: 700;
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  box-shadow:
+    inset 0 -2px 0
+    var(--color-border-highlight);
+}
+
+/* -------------------------------------------- */
+/*  Enemy Sheet Body                            */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .enemy-sheet-body {
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  padding: 0.55rem;
+
+  width: 100%;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tactical.enemy-sheet .enemy-tab-panel {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.35rem;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Section Headings                      */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .enemy-tab-panel > h2 {
+  margin:
+    0
+    0
+    0.1rem
+    0;
+
+  padding-bottom: 0.15rem;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+
+.tactical.enemy-sheet .enemy-tab-panel > h3 {
+  margin:
+    0.35rem
+    0
+    0;
+
+  font-size: 0.95rem;
+  line-height: 1.05;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Resource Fields                       */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .enemy-resource-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(120px, 1fr));
+
+  align-items: start;
+
+  gap:
+    0.35rem
+    0.6rem;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Combat Fields                         */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .item-field-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(95px, 1fr));
+
+  align-items: start;
+
+  gap:
+    0.35rem
+    0.55rem;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Attribute / Save Fields               */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .enemy-stat-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(90px, 1fr));
+
+  align-items: start;
+
+  gap:
+    0.4rem
+    0.55rem;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Fields                                */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .item-field {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 0.1rem;
+
+  min-width: 0;
+}
+
+.tactical.enemy-sheet .item-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  line-height: 1.05;
+}
+
+.tactical.enemy-sheet .item-field input[type="number"] {
+  width: 4.5rem;
+  max-width: 100%;
+
+  min-height: 1.8rem;
+
+  text-align: center;
+}
+
+/* -------------------------------------------- */
+/*  Enemy Derived Values                        */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .derived-value {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 4.5rem;
+  max-width: 100%;
+
+  min-height: 1.8rem;
+
+  padding:
+    0.2rem
+    0.35rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  text-align: center;
+
+  background:
+    rgba(255, 255, 255, 0.03);
+}
+
+/* -------------------------------------------- */
+/*  Enemy Hint Text                             */
+/* -------------------------------------------- */
+
+.tactical.enemy-sheet .hint {
+  margin:
+    0.1rem
+    0
+    0.15rem;
+
+  opacity: 0.75;
+
+  font-size: 0.75rem;
+  font-style: italic;
+
+  line-height: 1.15;
+}
