@@ -51,7 +51,9 @@
       "archetype": {},
       "specialization": {},
       "talent": {},
-      "ability": {}
+      "ability": {},
+      "general": {},
+      "vehicleModule": {}
     }
   },
 
