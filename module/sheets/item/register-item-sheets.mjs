@@ -45,6 +45,10 @@ import {
   TacticalGeneralSheet
 } from "./general-sheet.mjs";
 
+import {
+  TacticalVehicleModuleSheet
+} from "./vehicle-module-sheet.mjs";
+
 /**
  * Register Tactical Item sheets.
  */
@@ -200,7 +204,22 @@ export function registerTacticalItemSheets() {
     }
   );
 
+  DocumentSheetConfig.registerSheet(
+    Item,
+    "tactical",
+    TacticalVehicleModuleSheet,
+    {
+      types: [
+        "vehicleModule"
+      ],
+
+      makeDefault: true,
+
+      label: "Tactical Vehicle Module Sheet"
+    }
+  );
+
   console.log(
-    "Tactical | Registered Consumable, Weapon, Armor, Utility, Ancestry, Archetype, Specialization, Talent, Ability, and General Item Sheets"
+    "Tactical | Registered Consumable, Weapon, Armor, Utility, Ancestry, Archetype, Specialization, Talent, Ability, General, and Vehicle Module Item Sheets"
   );
 }
