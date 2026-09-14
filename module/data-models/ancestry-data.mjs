@@ -46,7 +46,7 @@ export class TacticalAncestryData extends foundry.abstract.TypeDataModel {
         initial: 0
       }),
 
-      aimModifier: new NumberField({
+      precisionModifier: new NumberField({
         required: true,
         integer: true,
         initial: 0
