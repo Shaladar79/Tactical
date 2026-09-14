@@ -1,0 +1,587 @@
+<div class="tactical item-sheet archetype-sheet {{cssClass}}">
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Persistent Header                       --}}
+  {{!-- ---------------------------------------- --}}
+
+  <header class="sheet-header">
+
+    <div class="archetype-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="archetype-header-identity">
+
+        <div class="identity-field archetype-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Archetype Name"
+          >
+
+        </div>
+
+        <div class="archetype-classification-row">
+
+          <div class="identity-field">
+
+            <label>Archetype Type</label>
+
+            <input
+              name="system.archetypeType"
+              type="text"
+              value="{{classification.archetypeType}}"
+              placeholder="Type"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="archetype-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="archetype-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Sheet Body                               --}}
+  {{!-- ---------------------------------------- --}}
+
+  <section class="archetype-sheet-body">
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Overview                              --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="archetype-tab-panel"
+        data-tab-panel="overview"
+      >
+
+        <h2>Overview</h2>
+
+        <p class="hint">
+          Archetypes define a character's tactical role, granted
+          features, equipment access, and progression requirements.
+        </p>
+
+        <div class="archetype-overview-grid">
+
+          <div class="archetype-overview-card">
+
+            <h3>Features</h3>
+
+            <p>
+              Defines granted Specializations, Abilities, and Talents.
+            </p>
+
+          </div>
+
+          <div class="archetype-overview-card">
+
+            <h3>Equipment</h3>
+
+            <p>
+              Defines equipment permissions and standard starting
+              equipment associated with this Archetype.
+            </p>
+
+          </div>
+
+          <div class="archetype-overview-card">
+
+            <h3>Traits</h3>
+
+            <p>
+              Defines persistent tags or properties associated with
+              this Archetype.
+            </p>
+
+          </div>
+
+          <div class="archetype-overview-card">
+
+            <h3>Progression</h3>
+
+            <p>
+              Defines the minimum Rank required to use or select this
+              Archetype.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Features                              --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="archetype-tab-panel"
+        data-tab-panel="features"
+      >
+
+        {{!-- Granted Specializations --}}
+
+        <div class="archetype-section-heading">
+
+          <h2>Granted Specializations</h2>
+
+          <button
+            type="button"
+            class="archetype-add-button"
+            data-action="addSpecialization"
+          >
+            Add Specialization
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Specializations automatically granted by this Archetype.
+        </p>
+
+        <div class="archetype-entry-list">
+
+          {{#each grantedSpecializations as |specialization|}}
+
+            <div class="archetype-entry-row">
+
+              <input
+                name="system.grantedSpecializations.{{@index}}"
+                type="text"
+                value="{{specialization}}"
+                placeholder="Specialization"
+              >
+
+              <button
+                type="button"
+                class="archetype-remove-button"
+                data-action="removeSpecialization"
+                data-index="{{@index}}"
+                title="Remove Specialization"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This Archetype grants no Specializations.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+        {{!-- Granted Abilities --}}
+
+        <div class="archetype-section-heading">
+
+          <h2>Granted Abilities</h2>
+
+          <button
+            type="button"
+            class="archetype-add-button"
+            data-action="addAbility"
+          >
+            Add Ability
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Abilities automatically granted by this Archetype.
+        </p>
+
+        <div class="archetype-entry-list">
+
+          {{#each grantedAbilities as |ability|}}
+
+            <div class="archetype-entry-row">
+
+              <input
+                name="system.grantedAbilities.{{@index}}"
+                type="text"
+                value="{{ability}}"
+                placeholder="Ability"
+              >
+
+              <button
+                type="button"
+                class="archetype-remove-button"
+                data-action="removeAbility"
+                data-index="{{@index}}"
+                title="Remove Ability"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This Archetype grants no Abilities.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+        {{!-- Granted Talents --}}
+
+        <div class="archetype-section-heading">
+
+          <h2>Granted Talents</h2>
+
+          <button
+            type="button"
+            class="archetype-add-button"
+            data-action="addTalent"
+          >
+            Add Talent
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Talents automatically granted by this Archetype.
+        </p>
+
+        <div class="archetype-entry-list">
+
+          {{#each grantedTalents as |talent|}}
+
+            <div class="archetype-entry-row">
+
+              <input
+                name="system.grantedTalents.{{@index}}"
+                type="text"
+                value="{{talent}}"
+                placeholder="Talent"
+              >
+
+              <button
+                type="button"
+                class="archetype-remove-button"
+                data-action="removeTalent"
+                data-index="{{@index}}"
+                title="Remove Talent"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This Archetype grants no Talents.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Equipment                             --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="archetype-tab-panel"
+        data-tab-panel="equipment"
+      >
+
+        {{!-- Equipment Permissions --}}
+
+        <div class="archetype-section-heading">
+
+          <h2>Equipment Permissions</h2>
+
+          <button
+            type="button"
+            class="archetype-add-button"
+            data-action="addPermission"
+          >
+            Add Permission
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Equipment categories or restrictions available to this Archetype.
+        </p>
+
+        <div class="archetype-entry-list">
+
+          {{#each equipmentPermissions as |permission|}}
+
+            <div class="archetype-entry-row">
+
+              <input
+                name="system.equipmentPermissions.{{@index}}"
+                type="text"
+                value="{{permission}}"
+                placeholder="Equipment Permission"
+              >
+
+              <button
+                type="button"
+                class="archetype-remove-button"
+                data-action="removePermission"
+                data-index="{{@index}}"
+                title="Remove Permission"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This Archetype has no special equipment permissions.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+        {{!-- Standard Equipment --}}
+
+        <div class="archetype-section-heading">
+
+          <h2>Standard Equipment</h2>
+
+          <button
+            type="button"
+            class="archetype-add-button"
+            data-action="addEquipment"
+          >
+            Add Equipment
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Equipment normally supplied when this Archetype is selected.
+        </p>
+
+        <div class="archetype-entry-list">
+
+          {{#each standardEquipment as |equipment|}}
+
+            <div class="archetype-entry-row">
+
+              <input
+                name="system.standardEquipment.{{@index}}"
+                type="text"
+                value="{{equipment}}"
+                placeholder="Equipment"
+              >
+
+              <button
+                type="button"
+                class="archetype-remove-button"
+                data-action="removeEquipment"
+                data-index="{{@index}}"
+                title="Remove Equipment"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This Archetype has no standard equipment.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Traits                                --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="archetype-tab-panel"
+        data-tab-panel="traits"
+      >
+
+        <div class="archetype-section-heading">
+
+          <h2>Traits</h2>
+
+          <button
+            type="button"
+            class="archetype-add-button"
+            data-action="addTrait"
+          >
+            Add Trait
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Traits describe persistent properties or tags associated
+          with this Archetype.
+        </p>
+
+        <div class="archetype-entry-list">
+
+          {{#each traits as |trait|}}
+
+            <div class="archetype-entry-row">
+
+              <input
+                name="system.traits.{{@index}}"
+                type="text"
+                value="{{trait}}"
+                placeholder="Trait"
+              >
+
+              <button
+                type="button"
+                class="archetype-remove-button"
+                data-action="removeTrait"
+                data-index="{{@index}}"
+                title="Remove Trait"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This Archetype has no traits.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Progression                           --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.4.active}}
+
+      <section
+        class="archetype-tab-panel"
+        data-tab-panel="progression"
+      >
+
+        <h2>Progression</h2>
+
+        <p class="hint">
+          Defines when this Archetype becomes available during
+          character progression.
+        </p>
+
+        <div class="archetype-progression-grid">
+
+          <div class="item-field">
+
+            <label>Minimum Rank</label>
+
+            <input
+              name="system.minimumRank"
+              type="number"
+              min="0"
+              step="1"
+              value="{{progression.minimumRank}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
