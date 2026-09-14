@@ -122,7 +122,7 @@
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+    repeat(4, minmax(0, 1fr));
 
   gap: 0;
 
@@ -254,6 +254,11 @@
   gap: 0.75rem;
 }
 
+.tactical.vehicle-sheet .vehicle-resource-grid {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
 .tactical.vehicle-sheet .item-field {
   display: flex;
 
@@ -288,6 +293,202 @@
   align-self: flex-start;
 }
 
+/* -------------------------------------------- */
+/*  Effective Vehicle Fields                    */
+/* -------------------------------------------- */
+
+.tactical.vehicle-sheet .effective-field input[readonly] {
+  opacity: 0.85;
+
+  cursor: default;
+
+  font-weight: 700;
+
+  background:
+    rgba(255, 255, 255, 0.05);
+}
+
+.tactical.vehicle-sheet .effective-field label {
+  opacity: 0.9;
+}
+
+/* -------------------------------------------- */
+/*  Vehicle Module Summary                      */
+/* -------------------------------------------- */
+
+.tactical.vehicle-sheet .vehicle-module-summary-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 0.6rem;
+
+  width: 100%;
+}
+
+.tactical.vehicle-sheet .vehicle-module-summary-card {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.25rem;
+
+  min-width: 0;
+
+  padding: 0.55rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+
+  background:
+    rgba(255, 255, 255, 0.03);
+
+  text-align: center;
+}
+
+.tactical.vehicle-sheet .vehicle-module-summary-card label {
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  line-height: 1.1;
+}
+
+.tactical.vehicle-sheet .vehicle-module-summary-card span {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* -------------------------------------------- */
+/*  Installed Vehicle Modules                   */
+/* -------------------------------------------- */
+
+.tactical.vehicle-sheet .vehicle-module-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.5rem;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .vehicle-module-row {
+  display: grid;
+
+  grid-template-columns:
+    48px
+    minmax(120px, 0.8fr)
+    minmax(0, 2fr);
+
+  align-items: center;
+
+  gap: 0.65rem;
+
+  min-width: 0;
+
+  padding: 0.5rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+
+  background:
+    rgba(255, 255, 255, 0.03);
+}
+
+.tactical.vehicle-sheet .vehicle-module-image {
+  display: block;
+
+  width: 42px;
+  height: 42px;
+
+  object-fit: cover;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.vehicle-sheet .vehicle-module-info {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.15rem;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .vehicle-module-name {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.tactical.vehicle-sheet .vehicle-module-type {
+  opacity: 0.75;
+
+  font-size: 0.75rem;
+
+  text-transform: capitalize;
+}
+
+.tactical.vehicle-sheet .vehicle-module-modifiers {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap:
+    0.2rem
+    0.5rem;
+
+  min-width: 0;
+}
+
+.tactical.vehicle-sheet .vehicle-module-modifiers span {
+  min-width: 0;
+
+  font-size: 0.72rem;
+
+  line-height: 1.15;
+
+  white-space: nowrap;
+}
+
+.tactical.vehicle-sheet .vehicle-modules-empty {
+  margin: 0;
+
+  padding: 0.75rem;
+
+  border:
+    1px dashed var(--color-border-light-primary);
+
+  border-radius: 4px;
+
+  opacity: 0.75;
+
+  font-style: italic;
+
+  text-align: center;
+}
+
+/* -------------------------------------------- */
+/*  Hint Text                                   */
+/* -------------------------------------------- */
+
 .tactical.vehicle-sheet .hint {
   margin:
     0.35rem
@@ -297,4 +498,30 @@
   opacity: 0.75;
 
   font-style: italic;
+}
+
+/* -------------------------------------------- */
+/*  Compact Layout                              */
+/* -------------------------------------------- */
+
+@media (max-width: 620px) {
+
+  .tactical.vehicle-sheet .vehicle-module-summary-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .tactical.vehicle-sheet .vehicle-module-row {
+    grid-template-columns:
+      48px
+      minmax(0, 1fr);
+  }
+
+  .tactical.vehicle-sheet .vehicle-module-modifiers {
+    grid-column:
+      1 / -1;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
 }
