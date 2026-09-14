@@ -1,0 +1,246 @@
+<div class="tactical item-sheet specialization-sheet {{cssClass}}">
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Persistent Header                       --}}
+  {{!-- ---------------------------------------- --}}
+
+  <header class="sheet-header">
+
+    <div class="specialization-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="specialization-header-identity">
+
+        <div class="identity-field specialization-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Specialization Name"
+          >
+
+        </div>
+
+        <div class="specialization-classification-row">
+
+          <div class="identity-field">
+
+            <label>Specialization Type</label>
+
+            <input
+              name="system.specializationType"
+              type="text"
+              value="{{classification.specializationType}}"
+              placeholder="Type"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="specialization-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="specialization-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Sheet Body                               --}}
+  {{!-- ---------------------------------------- --}}
+
+  <section class="specialization-sheet-body">
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Overview                              --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="specialization-tab-panel"
+        data-tab-panel="overview"
+      >
+
+        <h2>Overview</h2>
+
+        <p class="hint">
+          Specializations represent focused expertise within a parent Skill.
+          When applicable, a Specialization contributes the system's
+          Specialization bonus to the roll.
+        </p>
+
+        <div class="specialization-overview-grid">
+
+          <div class="specialization-overview-card">
+
+            <h3>Parent Skill</h3>
+
+            <p>
+              {{#if skill.parentSkill}}
+                {{skill.parentSkill}}
+              {{else}}
+                No parent Skill assigned.
+              {{/if}}
+            </p>
+
+          </div>
+
+          <div class="specialization-overview-card">
+
+            <h3>Roll Benefit</h3>
+
+            <p>
+              Applicable Specializations grant +1d12. Only one
+              Specialization may contribute to a roll.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Skill                                 --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="specialization-tab-panel"
+        data-tab-panel="skill"
+      >
+
+        <h2>Parent Skill</h2>
+
+        <p class="hint">
+          Defines the Tactical Skill this Specialization belongs to.
+        </p>
+
+        <div class="specialization-skill-grid">
+
+          <div class="item-field">
+
+            <label>Parent Skill</label>
+
+            <input
+              name="system.parentSkill"
+              type="text"
+              value="{{skill.parentSkill}}"
+              placeholder="Skill"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Classification                        --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="specialization-tab-panel"
+        data-tab-panel="classification"
+      >
+
+        <h2>Classification</h2>
+
+        <p class="hint">
+          Optional classification and source information for this
+          Specialization.
+        </p>
+
+        <div class="specialization-classification-grid">
+
+          <div class="item-field">
+
+            <label>Specialization Type</label>
+
+            <input
+              name="system.specializationType"
+              type="text"
+              value="{{classification.specializationType}}"
+              placeholder="Type"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
