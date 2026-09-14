@@ -1,0 +1,313 @@
+<div class="tactical item-sheet general-sheet {{cssClass}}">
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Persistent Header                       --}}
+  {{!-- ---------------------------------------- --}}
+
+  <header class="sheet-header">
+
+    <div class="general-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="general-header-identity">
+
+        <div class="identity-field general-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Item Name"
+          >
+
+        </div>
+
+        <div class="general-header-details">
+
+          <div class="identity-field">
+
+            <label>Category</label>
+
+            <select name="system.category">
+
+              {{#each categories as |category|}}
+
+                <option
+                  value="{{category.value}}"
+                  {{#if category.selected}}selected{{/if}}
+                >
+                  {{category.label}}
+                </option>
+
+              {{/each}}
+
+            </select>
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{details.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="general-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="general-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Sheet Body                               --}}
+  {{!-- ---------------------------------------- --}}
+
+  <section class="general-sheet-body">
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Overview                              --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="general-tab-panel"
+        data-tab-panel="overview"
+      >
+
+        <h2>Overview</h2>
+
+        <div class="general-overview-grid">
+
+          <div class="general-overview-card">
+
+            <h3>Category</h3>
+
+            <p>
+              {{#each categories as |category|}}
+                {{#if category.selected}}
+                  {{category.label}}
+                {{/if}}
+              {{/each}}
+            </p>
+
+          </div>
+
+          <div class="general-overview-card">
+
+            <h3>Quantity</h3>
+
+            <p>
+              {{details.quantity}}
+            </p>
+
+          </div>
+
+          <div class="general-overview-card">
+
+            <h3>Value Per Item</h3>
+
+            <p>
+              {{details.value}}
+            </p>
+
+          </div>
+
+          <div class="general-overview-card">
+
+            <h3>Total Value</h3>
+
+            <p>
+              {{details.totalValue}}
+            </p>
+
+          </div>
+
+        </div>
+
+        <p class="hint">
+          Value is an abstract per-item value. Future campaign systems may
+          interpret it as Supply Points, salvage, trade value, base resources,
+          or another genre-specific resource.
+        </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Details                               --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="general-tab-panel"
+        data-tab-panel="details"
+      >
+
+        <h2>Details</h2>
+
+        <div class="general-details-grid">
+
+          <div class="item-field">
+
+            <label>Category</label>
+
+            <select name="system.category">
+
+              {{#each categories as |category|}}
+
+                <option
+                  value="{{category.value}}"
+                  {{#if category.selected}}selected{{/if}}
+                >
+                  {{category.label}}
+                </option>
+
+              {{/each}}
+
+            </select>
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Quantity</label>
+
+            <input
+              name="system.quantity"
+              type="number"
+              min="0"
+              step="1"
+              value="{{details.quantity}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Value Per Item</label>
+
+            <input
+              name="system.value"
+              type="number"
+              min="0"
+              step="any"
+              value="{{details.value}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Total Value</label>
+
+            <input
+              type="number"
+              value="{{details.totalValue}}"
+              readonly
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{details.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Description                           --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="general-tab-panel general-description-panel"
+        data-tab-panel="description"
+      >
+
+        <h2>Description</h2>
+
+        <p class="hint">
+          Use this area for clues, access codes, map information, documents,
+          mission details, evidence, or other narrative information.
+        </p>
+
+        <div class="general-description-editor">
+
+          {{editor
+            description
+            target="system.description"
+            button=false
+            engine="prosemirror"
+            collaborate=false
+            editable=editable
+          }}
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
