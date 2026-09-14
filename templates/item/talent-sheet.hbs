@@ -1,0 +1,447 @@
+<div class="tactical item-sheet talent-sheet {{cssClass}}">
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Persistent Header                       --}}
+  {{!-- ---------------------------------------- --}}
+
+  <header class="sheet-header">
+
+    <div class="talent-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="talent-header-identity">
+
+        <div class="identity-field talent-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Talent Name"
+          >
+
+        </div>
+
+        <div class="talent-classification-row">
+
+          <div class="identity-field">
+
+            <label>Talent Type</label>
+
+            <input
+              name="system.talentType"
+              type="text"
+              value="{{classification.talentType}}"
+              placeholder="universal"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="talent-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="talent-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Sheet Body                               --}}
+  {{!-- ---------------------------------------- --}}
+
+  <section class="talent-sheet-body">
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Overview                              --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="talent-tab-panel"
+        data-tab-panel="overview"
+      >
+
+        <h2>Overview</h2>
+
+        <div class="talent-overview-grid">
+
+          <div class="talent-overview-card">
+
+            <h3>Minimum Rank</h3>
+
+            <p>
+              {{progression.minimumRank}}
+            </p>
+
+          </div>
+
+          <div class="talent-overview-card">
+
+            <h3>XP Cost</h3>
+
+            <p>
+              {{progression.xpCost}}
+            </p>
+
+          </div>
+
+          <div class="talent-overview-card">
+
+            <h3>Repeatable</h3>
+
+            <p>
+              {{#if progression.repeatable}}
+                Yes
+              {{else}}
+                No
+              {{/if}}
+            </p>
+
+          </div>
+
+          <div class="talent-overview-card">
+
+            <h3>Maximum Purchases</h3>
+
+            <p>
+              {{progression.maxPurchases}}
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Progression                           --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="talent-tab-panel"
+        data-tab-panel="progression"
+      >
+
+        <h2>Progression</h2>
+
+        <div class="talent-progression-grid">
+
+          <div class="item-field">
+
+            <label>Minimum Rank</label>
+
+            <input
+              name="system.minimumRank"
+              type="number"
+              min="0"
+              step="1"
+              value="{{progression.minimumRank}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>XP Cost</label>
+
+            <input
+              name="system.xpCost"
+              type="number"
+              min="0"
+              step="1"
+              value="{{progression.xpCost}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Repeatable</label>
+
+            <input
+              name="system.repeatable"
+              type="checkbox"
+              {{checked progression.repeatable}}
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Purchases</label>
+
+            <input
+              name="system.maxPurchases"
+              type="number"
+              min="1"
+              step="1"
+              value="{{progression.maxPurchases}}"
+            >
+
+          </div>
+
+        </div>
+
+        <div class="talent-list-section">
+
+          <div class="talent-section-heading">
+
+            <h3>Rank Gates</h3>
+
+            <button
+              type="button"
+              data-action="addRankGate"
+              title="Add Rank Gate"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </button>
+
+          </div>
+
+          <div class="talent-list">
+
+            {{#each progression.rankGates as |rankGate index|}}
+
+              <div class="talent-list-row">
+
+                <input
+                  name="system.rankGates.{{index}}"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="{{rankGate}}"
+                >
+
+                <button
+                  type="button"
+                  data-action="removeRankGate"
+                  data-index="{{index}}"
+                  title="Remove Rank Gate"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+
+              </div>
+
+            {{/each}}
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Requirements                          --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="talent-tab-panel"
+        data-tab-panel="requirements"
+      >
+
+        <h2>Requirements</h2>
+
+        <div class="talent-list-section">
+
+          <div class="talent-section-heading">
+
+            <h3>Required Archetypes</h3>
+
+            <button
+              type="button"
+              data-action="addRequiredArchetype"
+              title="Add Required Archetype"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </button>
+
+          </div>
+
+          <div class="talent-list">
+
+            {{#each requirements.requiredArchetypes as |archetype index|}}
+
+              <div class="talent-list-row">
+
+                <input
+                  name="system.requiredArchetypes.{{index}}"
+                  type="text"
+                  value="{{archetype}}"
+                  placeholder="Archetype"
+                >
+
+                <button
+                  type="button"
+                  data-action="removeRequiredArchetype"
+                  data-index="{{index}}"
+                  title="Remove Required Archetype"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+
+              </div>
+
+            {{/each}}
+
+          </div>
+
+        </div>
+
+        <div class="talent-list-section">
+
+          <div class="talent-section-heading">
+
+            <h3>Prerequisites</h3>
+
+            <button
+              type="button"
+              data-action="addPrerequisite"
+              title="Add Prerequisite"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </button>
+
+          </div>
+
+          <div class="talent-list">
+
+            {{#each requirements.prerequisites as |prerequisite index|}}
+
+              <div class="talent-list-row">
+
+                <input
+                  name="system.prerequisites.{{index}}"
+                  type="text"
+                  value="{{prerequisite}}"
+                  placeholder="Prerequisite"
+                >
+
+                <button
+                  type="button"
+                  data-action="removePrerequisite"
+                  data-index="{{index}}"
+                  title="Remove Prerequisite"
+                >
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+
+              </div>
+
+            {{/each}}
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Classification                        --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="talent-tab-panel"
+        data-tab-panel="classification"
+      >
+
+        <h2>Classification</h2>
+
+        <div class="talent-classification-grid">
+
+          <div class="item-field">
+
+            <label>Talent Type</label>
+
+            <input
+              name="system.talentType"
+              type="text"
+              value="{{classification.talentType}}"
+              placeholder="universal"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
