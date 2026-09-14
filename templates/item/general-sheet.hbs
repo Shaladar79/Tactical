@@ -293,14 +293,11 @@
 
         <div class="general-description-editor">
 
-          {{editor
-            description
-            target="system.description"
-            button=false
-            engine="prosemirror"
-            collaborate=false
-            editable=editable
-          }}
+          <textarea
+            name="system.description"
+            rows="12"
+            placeholder="Enter description, clues, codes, mission information, or other narrative details."
+          >{{description}}</textarea>
 
         </div>
 
