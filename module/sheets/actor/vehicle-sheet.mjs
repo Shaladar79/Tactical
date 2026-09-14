@@ -75,7 +75,13 @@ export class TacticalVehicleSheet
 
     actions: {
       switchTab:
-        this.#onSwitchTab
+        this.#onSwitchTab,
+
+      openModule:
+        this.#onOpenModule,
+
+      deleteModule:
+        this.#onDeleteModule
     }
   };
 
@@ -502,6 +508,79 @@ export class TacticalVehicleSheet
 
     this._activeTab =
       tabId;
+
+    await this.render({
+      force: true
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Open Vehicle Module                        */
+  /* -------------------------------------------- */
+
+  static async #onOpenModule(
+    event,
+    target
+  ) {
+
+    const itemId =
+      target.dataset.itemId;
+
+    if (!itemId) {
+      return;
+    }
+
+    const item =
+      this.actor.items.get(
+        itemId
+      );
+
+    if (
+      !item ||
+      item.type !== "vehicleModule"
+    ) {
+      return;
+    }
+
+    await item.sheet?.render({
+      force: true
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Delete Vehicle Module                      */
+  /* -------------------------------------------- */
+
+  static async #onDeleteModule(
+    event,
+    target
+  ) {
+
+    const itemId =
+      target.dataset.itemId;
+
+    if (!itemId) {
+      return;
+    }
+
+    const item =
+      this.actor.items.get(
+        itemId
+      );
+
+    if (
+      !item ||
+      item.type !== "vehicleModule"
+    ) {
+      return;
+    }
+
+    await this.actor.deleteEmbeddedDocuments(
+      "Item",
+      [
+        itemId
+      ]
+    );
 
     await this.render({
       force: true
