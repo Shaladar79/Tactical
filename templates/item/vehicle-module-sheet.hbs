@@ -1,0 +1,417 @@
+<div class="tactical item-sheet vehicle-module-sheet {{cssClass}}">
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Persistent Header                       --}}
+  {{!-- ---------------------------------------- --}}
+
+  <header class="sheet-header">
+
+    <div class="vehicle-module-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="vehicle-module-header-identity">
+
+        <div class="identity-field vehicle-module-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Vehicle Module Name"
+          >
+
+        </div>
+
+        <div class="vehicle-module-classification-row">
+
+          <div class="identity-field">
+
+            <label>Module Type</label>
+
+            <select name="system.moduleType">
+
+              {{#each moduleTypes as |moduleType|}}
+
+                <option
+                  value="{{moduleType.value}}"
+                  {{#if moduleType.selected}}selected{{/if}}
+                >
+                  {{moduleType.label}}
+                </option>
+
+              {{/each}}
+
+            </select>
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="vehicle-module-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="vehicle-module-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Sheet Body                               --}}
+  {{!-- ---------------------------------------- --}}
+
+  <section class="vehicle-module-sheet-body">
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Overview                              --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="vehicle-module-tab-panel"
+        data-tab-panel="overview"
+      >
+
+        <h2>Overview</h2>
+
+        <div class="vehicle-module-overview-grid">
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Hull</h3>
+
+            <p>{{modifiers.hull}}</p>
+
+          </div>
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Armor Integrity</h3>
+
+            <p>{{modifiers.armorIntegrity}}</p>
+
+          </div>
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Movement</h3>
+
+            <p>{{modifiers.movement}}</p>
+
+          </div>
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Initiative</h3>
+
+            <p>{{modifiers.initiative}}</p>
+
+          </div>
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Toughness</h3>
+
+            <p>{{modifiers.toughness}}</p>
+
+          </div>
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Actions</h3>
+
+            <p>{{modifiers.actions}}</p>
+
+          </div>
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Reactions</h3>
+
+            <p>{{modifiers.reactions}}</p>
+
+          </div>
+
+          <div class="vehicle-module-overview-card">
+
+            <h3>Attack Pool</h3>
+
+            <p>{{modifiers.attackPool}}</p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Modifiers                             --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="vehicle-module-tab-panel"
+        data-tab-panel="modifiers"
+      >
+
+        <h2>Vehicle Modifiers</h2>
+
+        <p class="hint">
+          Positive values increase a Vehicle statistic. Negative values apply
+          a penalty when this module is active.
+        </p>
+
+        <div class="vehicle-module-modifier-grid">
+
+          <div class="item-field">
+
+            <label>Hull</label>
+
+            <input
+              name="system.hullModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.hull}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Armor Integrity</label>
+
+            <input
+              name="system.armorIntegrityModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.armorIntegrity}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Movement</label>
+
+            <input
+              name="system.movementModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.movement}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Initiative</label>
+
+            <input
+              name="system.initiativeModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.initiative}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Toughness</label>
+
+            <input
+              name="system.toughnessModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.toughness}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Actions</label>
+
+            <input
+              name="system.actionsModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.actions}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Reactions</label>
+
+            <input
+              name="system.reactionsModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.reactions}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Attack Pool</label>
+
+            <input
+              name="system.attackPoolModifier"
+              type="number"
+              step="1"
+              value="{{modifiers.attackPool}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Classification                        --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="vehicle-module-tab-panel"
+        data-tab-panel="classification"
+      >
+
+        <h2>Classification</h2>
+
+        <div class="vehicle-module-classification-grid">
+
+          <div class="item-field">
+
+            <label>Module Type</label>
+
+            <select name="system.moduleType">
+
+              {{#each moduleTypes as |moduleType|}}
+
+                <option
+                  value="{{moduleType.value}}"
+                  {{#if moduleType.selected}}selected{{/if}}
+                >
+                  {{moduleType.label}}
+                </option>
+
+              {{/each}}
+
+            </select>
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Description                           --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="vehicle-module-tab-panel vehicle-module-description-panel"
+        data-tab-panel="description"
+      >
+
+        <h2>Description</h2>
+
+        <p class="hint">
+          Use this area for special rules or effects that are not represented
+          by the numeric modifiers.
+        </p>
+
+        <div class="vehicle-module-description-editor">
+
+          {{editor
+            description
+            target="system.description"
+            button=false
+            engine="prosemirror"
+            collaborate=false
+            editable=editable
+          }}
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
