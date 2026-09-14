@@ -21,6 +21,10 @@ import {
   TacticalUtilitySheet
 } from "./utility-sheet.mjs";
 
+import {
+  TacticalAncestrySheet
+} from "./ancestry-sheet.mjs";
+
 /**
  * Register Tactical Item sheets.
  */
@@ -86,7 +90,22 @@ export function registerTacticalItemSheets() {
     }
   );
 
+  DocumentSheetConfig.registerSheet(
+    Item,
+    "tactical",
+    TacticalAncestrySheet,
+    {
+      types: [
+        "ancestry"
+      ],
+
+      makeDefault: true,
+
+      label: "Tactical Ancestry Sheet"
+    }
+  );
+
   console.log(
-    "Tactical | Registered Consumable, Weapon, Armor, and Utility Item Sheets"
+    "Tactical | Registered Consumable, Weapon, Armor, Utility, and Ancestry Item Sheets"
   );
 }
