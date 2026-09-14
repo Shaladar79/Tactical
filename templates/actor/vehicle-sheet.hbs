@@ -537,6 +537,30 @@
                     {{module.moduleType}}
                   </span>
 
+                  <div class="vehicle-module-controls">
+
+                    <button
+                      type="button"
+                      class="vehicle-module-control"
+                      data-action="openModule"
+                      data-item-id="{{module.id}}"
+                      title="Open Vehicle Module"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
+                      class="vehicle-module-control vehicle-module-remove"
+                      data-action="deleteModule"
+                      data-item-id="{{module.id}}"
+                      title="Remove Vehicle Module"
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+
                 </div>
 
                 <div class="vehicle-module-modifiers">
