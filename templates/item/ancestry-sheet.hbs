@@ -1,0 +1,432 @@
+<div class="tactical item-sheet ancestry-sheet {{cssClass}}">
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Persistent Header                       --}}
+  {{!-- ---------------------------------------- --}}
+
+  <header class="sheet-header">
+
+    <div class="ancestry-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="ancestry-header-identity">
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Name                                 --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="identity-field ancestry-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Ancestry Name"
+          >
+
+        </div>
+
+        {{!-- ------------------------------------ --}}
+        {{!--  Classification                       --}}
+        {{!-- ------------------------------------ --}}
+
+        <div class="ancestry-classification-row">
+
+          <div class="identity-field">
+
+            <label>Ancestry Type</label>
+
+            <input
+              name="system.ancestryType"
+              type="text"
+              value="{{classification.ancestryType}}"
+              placeholder="Type"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="ancestry-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="ancestry-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Sheet Body                               --}}
+  {{!-- ---------------------------------------- --}}
+
+  <section class="ancestry-sheet-body">
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Overview Tab                            --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="ancestry-tab-panel"
+        data-tab-panel="overview"
+      >
+
+        <h2>Overview</h2>
+
+        <p class="hint">
+          Ancestries define innate character modifiers, traits,
+          and abilities supplied by Tactical or a genre module.
+        </p>
+
+        <h3>General Modifiers</h3>
+
+        <div class="ancestry-modifier-grid">
+
+          <div class="item-field">
+
+            <label>Movement</label>
+
+            <input
+              name="system.movementModifier"
+              type="number"
+              step="1"
+              value="{{otherModifiers.movement}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Health</label>
+
+            <input
+              name="system.healthModifier"
+              type="number"
+              step="1"
+              value="{{otherModifiers.health}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Maximum Wounds</label>
+
+            <input
+              name="system.woundModifier"
+              type="number"
+              step="1"
+              value="{{otherModifiers.wounds}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Attribute Modifiers Tab                 --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="ancestry-tab-panel"
+        data-tab-panel="attributes"
+      >
+
+        <h2>Attribute Modifiers</h2>
+
+        <p class="hint">
+          Positive and negative values modify the character's
+          corresponding Tactical Attribute.
+        </p>
+
+        <div class="ancestry-attribute-grid">
+
+          <div class="item-field">
+
+            <label>Might</label>
+
+            <input
+              name="system.mightModifier"
+              type="number"
+              step="1"
+              value="{{attributeModifiers.might}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Precision</label>
+
+            <input
+              name="system.precisionModifier"
+              type="number"
+              step="1"
+              value="{{attributeModifiers.precision}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Agility</label>
+
+            <input
+              name="system.agilityModifier"
+              type="number"
+              step="1"
+              value="{{attributeModifiers.agility}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Endurance</label>
+
+            <input
+              name="system.enduranceModifier"
+              type="number"
+              step="1"
+              value="{{attributeModifiers.endurance}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Focus</label>
+
+            <input
+              name="system.focusModifier"
+              type="number"
+              step="1"
+              value="{{attributeModifiers.focus}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Resolve</label>
+
+            <input
+              name="system.resolveModifier"
+              type="number"
+              step="1"
+              value="{{attributeModifiers.resolve}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Perception</label>
+
+            <input
+              name="system.perceptionModifier"
+              type="number"
+              step="1"
+              value="{{attributeModifiers.perception}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Traits Tab                              --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="ancestry-tab-panel"
+        data-tab-panel="traits"
+      >
+
+        <div class="ancestry-section-heading">
+
+          <h2>Traits</h2>
+
+          <button
+            type="button"
+            class="ancestry-add-button"
+            data-action="addTrait"
+          >
+            Add Trait
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Traits describe persistent properties granted by this ancestry.
+        </p>
+
+        <div class="ancestry-entry-list">
+
+          {{#each traits as |trait|}}
+
+            <div class="ancestry-entry-row">
+
+              <input
+                name="system.traits.{{@index}}"
+                type="text"
+                value="{{trait}}"
+                placeholder="Trait"
+              >
+
+              <button
+                type="button"
+                class="ancestry-remove-button"
+                data-action="removeTrait"
+                data-index="{{@index}}"
+                title="Remove Trait"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This ancestry has no traits.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Granted Abilities Tab                   --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="ancestry-tab-panel"
+        data-tab-panel="abilities"
+      >
+
+        <div class="ancestry-section-heading">
+
+          <h2>Granted Abilities</h2>
+
+          <button
+            type="button"
+            class="ancestry-add-button"
+            data-action="addAbility"
+          >
+            Add Ability
+          </button>
+
+        </div>
+
+        <p class="hint">
+          Enter abilities automatically granted by this ancestry.
+        </p>
+
+        <div class="ancestry-entry-list">
+
+          {{#each grantedAbilities as |ability|}}
+
+            <div class="ancestry-entry-row">
+
+              <input
+                name="system.grantedAbilities.{{@index}}"
+                type="text"
+                value="{{ability}}"
+                placeholder="Ability"
+              >
+
+              <button
+                type="button"
+                class="ancestry-remove-button"
+                data-action="removeAbility"
+                data-index="{{@index}}"
+                title="Remove Ability"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          {{else}}
+
+            <p class="hint">
+              This ancestry grants no abilities.
+            </p>
+
+          {{/each}}
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
