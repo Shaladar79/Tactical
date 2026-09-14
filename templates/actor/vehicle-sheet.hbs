@@ -146,7 +146,7 @@
 
           <div class="item-field">
 
-            <label>Maximum Hull</label>
+            <label>Base Maximum Hull</label>
 
             <input
               name="system.hull.max"
@@ -154,6 +154,18 @@
               min="0"
               step="1"
               value="{{combat.hull.max}}"
+            >
+
+          </div>
+
+          <div class="item-field effective-field">
+
+            <label>Effective Maximum Hull</label>
+
+            <input
+              type="number"
+              value="{{effective.hull.max}}"
+              readonly
             >
 
           </div>
@@ -180,7 +192,7 @@
 
           <div class="item-field">
 
-            <label>Maximum Integrity</label>
+            <label>Base Maximum Integrity</label>
 
             <input
               name="system.armorIntegrity.max"
@@ -188,6 +200,18 @@
               min="0"
               step="1"
               value="{{combat.armorIntegrity.max}}"
+            >
+
+          </div>
+
+          <div class="item-field effective-field">
+
+            <label>Effective Maximum Integrity</label>
+
+            <input
+              type="number"
+              value="{{effective.armorIntegrity.max}}"
+              readonly
             >
 
           </div>
@@ -200,7 +224,7 @@
 
           <div class="item-field">
 
-            <label>Movement</label>
+            <label>Base Movement</label>
 
             <input
               name="system.movement"
@@ -212,9 +236,21 @@
 
           </div>
 
+          <div class="item-field effective-field">
+
+            <label>Effective Movement</label>
+
+            <input
+              type="number"
+              value="{{effective.movement}}"
+              readonly
+            >
+
+          </div>
+
           <div class="item-field">
 
-            <label>Initiative</label>
+            <label>Base Initiative</label>
 
             <input
               name="system.initiative"
@@ -222,6 +258,18 @@
               min="0"
               step="1"
               value="{{combat.initiative}}"
+            >
+
+          </div>
+
+          <div class="item-field effective-field">
+
+            <label>Effective Initiative</label>
+
+            <input
+              type="number"
+              value="{{effective.initiative}}"
+              readonly
             >
 
           </div>
@@ -242,7 +290,7 @@
 
           <div class="item-field">
 
-            <label>Toughness</label>
+            <label>Base Toughness</label>
 
             <input
               name="system.toughness"
@@ -254,11 +302,23 @@
 
           </div>
 
+          <div class="item-field effective-field">
+
+            <label>Effective Toughness</label>
+
+            <input
+              type="number"
+              value="{{effective.toughness}}"
+              readonly
+            >
+
+          </div>
+
         </div>
 
         <p class="hint">
-          Vehicles and autonomous units use Hull instead of Health.
-          Current Hull and Armor Integrity cannot exceed their maximum values.
+          Editable values are the Vehicle's stored base statistics.
+          Effective values include all embedded Vehicle Module modifiers.
         </p>
 
       </section>
@@ -282,7 +342,7 @@
 
           <div class="item-field">
 
-            <label>Actions</label>
+            <label>Base Actions</label>
 
             <input
               name="system.actions"
@@ -294,9 +354,21 @@
 
           </div>
 
+          <div class="item-field effective-field">
+
+            <label>Effective Actions</label>
+
+            <input
+              type="number"
+              value="{{effective.actions}}"
+              readonly
+            >
+
+          </div>
+
           <div class="item-field">
 
-            <label>Reactions per Round</label>
+            <label>Base Reactions per Round</label>
 
             <input
               name="system.reactionsPerRound"
@@ -308,7 +380,23 @@
 
           </div>
 
+          <div class="item-field effective-field">
+
+            <label>Effective Reactions per Round</label>
+
+            <input
+              type="number"
+              value="{{effective.reactionsPerRound}}"
+              readonly
+            >
+
+          </div>
+
         </div>
+
+        <p class="hint">
+          Effective Action Economy includes Vehicle Module modifiers.
+        </p>
 
       </section>
 
@@ -331,7 +419,7 @@
 
           <div class="item-field">
 
-            <label>Attack Pool</label>
+            <label>Base Attack Pool</label>
 
             <input
               name="system.attackPool"
@@ -343,11 +431,169 @@
 
           </div>
 
+          <div class="item-field effective-field">
+
+            <label>Effective Attack Pool</label>
+
+            <input
+              type="number"
+              value="{{effective.attackPool}}"
+              readonly
+            >
+
+          </div>
+
         </div>
 
         <p class="hint">
-          Attack Pool is the Vehicle's default attack dice pool.
+          Effective Attack Pool includes all Vehicle Module modifiers.
         </p>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- ---------------------------------------- --}}
+    {{!--  Modules Tab                             --}}
+    {{!-- ---------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="vehicle-tab-panel vehicle-modules-panel"
+        data-tab-panel="modules"
+      >
+
+        <h2>Vehicle Modules</h2>
+
+        <p class="hint">
+          Embedded Vehicle Modules automatically contribute their modifiers
+          to this Vehicle's effective statistics.
+        </p>
+
+        <h3>Total Module Modifiers</h3>
+
+        <div class="vehicle-module-summary-grid">
+
+          <div class="vehicle-module-summary-card">
+            <label>Hull</label>
+            <span>{{moduleModifiers.hull}}</span>
+          </div>
+
+          <div class="vehicle-module-summary-card">
+            <label>Armor Integrity</label>
+            <span>{{moduleModifiers.armorIntegrity}}</span>
+          </div>
+
+          <div class="vehicle-module-summary-card">
+            <label>Movement</label>
+            <span>{{moduleModifiers.movement}}</span>
+          </div>
+
+          <div class="vehicle-module-summary-card">
+            <label>Initiative</label>
+            <span>{{moduleModifiers.initiative}}</span>
+          </div>
+
+          <div class="vehicle-module-summary-card">
+            <label>Toughness</label>
+            <span>{{moduleModifiers.toughness}}</span>
+          </div>
+
+          <div class="vehicle-module-summary-card">
+            <label>Actions</label>
+            <span>{{moduleModifiers.actions}}</span>
+          </div>
+
+          <div class="vehicle-module-summary-card">
+            <label>Reactions</label>
+            <span>{{moduleModifiers.reactions}}</span>
+          </div>
+
+          <div class="vehicle-module-summary-card">
+            <label>Attack Pool</label>
+            <span>{{moduleModifiers.attackPool}}</span>
+          </div>
+
+        </div>
+
+        <h3>Installed Modules</h3>
+
+        {{#if hasVehicleModules}}
+
+          <div class="vehicle-module-list">
+
+            {{#each vehicleModules as |module|}}
+
+              <article class="vehicle-module-row">
+
+                <img
+                  class="vehicle-module-image"
+                  src="{{module.img}}"
+                  title="{{module.name}}"
+                  width="42"
+                  height="42"
+                >
+
+                <div class="vehicle-module-info">
+
+                  <strong class="vehicle-module-name">
+                    {{module.name}}
+                  </strong>
+
+                  <span class="vehicle-module-type">
+                    {{module.moduleType}}
+                  </span>
+
+                </div>
+
+                <div class="vehicle-module-modifiers">
+
+                  <span>Hull {{module.modifiers.hull}}</span>
+
+                  <span>
+                    Armor {{module.modifiers.armorIntegrity}}
+                  </span>
+
+                  <span>
+                    Move {{module.modifiers.movement}}
+                  </span>
+
+                  <span>
+                    Init {{module.modifiers.initiative}}
+                  </span>
+
+                  <span>
+                    Tough {{module.modifiers.toughness}}
+                  </span>
+
+                  <span>
+                    Actions {{module.modifiers.actions}}
+                  </span>
+
+                  <span>
+                    Reactions {{module.modifiers.reactions}}
+                  </span>
+
+                  <span>
+                    Attack {{module.modifiers.attackPool}}
+                  </span>
+
+                </div>
+
+              </article>
+
+            {{/each}}
+
+          </div>
+
+        {{else}}
+
+          <p class="vehicle-modules-empty">
+            No Vehicle Modules are currently embedded on this Vehicle.
+          </p>
+
+        {{/if}}
 
       </section>
 
