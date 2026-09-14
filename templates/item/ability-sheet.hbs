@@ -1,0 +1,388 @@
+<div class="tactical item-sheet ability-sheet {{cssClass}}">
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Persistent Header                       --}}
+  {{!-- ---------------------------------------- --}}
+
+  <header class="sheet-header">
+
+    <div class="ability-header-top">
+
+      <div class="header-portrait">
+
+        <img
+          class="profile-img"
+          src="{{item.img}}"
+          data-edit="img"
+          title="{{item.name}}"
+          width="96"
+          height="96"
+        >
+
+      </div>
+
+      <div class="ability-header-identity">
+
+        <div class="identity-field ability-name-field">
+
+          <label>Name</label>
+
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Ability Name"
+          >
+
+        </div>
+
+        <div class="ability-classification-row">
+
+          <div class="identity-field">
+
+            <label>Ability Type</label>
+
+            <input
+              name="system.abilityType"
+              type="text"
+              value="{{classification.abilityType}}"
+              placeholder="Type"
+            >
+
+          </div>
+
+          <div class="identity-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Tabs                                     --}}
+  {{!-- ---------------------------------------- --}}
+
+  <nav class="ability-sheet-tabs">
+
+    {{#each tabs as |tab|}}
+
+      <button
+        type="button"
+        class="ability-tab-button {{#if tab.active}}active{{/if}}"
+        data-action="switchTab"
+        data-tab="{{tab.id}}"
+      >
+        {{tab.label}}
+      </button>
+
+    {{/each}}
+
+  </nav>
+
+  {{!-- ---------------------------------------- --}}
+  {{!--  Sheet Body                               --}}
+  {{!-- ---------------------------------------- --}}
+
+  <section class="ability-sheet-body">
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Overview                              --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.0.active}}
+
+      <section
+        class="ability-tab-panel"
+        data-tab-panel="overview"
+      >
+
+        <h2>Overview</h2>
+
+        <div class="ability-overview-grid">
+
+          <div class="ability-overview-card">
+
+            <h3>Action Cost</h3>
+
+            <p>
+              {{action.actionCost}}
+            </p>
+
+          </div>
+
+          <div class="ability-overview-card">
+
+            <h3>Reaction</h3>
+
+            <p>
+              {{#if action.isReaction}}
+                Yes
+              {{else}}
+                No
+              {{/if}}
+            </p>
+
+          </div>
+
+          <div class="ability-overview-card">
+
+            <h3>Range</h3>
+
+            <p>
+              {{action.range}}
+            </p>
+
+          </div>
+
+          <div class="ability-overview-card">
+
+            <h3>Minimum Rank</h3>
+
+            <p>
+              {{requirements.minimumRank}}
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Action                                --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.1.active}}
+
+      <section
+        class="ability-tab-panel"
+        data-tab-panel="action"
+      >
+
+        <h2>Action</h2>
+
+        <div class="ability-action-grid">
+
+          <div class="item-field">
+
+            <label>Action Cost</label>
+
+            <input
+              name="system.actionCost"
+              type="number"
+              min="0"
+              step="1"
+              value="{{action.actionCost}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Reaction</label>
+
+            <input
+              name="system.isReaction"
+              type="checkbox"
+              {{checked action.isReaction}}
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Range</label>
+
+            <input
+              name="system.range"
+              type="number"
+              min="0"
+              step="1"
+              value="{{action.range}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Usage                                 --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.2.active}}
+
+      <section
+        class="ability-tab-panel"
+        data-tab-panel="usage"
+      >
+
+        <h2>Usage Limits</h2>
+
+        <div class="ability-usage-grid">
+
+          <div class="item-field">
+
+            <label>Uses Per Encounter</label>
+
+            <input
+              name="system.usesPerEncounter"
+              type="number"
+              min="0"
+              step="1"
+              value="{{usage.usesPerEncounter}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Uses Per Round</label>
+
+            <input
+              name="system.usesPerRound"
+              type="number"
+              min="0"
+              step="1"
+              value="{{usage.usesPerRound}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Cooldown Turns</label>
+
+            <input
+              name="system.cooldownTurns"
+              type="number"
+              min="0"
+              step="1"
+              value="{{usage.cooldownTurns}}"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Requirements                          --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.3.active}}
+
+      <section
+        class="ability-tab-panel"
+        data-tab-panel="requirements"
+      >
+
+        <h2>Requirements</h2>
+
+        <div class="ability-requirements-grid">
+
+          <div class="item-field">
+
+            <label>Minimum Rank</label>
+
+            <input
+              name="system.minimumRank"
+              type="number"
+              min="0"
+              step="1"
+              value="{{requirements.minimumRank}}"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Required Archetype</label>
+
+            <input
+              name="system.requiredArchetype"
+              type="text"
+              value="{{requirements.requiredArchetype}}"
+              placeholder="Archetype"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+    {{!-- -------------------------------------- --}}
+    {{!--  Classification                        --}}
+    {{!-- -------------------------------------- --}}
+
+    {{#if tabs.4.active}}
+
+      <section
+        class="ability-tab-panel"
+        data-tab-panel="classification"
+      >
+
+        <h2>Classification</h2>
+
+        <div class="ability-classification-grid">
+
+          <div class="item-field">
+
+            <label>Ability Type</label>
+
+            <input
+              name="system.abilityType"
+              type="text"
+              value="{{classification.abilityType}}"
+              placeholder="Type"
+            >
+
+          </div>
+
+          <div class="item-field">
+
+            <label>Source Module</label>
+
+            <input
+              name="system.sourceModule"
+              type="text"
+              value="{{classification.sourceModule}}"
+              placeholder="tactical"
+            >
+
+          </div>
+
+        </div>
+
+      </section>
+
+    {{/if}}
+
+  </section>
+
+</div>
