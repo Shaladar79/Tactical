@@ -12,7 +12,7 @@ const {
 } = foundry.applications;
 
 /* -------------------------------------------- */
-/*  Vehicle Sheet Tabs                         */
+/*  Vehicle Sheet Tabs                          */
 /* -------------------------------------------- */
 
 const VEHICLE_SHEET_TABS = [
@@ -27,6 +27,10 @@ const VEHICLE_SHEET_TABS = [
   {
     id: "attack",
     label: "Attack"
+  },
+  {
+    id: "modules",
+    label: "Modules"
   }
 ];
 
@@ -123,6 +127,225 @@ export class TacticalVehicleSheet
       );
 
     /* -------------------------------------------- */
+    /*  Effective Vehicle Statistics               */
+    /* -------------------------------------------- */
+
+    const effectiveSystem =
+      system.effective ?? {};
+
+    const moduleModifierSystem =
+      system.moduleModifiers ?? {};
+
+    const effective = {
+      hull: {
+        value:
+          Math.max(
+            0,
+            Number(
+              effectiveSystem.hull?.value
+            ) || 0
+          ),
+
+        max:
+          Math.max(
+            0,
+            Number(
+              effectiveSystem.hull?.max
+            ) || 0
+          )
+      },
+
+      armorIntegrity: {
+        value:
+          Math.max(
+            0,
+            Number(
+              effectiveSystem.armorIntegrity?.value
+            ) || 0
+          ),
+
+        max:
+          Math.max(
+            0,
+            Number(
+              effectiveSystem.armorIntegrity?.max
+            ) || 0
+          )
+      },
+
+      movement:
+        Math.max(
+          0,
+          Number(
+            effectiveSystem.movement
+          ) || 0
+        ),
+
+      initiative:
+        Math.max(
+          0,
+          Number(
+            effectiveSystem.initiative
+          ) || 0
+        ),
+
+      resolve:
+        Math.max(
+          0,
+          Number(
+            effectiveSystem.resolve
+          ) || 0
+        ),
+
+      toughness:
+        Math.max(
+          0,
+          Number(
+            effectiveSystem.toughness
+          ) || 0
+        ),
+
+      actions:
+        Math.max(
+          0,
+          Number(
+            effectiveSystem.actions
+          ) || 0
+        ),
+
+      reactionsPerRound:
+        Math.max(
+          0,
+          Number(
+            effectiveSystem.reactionsPerRound
+          ) || 0
+        ),
+
+      attackPool:
+        Math.max(
+          0,
+          Number(
+            effectiveSystem.attackPool
+          ) || 0
+        )
+    };
+
+    /* -------------------------------------------- */
+    /*  Vehicle Module Totals                      */
+    /* -------------------------------------------- */
+
+    const moduleModifiers = {
+      hull:
+        Number(
+          moduleModifierSystem.hull
+        ) || 0,
+
+      armorIntegrity:
+        Number(
+          moduleModifierSystem.armorIntegrity
+        ) || 0,
+
+      movement:
+        Number(
+          moduleModifierSystem.movement
+        ) || 0,
+
+      initiative:
+        Number(
+          moduleModifierSystem.initiative
+        ) || 0,
+
+      toughness:
+        Number(
+          moduleModifierSystem.toughness
+        ) || 0,
+
+      actions:
+        Number(
+          moduleModifierSystem.actions
+        ) || 0,
+
+      reactions:
+        Number(
+          moduleModifierSystem.reactions
+        ) || 0,
+
+      attackPool:
+        Number(
+          moduleModifierSystem.attackPool
+        ) || 0
+    };
+
+    /* -------------------------------------------- */
+    /*  Embedded Vehicle Modules                   */
+    /* -------------------------------------------- */
+
+    const vehicleModules =
+      actor.items
+        .filter(
+          item =>
+            item.type === "vehicleModule"
+        )
+        .map(
+          item => ({
+            id:
+              item.id,
+
+            name:
+              item.name,
+
+            img:
+              item.img,
+
+            moduleType:
+              item.system?.moduleType ??
+              "utility",
+
+            modifiers: {
+              hull:
+                Number(
+                  item.system?.hullModifier
+                ) || 0,
+
+              armorIntegrity:
+                Number(
+                  item.system?.armorIntegrityModifier
+                ) || 0,
+
+              movement:
+                Number(
+                  item.system?.movementModifier
+                ) || 0,
+
+              initiative:
+                Number(
+                  item.system?.initiativeModifier
+                ) || 0,
+
+              toughness:
+                Number(
+                  item.system?.toughnessModifier
+                ) || 0,
+
+              actions:
+                Number(
+                  item.system?.actionsModifier
+                ) || 0,
+
+              reactions:
+                Number(
+                  item.system?.reactionsModifier
+                ) || 0,
+
+              attackPool:
+                Number(
+                  item.system?.attackPoolModifier
+                ) || 0
+            }
+          })
+        );
+
+    /* -------------------------------------------- */
     /*  Sheet Context                               */
     /* -------------------------------------------- */
 
@@ -156,6 +379,13 @@ export class TacticalVehicleSheet
           Boolean(system.autonomous)
       },
 
+      /*
+       * Stored base statistics.
+       *
+       * These remain separate from effective values so
+       * module bonuses are never written back into the
+       * Vehicle's persistent base statistics.
+       */
       combat: {
         hull: {
           value:
@@ -230,7 +460,16 @@ export class TacticalVehicleSheet
             0,
             Number(system.attackPool) || 0
           )
-      }
+      },
+
+      effective,
+
+      moduleModifiers,
+
+      vehicleModules,
+
+      hasVehicleModules:
+        vehicleModules.length > 0
     };
   }
 
