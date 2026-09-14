@@ -6,7 +6,6 @@
  */
 
 const {
-  BooleanField,
   StringField
 } = foundry.data.fields;
 
@@ -23,18 +22,9 @@ export class TacticalSpecializationData extends foundry.abstract.TypeDataModel {
       /* -------------------------------------------- */
 
       parentSkill: new StringField({
-        required: true,
-        blank: false,
+        required: false,
+        blank: true,
         initial: ""
-      }),
-
-      /* -------------------------------------------- */
-      /*  Behavior                                    */
-      /* -------------------------------------------- */
-
-      grantsDie: new BooleanField({
-        required: true,
-        initial: true
       }),
 
       /* -------------------------------------------- */
