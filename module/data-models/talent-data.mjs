@@ -72,15 +72,15 @@ export class TacticalTalentData extends foundry.abstract.TypeDataModel {
 
       requiredArchetypes: new ArrayField(
         new StringField({
-          required: true,
-          blank: false
+          required: false,
+          blank: true
         })
       ),
 
       prerequisites: new ArrayField(
         new StringField({
-          required: true,
-          blank: false
+          required: false,
+          blank: true
         })
       ),
 
