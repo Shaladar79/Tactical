@@ -1,0 +1,442 @@
+/**
+ * Tactical
+ * Talent Item Sheet Styles
+ */
+
+/* -------------------------------------------- */
+/*  Talent Sheet Structure                      */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+/* -------------------------------------------- */
+/*  Talent Header                               */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet .sheet-header {
+  flex: 0 0 auto;
+
+  padding: 0.6rem;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  background:
+    var(--color-bg);
+}
+
+.tactical.talent-sheet .talent-header-top {
+  display: grid;
+
+  grid-template-columns:
+    90px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 0.7rem;
+
+  width: 100%;
+}
+
+.tactical.talent-sheet .header-portrait {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: center;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .profile-img {
+  display: block;
+
+  width: 80px;
+  height: 80px;
+
+  object-fit: cover;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+}
+
+.tactical.talent-sheet .talent-header-identity {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.4rem;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .identity-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.1rem;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .identity-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.tactical.talent-sheet .identity-field input {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .talent-name-field input {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tactical.talent-sheet .talent-classification-row {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  align-items: end;
+
+  gap: 0.5rem;
+
+  width: 100%;
+}
+
+/* -------------------------------------------- */
+/*  Talent Tabs                                 */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet .talent-sheet-tabs {
+  flex: 0 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 0;
+
+  width: 100%;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  background:
+    var(--color-bg);
+}
+
+.tactical.talent-sheet .talent-tab-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 2.15rem;
+
+  padding:
+    0.3rem
+    0.25rem;
+
+  border: 0;
+
+  border-right:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 0;
+
+  background:
+    transparent;
+
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  line-height: 1;
+
+  text-align: center;
+
+  white-space: normal;
+
+  cursor: pointer;
+}
+
+.tactical.talent-sheet .talent-tab-button:last-child {
+  border-right: 0;
+}
+
+.tactical.talent-sheet .talent-tab-button:hover,
+.tactical.talent-sheet .talent-tab-button:focus-visible {
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.tactical.talent-sheet .talent-tab-button.active {
+  font-weight: 700;
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  box-shadow:
+    inset 0 -2px 0
+    var(--color-border-highlight);
+}
+
+/* -------------------------------------------- */
+/*  Talent Body                                 */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet .talent-sheet-body {
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  padding: 0.65rem;
+
+  width: 100%;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.tactical.talent-sheet .talent-tab-panel {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.6rem;
+
+  width: 100%;
+
+  min-width: 0;
+}
+
+/* -------------------------------------------- */
+/*  Section Headings                            */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet .talent-tab-panel > h2 {
+  margin:
+    0
+    0
+    0.1rem
+    0;
+
+  padding-bottom: 0.2rem;
+
+  border-bottom:
+    1px solid var(--color-border-light-primary);
+
+  font-size: 1.15rem;
+  line-height: 1.1;
+}
+
+/* -------------------------------------------- */
+/*  Overview                                    */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet .talent-overview-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 0.6rem;
+
+  width: 100%;
+}
+
+.tactical.talent-sheet .talent-overview-card {
+  min-width: 0;
+
+  padding: 0.65rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 4px;
+
+  background:
+    rgba(255, 255, 255, 0.03);
+}
+
+.tactical.talent-sheet .talent-overview-card h3 {
+  margin:
+    0
+    0
+    0.35rem;
+
+  font-size: 0.95rem;
+}
+
+.tactical.talent-sheet .talent-overview-card p {
+  margin: 0;
+
+  font-size: 0.8rem;
+
+  line-height: 1.25;
+}
+
+/* -------------------------------------------- */
+/*  Progression / Classification Fields         */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet .talent-progression-grid,
+.tactical.talent-sheet .talent-classification-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  align-items: start;
+
+  gap: 0.6rem;
+
+  width: 100%;
+}
+
+.tactical.talent-sheet .item-field {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 0.1rem;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .item-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  line-height: 1.05;
+}
+
+.tactical.talent-sheet .item-field input[type="text"],
+.tactical.talent-sheet .item-field input[type="number"] {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .item-field input[type="checkbox"] {
+  margin-top: 0.35rem;
+}
+
+/* -------------------------------------------- */
+/*  Talent Lists                                */
+/* -------------------------------------------- */
+
+.tactical.talent-sheet .talent-list-section {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.35rem;
+
+  min-width: 0;
+
+  padding-top: 0.25rem;
+}
+
+.tactical.talent-sheet .talent-section-heading {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 0.5rem;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .talent-section-heading h3 {
+  margin: 0;
+
+  font-size: 0.95rem;
+}
+
+.tactical.talent-sheet .talent-section-heading button {
+  flex: 0 0 auto;
+
+  width: 2rem;
+  min-width: 2rem;
+  height: 1.8rem;
+
+  padding: 0;
+}
+
+.tactical.talent-sheet .talent-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.3rem;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .talent-list-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    2rem;
+
+  align-items: center;
+
+  gap: 0.35rem;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .talent-list-row input {
+  width: 100%;
+
+  min-width: 0;
+}
+
+.tactical.talent-sheet .talent-list-row button {
+  width: 2rem;
+  min-width: 2rem;
+  height: 1.8rem;
+
+  padding: 0;
+}
+
+/* -------------------------------------------- */
+/*  Compact Layout                              */
+/* -------------------------------------------- */
+
+@media (max-width: 520px) {
+
+  .tactical.talent-sheet .talent-overview-grid,
+  .tactical.talent-sheet .talent-progression-grid,
+  .tactical.talent-sheet .talent-classification-grid {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .tactical.talent-sheet .talent-classification-row {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+}
