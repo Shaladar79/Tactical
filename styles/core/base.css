@@ -1,0 +1,32 @@
+/**
+ * Tactical
+ * Core Base Styles
+ *
+ * Shared styling used across Tactical sheets and applications.
+ * Keep genre-specific styling in extension modules.
+ */
+
+/* -------------------------------------------- */
+/*  Global Tactical Box Sizing                  */
+/* -------------------------------------------- */
+
+.tactical {
+  box-sizing: border-box;
+}
+
+.tactical *,
+.tactical *::before,
+.tactical *::after {
+  box-sizing: inherit;
+}
+
+/* -------------------------------------------- */
+/*  General Form Elements                       */
+/* -------------------------------------------- */
+
+.tactical input,
+.tactical select,
+.tactical textarea,
+.tactical button {
+  font: inherit;
+}
