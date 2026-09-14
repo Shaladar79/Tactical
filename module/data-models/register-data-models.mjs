@@ -26,6 +26,8 @@ import { TacticalArchetypeData } from "./archetype-data.mjs";
 import { TacticalSpecializationData } from "./specialization-data.mjs";
 import { TacticalTalentData } from "./talent-data.mjs";
 import { TacticalAbilityData } from "./ability-data.mjs";
+import { TacticalGeneralData } from "./general-data.mjs";
+import { TacticalVehicleModuleData } from "./vehicle-module-data.mjs";
 
 /**
  * Register all Tactical Data Models.
@@ -60,10 +62,12 @@ export function registerTacticalDataModels() {
     archetype: TacticalArchetypeData,
     specialization: TacticalSpecializationData,
     talent: TacticalTalentData,
-    ability: TacticalAbilityData
+    ability: TacticalAbilityData,
+    general: TacticalGeneralData,
+    vehicleModule: TacticalVehicleModuleData
   };
 
   console.log(
-    "Tactical | Registered 3 Actor Data Models and 9 Item Data Models"
+    "Tactical | Registered 3 Actor Data Models and 11 Item Data Models"
   );
 }
