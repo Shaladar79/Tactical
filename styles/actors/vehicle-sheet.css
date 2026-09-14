@@ -475,7 +475,59 @@
 
   text-transform: capitalize;
 }
+/* -------------------------------------------- */
+/*  Vehicle Module Controls                     */
+/* -------------------------------------------- */
 
+.tactical.vehicle-sheet .vehicle-module-controls {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 0.25rem;
+
+  margin-top: 0.15rem;
+}
+
+.tactical.vehicle-sheet .vehicle-module-control {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: auto;
+  min-width: 0;
+  min-height: 1.45rem;
+
+  padding:
+    0.12rem
+    0.35rem;
+
+  border:
+    1px solid var(--color-border-light-primary);
+
+  border-radius: 3px;
+
+  background:
+    rgba(255, 255, 255, 0.04);
+
+  font-size: 0.66rem;
+  font-weight: 600;
+
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.tactical.vehicle-sheet .vehicle-module-control:hover,
+.tactical.vehicle-sheet .vehicle-module-control:focus-visible {
+  background:
+    rgba(255, 255, 255, 0.1);
+}
+
+.tactical.vehicle-sheet .vehicle-module-remove {
+  opacity: 0.85;
+}
 .tactical.vehicle-sheet .vehicle-module-modifiers {
   display: grid;
 
