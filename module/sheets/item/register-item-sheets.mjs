@@ -29,6 +29,10 @@ import {
   TacticalArchetypeSheet
 } from "./archetype-sheet.mjs";
 
+import {
+  TacticalSpecializationSheet
+} from "./specialization-sheet.mjs";
+
 /**
  * Register Tactical Item sheets.
  */
@@ -124,7 +128,22 @@ export function registerTacticalItemSheets() {
     }
   );
 
+  DocumentSheetConfig.registerSheet(
+    Item,
+    "tactical",
+    TacticalSpecializationSheet,
+    {
+      types: [
+        "specialization"
+      ],
+
+      makeDefault: true,
+
+      label: "Tactical Specialization Sheet"
+    }
+  );
+
   console.log(
-    "Tactical | Registered Consumable, Weapon, Armor, Utility, Ancestry, and Archetype Item Sheets"
+    "Tactical | Registered Consumable, Weapon, Armor, Utility, Ancestry, Archetype, and Specialization Item Sheets"
   );
 }
